@@ -13,7 +13,8 @@ import LoginComponent from './components/LoginComponent.vue';
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" /> -->
-  <LoginComponent/>
+  <!-- <LoginComponent/> -->
+   <router-view></router-view>
 </template>
 
 <style scoped>
