@@ -36,6 +36,17 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "VueProject": {
+      "commandName": "Executable",
+      "executablePath": "npm",
+      "workingDirectory": "path/to/your/vue/project",
+      "commandLineArgs": "run dev",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

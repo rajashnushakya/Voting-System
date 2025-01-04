@@ -3,20 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\service\\userstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\service\\userstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\model\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\model\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\migration\\db.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\migration\\db.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\service\\dbmaintainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\service\\dbmaintainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\controllers\\databasecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\controllers\\databasecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|c:\\users\\bhuban.shrestha\\source\\workspaces\\personal\\rajashnu\\voting-system\\votingapi\\migration\\db.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
+      "RelativeMoniker": "D:0:0:{7C05795D-E2F6-49CC-B702-31E9E0754CCB}|VotingAPI\\VotingAPI.csproj|solutionrelative:votingapi\\migration\\db.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,62 +38,80 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{99b8fa2f-ab90-4f57-9c32-949f146f1914}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Program.cs",
-              "RelativeDocumentMoniker": "VotingAPI\\Program.cs",
-              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Program.cs",
-              "RelativeToolTip": "VotingAPI\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAA8AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-25T04:59:09.21Z",
+              "DocumentIndex": 1,
+              "Title": "Db.sql ",
+              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Migration\\Db.sql",
+              "RelativeDocumentMoniker": "VotingAPI\\Migration\\Db.sql",
+              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Migration\\Db.sql",
+              "RelativeToolTip": "VotingAPI\\Migration\\Db.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-01-04T10:15:45.073Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Model\\User.cs",
-              "RelativeDocumentMoniker": "VotingAPI\\Model\\User.cs",
-              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Model\\User.cs",
-              "RelativeToolTip": "VotingAPI\\Model\\User.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-25T04:32:51.738Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserStore.cs",
-              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Service\\UserStore.cs",
-              "RelativeDocumentMoniker": "VotingAPI\\Service\\UserStore.cs",
-              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Service\\UserStore.cs",
-              "RelativeToolTip": "VotingAPI\\Service\\UserStore.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAAAiwAYAAAAdAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-25T04:32:19.633Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "UserController.cs",
               "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "VotingAPI\\Controllers\\UserController.cs",
               "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Controllers\\UserController.cs",
               "RelativeToolTip": "VotingAPI\\Controllers\\UserController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAASAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-25T04:25:29.331Z",
+              "WhenOpened": "2024-12-27T06:14:52.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Program.cs",
+              "RelativeDocumentMoniker": "VotingAPI\\Program.cs",
+              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Program.cs",
+              "RelativeToolTip": "VotingAPI\\Program.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAAB8AAABFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-27T05:24:08.334Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DatabaseController.cs",
+              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Controllers\\DatabaseController.cs",
+              "RelativeDocumentMoniker": "VotingAPI\\Controllers\\DatabaseController.cs",
+              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Controllers\\DatabaseController.cs",
+              "RelativeToolTip": "VotingAPI\\Controllers\\DatabaseController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAA/AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-27T05:22:26.811Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DbMaintainer.cs",
+              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Service\\DbMaintainer.cs",
+              "RelativeDocumentMoniker": "VotingAPI\\Service\\DbMaintainer.cs",
+              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\Service\\DbMaintainer.cs",
+              "RelativeToolTip": "VotingAPI\\Service\\DbMaintainer.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-27T05:14:48.27Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "VotingAPI\\appsettings.json",
+              "ToolTip": "C:\\Users\\bhuban.shrestha\\source\\Workspaces\\Personal\\Rajashnu\\Voting-System\\VotingAPI\\appsettings.json",
+              "RelativeToolTip": "VotingAPI\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-12-27T05:11:33.68Z",
               "EditorCaption": ""
             }
           ]

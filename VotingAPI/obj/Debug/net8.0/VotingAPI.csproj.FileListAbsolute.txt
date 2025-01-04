@@ -78,3 +78,7 @@ C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\Votin
 C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Runtime.Caching.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\dbup-core.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\dbup-sqlserver.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\Db.sql
