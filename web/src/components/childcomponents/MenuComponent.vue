@@ -2,7 +2,6 @@
   import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
   import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
   import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-  import HeaderComponent from './HeaderComponent.vue'
   const user = {
     name: 'Tom Cook',
     email: 'tom@example.com',
@@ -21,10 +20,10 @@
     { name: 'Settings', href: '#' },
     { name: 'Sign out', href: '#' },
   ]
+
   </script>
 
 <template>
-    <HeaderComponent></HeaderComponent>
     <!--
       This example requires updating your template:
   
