@@ -17,15 +17,15 @@ const routes = [
     component: () => import('./components/LoginComponent.vue'),
   },
   {
-    path: '/register',
-    name: 'register',
-    component: () => import('./components/RegisttrationForm.vue'),
-  },
-  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('./components/DashboardComponent.vue'),
   },
+  {
+    path:'/registration',
+    name:'Registration',
+    component:()=>import ('./components/RegisttrationForm.vue'),
+  }
 ];
 
 const router = createRouter({
