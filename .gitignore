@@ -213,6 +213,11 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+VotingAPI/[Bb]in/
+VotingAPI/[Oo]bj/
+VotingAPI/[Ll]og/
+VotingAPI/[Ll]ogs/
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
