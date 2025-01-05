@@ -1,8 +1,7 @@
 import axios from 'axios'
-import { errorMessages } from 'vue/compiler-sfc';
 
 const apiClient = axios.create({
-    baseURL: 'https://localhost:7182/api',
+    baseURL: '/api',
     headers: {
         "Content-Type": 'application/json',
 
