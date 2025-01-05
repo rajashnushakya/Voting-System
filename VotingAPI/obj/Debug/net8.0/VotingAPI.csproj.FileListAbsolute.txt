@@ -81,4 +81,14 @@ C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\Votin
 C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\dbup-core.dll
 C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\dbup-sqlserver.dll
 C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\Db.sql
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\1 address_table.sql
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\5 sp_voter_registration.sql
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\2 voter_nation_drop.sql
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\3 voter_table_alter.sql
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Migration\6 voter_data.sql
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\System.Web.Cors.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\System.Net.Http.Formatting.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\System.Web.Http.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\System.Web.Http.Cors.dll
+C:\Users\bhuban.shrestha\source\Workspaces\Personal\Rajashnu\Voting-System\VotingAPI\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll

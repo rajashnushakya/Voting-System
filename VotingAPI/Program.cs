@@ -7,6 +7,8 @@ using System.Text;
 using VotingAPI.Model;
 using VotingAPI.Service;
 
+string _corsPolicyName = "_localhostOnlyPolicy";
+
 var builder = WebApplication.CreateBuilder(args);
 
 //Jwt configuration starts here
@@ -35,6 +37,18 @@ builder.Services.AddIdentity<AppUser, Role>()
 builder.Services.AddTransient<IUserStore<AppUser>, AppUserStore>();
 builder.Services.AddTransient<IRoleStore<Role>, AppRoleStore>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: _corsPolicyName,
+        policy =>
+        {
+            string clients = builder.Configuration["ApiAllowedClients"];
+            policy.WithOrigins(clients.Split(','))
+            //policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -80,6 +94,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(_corsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 

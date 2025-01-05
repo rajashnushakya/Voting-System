@@ -20,7 +20,17 @@ namespace VotingAPI.Controllers
         [HttpGet]
         public DatabaseUpgradeResult? Synchronize()
         {
-            return DbMaintainer.Maintain(_configuration.GetConnectionString("VotingDb"));
+            try
+            {
+                var a =  DbMaintainer.Maintain(_configuration.GetConnectionString("VotingDb"));
+                return a;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
         }
     }
 }

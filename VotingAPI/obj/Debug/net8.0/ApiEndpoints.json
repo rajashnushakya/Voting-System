@@ -20,22 +20,42 @@
     ]
   },
   {
-    "ContainingType": "VotingAPI.Controllers.UserController",
+    "ContainingType": "VotingAPI.Controllers.VoterController",
     "Method": "RegisterAsync",
-    "RelativePath": "api/User/Register",
+    "RelativePath": "api/Voter/Register",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "user",
-        "Type": "VotingAPI.Model.AppUser",
+        "Name": "voter",
+        "Type": "VotingAPI.Model.Voter",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "Microsoft.AspNetCore.Identity.IdentityResult",
+        "Type": "VotingAPI.Model.DbResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "VotingAPI.Controllers.VoterController",
+    "Method": "Test",
+    "RelativePath": "api/Voter/Test",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
         "MediaTypes": [
           "text/plain",
           "application/json",

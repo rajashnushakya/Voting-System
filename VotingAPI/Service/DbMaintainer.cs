@@ -1,5 +1,6 @@
 ﻿using DbUp;
 using DbUp.Engine;
+using DbUp.ScriptProviders;
 
 namespace VotingAPI.Service
 {
@@ -13,18 +14,26 @@ namespace VotingAPI.Service
 
         public static DatabaseUpgradeResult? Maintain(string connectionString)
         {
-            var upgrader = DeployChanges.To
-                .SqlDatabase(connectionString)
-                .WithScriptsFromFileSystem(_scriptPath)
-                .LogToConsole()
-                .Build();
-
-            if (upgrader.IsUpgradeRequired())
+            try
             {
-                var result = upgrader.PerformUpgrade();
-                return result;
+                var upgrader = DeployChanges.To
+            .SqlDatabase(connectionString)
+            .WithScriptsFromFileSystem(_scriptPath)
+            .LogToConsole()
+            .Build();
+
+                if (upgrader.IsUpgradeRequired())
+                {
+                    var result = upgrader.PerformUpgrade();
+                    return result;
+                }
+                return null;
             }
-            return null;
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 }
