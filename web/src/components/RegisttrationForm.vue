@@ -1,137 +1,266 @@
 <template>
-  <div class="text-gray-600 mb-8 mx-4">
-    <p class="font-medium text-lg mb-2">Voters Details</p>
-  </div>
+  <div>
+    <div class="text-gray-600 mb-8 mx-4">
+      <p class="font-medium text-lg mb-2">Voters Details</p>
+    </div>
 
-  <div class="lg:col-span-2">
-    <div class="mx-6 my-8">
+    <div class="lg:col-span-2">
+      <div class="mx-6 my-8">
+        <!-- Form Fields -->
+        <form @submit.prevent="handleSubmit">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 p-4">
+            <!-- Personal Details -->
+            <div>
+              <label for="name" class="block text-gray-700 font-medium mb-2">Full Name</label>
+              <input
+                type="text"
+                v-model="formData.name"
+                id="name"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label for="fatherName" class="block text-gray-700 font-medium mb-2">Father's Name</label>
+              <input
+                type="text"
+                v-model="formData.fatherName"
+                id="fatherName"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="John Sr."
+              />
+            </div>
+            <div>
+              <label for="motherName" class="block text-gray-700 font-medium mb-2">Mother's Name</label>
+              <input
+                type="text"
+                v-model="formData.motherName"
+                id="motherName"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Jane Doe"
+              />
+            </div>
+            <div>
+              <label for="grandFatherName" class="block text-gray-700 font-medium mb-2">Grandfather's Name</label>
+              <input
+                type="text"
+                v-model="formData.grandFatherName"
+                id="grandFatherName"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="James Doe"
+              />
+            </div>
+            <div>
+              <label for="grandMotherName" class="block text-gray-700 font-medium mb-2">Grandmother's Name</label>
+              <input
+                type="text"
+                v-model="formData.grandMotherName"
+                id="grandMotherName"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Mary Doe"
+              />
+            </div>
+            <div>
+              <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+              <input
+                type="email"
+                v-model="formData.email"
+                id="email"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="email@domain.com"
+              />
+            </div>
+            <div>
+              <label for="dob" class="block text-gray-700 font-medium mb-2">Date of Birth</label>
+              <input
+                type="date"
+                v-model="formData.dateofBirth"
+                id="dob"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+              />
+            </div>
+            <div>
+              <label for="gender" class="block text-gray-700 font-medium mb-2">Gender</label>
+              <select
+                v-model="formData.gender"
+                id="gender"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
 
-      <div class="flex space-x-12 mb-4 p-4">
-        <div class="flex-1">
-          <label for="fullname" class="block text-gray-700 font-medium mb-2">Full Name</label>
-          <input
-            type="text"
-            name="fullname"
-            id="fullname"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="John Doe"
-          />
-        </div>
-        <div class="flex-1">
-          <label for="dob" class="block text-gray-700 font-medium mb-2">Date of Birth</label>
-          <input
-            type="date"
-            name="dob"
-            id="dob"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-          />
-        </div>
+            <!-- Role and Credentials -->
+            <div>
+              <label for="roleId" class="block text-gray-700 font-medium mb-2">Role ID</label>
+              <input
+                type="number"
+                v-model="formData.user.roleId"
+                id="roleId"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="1"
+              />
+            </div>
+            <div>
+              <label for="userName" class="block text-gray-700 font-medium mb-2">Username</label>
+              <input
+                type="text"
+                v-model="formData.user.userName"
+                id="userName"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Enter Username"
+              />
+            </div>
+            <div>
+              <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+              <input
+                type="password"
+                v-model="formData.user.password"
+                id="password"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Enter Password"
+              />
+            </div>
+          </div>
+
+          <!-- Address Section -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 p-4">
+            <div>
+              <label for="houseNumber" class="block text-gray-700 font-medium mb-2">House Number</label>
+              <input
+                type="number"
+                v-model="formData.address.houseNumber"
+                id="houseNumber"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="123"
+              />
+            </div>
+            <div>
+              <label for="streetName" class="block text-gray-700 font-medium mb-2">Street Name</label>
+              <input
+                type="text"
+                v-model="formData.address.streetName"
+                id="streetName"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Main Street"
+              />
+            </div>
+            <div>
+              <label for="wardNumber" class="block text-gray-700 font-medium mb-2">Ward Number</label>
+              <input
+                type="number"
+                v-model="formData.address.wardNumber"
+                id="wardNumber"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="1"
+              />
+            </div>
+            <div>
+              <label for="municipality" class="block text-gray-700 font-medium mb-2">Municipality</label>
+              <input
+                type="text"
+                v-model="formData.address.municpality"
+                id="municipality"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Kathmandu"
+              />
+            </div>
+            <div>
+              <label for="district" class="block text-gray-700 font-medium mb-2">District</label>
+              <input
+                type="text"
+                v-model="formData.address.district"
+                id="district"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Bagmati"
+              />
+            </div>
+            <div>
+              <label for="province" class="block text-gray-700 font-medium mb-2">Province</label>
+              <input
+                type="text"
+                v-model="formData.address.province"
+                id="province"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Province 3"
+              />
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-right mx-2">
+            <button
+              type="submit"
+              class="bg-[#003893] hover:bg-[#002b73] text-white font-bold py-2 px-6 rounded"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
-
-      <div class="flex space-x-12 mb-4 p-4">
-        <div class="flex-1">
-          <label for="fathername" class="block text-gray-700 font-medium mb-2">Father's Name</label>
-          <input
-            type="text"
-            name="fathername"
-            id="fathername"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="John Sr."
-          />
-        </div>
-        <div class="flex-1">
-          <label for="mothername" class="block text-gray-700 font-medium mb-2">Mother's Name</label>
-          <input
-            type="text"
-            name="mothername"
-            id="mothername"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="Jane Doe"
-          />
-        </div>
-      </div>
-
-      <!-- Grandfather's Name and Grandmother's Name (2 Fields in One Row) -->
-      <div class="flex space-x-12 mb-4 p-4">
-        <div class="flex-1">
-          <label for="grandfathername" class="block text-gray-700 font-medium mb-2">Grandfather's Name</label>
-          <input
-            type="text"
-            name="grandfathername"
-            id="grandfathername"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="James Doe"
-          />
-        </div>
-        <div class="flex-1">
-          <label for="grandmothername" class="block text-gray-700 font-medium mb-2">Grandmother's Name</label>
-          <input
-            type="text"
-            name="grandmothername"
-            id="grandmothername"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="Mary Doe"
-          />
-        </div>
-      </div>
-
-      <!-- Address and Phone Number (2 Fields in One Row) -->
-      <div class="flex space-x-12 mb-4 p-4">
-        <div class="flex-1">
-          <label for="address" class="block text-gray-700 font-medium mb-2">Address</label>
-          <input
-            type="text"
-            name="address"
-            id="address"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="123 Main Street"
-          />
-        </div>
-        <div class="flex-1">
-          <label for="phonenumber" class="block text-gray-700 font-medium mb-2">Phone Number</label>
-          <input
-            type="tel"
-            name="phonenumber"
-            id="phonenumber"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="123-456-7890"
-          />
-        </div>
-      </div>
-
-      <!-- Email and Password (2 Fields in One Row) -->
-      <div class="flex space-x-12 mb-4 p-4">
-        <div class="flex-1">
-          <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="email@domain.com"
-          />
-        </div>
-        <div class="flex-1">
-          <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-            placeholder="********"
-          />
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="text-right mx-2">
-        <button
-          class="bg-[#003893] hover:bg-[#002b73] text-white font-bold py-2 px-6 rounded"
-        >
-          Submit
-        </button>
-      </div>
-
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { reactive } from "vue";
+import apiService from "../service/apiService";
+
+const formData = reactive({
+  id: 0,
+  name: "",
+  fatherName: "",
+  motherName: "",
+  grandFatherName: "",
+  grandMotherName: "",
+  email: "",
+  dateofBirth: "",
+  gender: "",
+  user : {
+    roleId: 0,
+  userName: "",
+  password: "",},
+  address: {
+    id: 0,
+    voterId: 0,
+    houseNumber: 0,
+    wardNumber: 0,
+    streetName: "",
+    municpality: "",
+    district: "",
+    province: "",
+  },
+});
+import { AxiosError } from 'axios';
+const successMessage = reactive({
+  message: "",
+  isVisible: false,
+});
+
+const handleSubmit = async () => {
+  try {
+    const response = await apiService.postData("voter/register", formData);
+    console.log("Registration successful:", response);
+    successMessage.message = "Registration successful!";
+    successMessage.isVisible = true;
+
+    setTimeout(() => {
+      successMessage.isVisible = false;
+    }, 3000);
+
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Error details:", error.response?.data);
+      console.error("Error message:", error.message);
+    } else {
+      console.error("Unknown error:", error);
+    }
+  }
+};
+
+
+
+
+</script>
