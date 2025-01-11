@@ -10,10 +10,10 @@
   }
   const navigation = [
     { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-    { name: 'Reports', href: '#', current: false },
+    { name: 'Election', href: '#', current: false },
+    { name: 'Logs', href: '#', current: false },
+    { name: 'Result', href: '#', current: false },
+    { name: 'Setting', href: '#', current: false },
   ]
   const userNavigation = [
     { name: 'Your Profile', href: '#' },
@@ -24,14 +24,6 @@
   </script>
 
 <template>
-    <!--
-      This example requires updating your template:
-  
-      ```
-      <html class="h-full bg-gray-100">
-      <body class="h-full">
-      ```
-    -->
     <div class="min-h-full">
       <Disclosure as="nav" class="bg-nepal-blue" v-slot="{ open }">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
@@ -140,12 +132,6 @@
           </div>
         </DisclosurePanel>
       </Disclosure>
-  
-      <header class="bg-white shadow">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
-        </div>
-      </header>
       <main>
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <!-- Your content -->
