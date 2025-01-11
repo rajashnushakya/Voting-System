@@ -25,7 +25,18 @@ const routes = [
     path:'/registration',
     name:'Registration',
     component:()=>import ('./components/RegisttrationForm.vue'),
+  },
+  {
+    path:'/electionDetails',
+    name:'ElectionDetails',
+    component:()=>import ('./components/ElectionDetail.vue'),
+  },
+  {
+    path:'/addElection',
+    name:'addElection',
+    component:()=>import ('./components/childcomponents/AddElection.vue'),
   }
+
 ];
 
 const router = createRouter({
