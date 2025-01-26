@@ -1,0 +1,135 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using VotingAPI.Model;
+
+namespace VotingAPI.Service
+{
+    public class DataService
+    {
+        private readonly string _connectionString;
+
+        public DataService(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        public async Task<List<District>> GetAllDistrictsAsync(CancellationToken cancellationToken)
+        {
+            var districts = new List<District>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+                    using (var cmd = new SqlCommand("GetAllDistricts", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                districts.Add(new District
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("DistrictId")),
+                                    Name = reader.GetString(reader.GetOrdinal("DistrictName"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching districts.", ex);
+            }
+
+            return districts;
+        }
+
+        public async Task<List<Municipality>> GetMunicipalitiesAsync(int? districtId, CancellationToken cancellationToken)
+        {
+            var municipalities = new List<Municipality>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+                    using (var cmd = new SqlCommand("GetMunicipalitiesByDistrict", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        if (districtId.HasValue)
+                        {
+                            cmd.Parameters.AddWithValue("@DistrictId", districtId.Value);
+                        }
+                        else
+                        {
+                            cmd.Parameters.AddWithValue("@DistrictId", DBNull.Value);
+                        }
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                municipalities.Add(new Municipality
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("MunicipalityId")),
+                                    Name = reader.GetString(reader.GetOrdinal("MunicipalityName")),
+                                    DistrictId = reader.GetInt32(reader.GetOrdinal("DistrictId")),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching municipalities.", ex);
+            }
+
+            return municipalities;
+        }
+        public async Task<List<Party>> GetAllPartiesAsync()
+        {
+            var parties = new List<Party>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    using (var cmd = new SqlCommand("GetAllParties", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                parties.Add(new Party
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("PartyId")),
+                                    PartyName = reader.GetString(reader.GetOrdinal("PartyName")),
+                                    Address = reader.GetString(reader.GetOrdinal("Address")),
+                                    Logo = reader.GetString(reader.GetOrdinal("Logo"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching parties.", ex);
+            }
+
+            return parties;
+        }
+
+    }
+}
