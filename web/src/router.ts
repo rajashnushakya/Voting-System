@@ -35,7 +35,24 @@ const routes = [
     path:'/addElection',
     name:'addElection',
     component:()=>import ('./components/childcomponents/AddElection.vue'),
-  }
+  },
+  {
+    path:'/Election',
+    name:'Election',
+    component:()=>import ('./components/Election.vue'),
+  },
+  {
+    path:'/log',
+    name:'log',
+    component:()=>import ('./components/Logs.vue'),
+  },
+  {
+    path:'/result',
+    name:'result',
+    component:()=>import ('./components/Result.vue'),
+  },
+
+
 
 ];
 
