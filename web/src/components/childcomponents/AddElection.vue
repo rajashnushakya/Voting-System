@@ -32,10 +32,11 @@
                 id="end-date"
                 type="date"
                 v-model="electionData.end_date"
-                :min="todayDate"
+                :min="minEndDate"
                 required
                 class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
+
             </div>
           </div>
         </form>
@@ -71,6 +72,23 @@ const electionData = ref({
 });
 
 const service = new electionService();
+const minEndDate = computed(() => {
+  if (electionData.value.start_date) {
+    const startDate = new Date(electionData.value.start_date);
+    startDate.setDate(startDate.getDate() + 1); // Add one day
+    return startDate.toISOString().split('T')[0];
+  }
+  return todayDate.value; // Default to today if start_date is not set
+});
+
+// Watch start_date to update end_date automatically
+watch(() => electionData.value.start_date, (newStartDate) => {
+  if (newStartDate && newStartDate >= electionData.value.end_date) {
+    const nextDay = new Date(newStartDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    electionData.value.end_date = nextDay.toISOString().split('T')[0];
+  }
+});
 
 // Watch for changes in parent prop and update local state
 watch(() => props.dialogActive, (newValue) => {
