@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import MenuComponent from './childcomponents/MenuComponent.vue'
-import { VoteIcon, UsersIcon, CheckSquareIcon, PlusCircleIcon, UserPlusIcon, FileTextIcon, UserIcon } from 'lucide-vue-next'
-import AddElection from './childcomponents/AddElection.vue'
+import { VoteIcon, UsersIcon, CheckSquareIcon, FileTextIcon, UserIcon } from 'lucide-vue-next'
+
 
 interface QuickStat {
   title: string;
@@ -52,10 +52,6 @@ const electionResults = ref<ElectionResult[]>([
   { id: 2, name: 'Local Community Council' },
 ])
 
-const addVoter = () => {
-  // Implement add voter logic
-  console.log('Add voter clicked')
-}
 
 const viewDetails = (electionId: number) => {
   // Implement view details logic
@@ -71,15 +67,8 @@ const viewDetailedResults = (resultId: number) => {
   // Implement view detailed results logic
   console.log('View detailed results clicked for', resultId)
 }
-const showAddElectionForm = ref(false)
 
-const openAddElectionForm = () => {
-  showAddElectionForm.value = true
-}
 
-const closeAddElectionForm = () => {
-  showAddElectionForm.value = false
-}
 
 </script>
 <template>
@@ -99,20 +88,7 @@ const closeAddElectionForm = () => {
         </div>
       </section>
 
-      <!-- Action Buttons -->
-      <section class="flex gap-4 mb-8">
-        <button @click="openAddElectionForm" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center">
-          <PlusCircleIcon class="w-5 h-5 mr-2" />
-          Create Election
-        </button>
-        <button @click="addVoter" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center">
-          <UserPlusIcon class="w-5 h-5 mr-2" />
-          Add Officer
-        </button>
-      </section>
 
-      <!-- Conditionally Render AddElection Component -->
-      <AddElection v-if="showAddElectionForm" @close="closeAddElectionForm" />
 
       <!-- Recent Activities Section -->
       <section class="bg-white rounded-lg shadow p-6 mb-8">
