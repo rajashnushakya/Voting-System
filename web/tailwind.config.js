@@ -13,9 +13,6 @@ module.exports = {
         'nepal-red':'#DC143C'
       }
     },
-    // color:{
-    //   red:'#003893'
-    // }
   },
   plugins: [],
 }

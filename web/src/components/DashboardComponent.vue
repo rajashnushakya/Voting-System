@@ -112,7 +112,6 @@ const viewDetailedResults = (resultId: number) => {
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Election Name</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Votes</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -121,7 +120,6 @@ const viewDetailedResults = (resultId: number) => {
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.startDate }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.endDate }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ election.totalVotes }}</td>
                 <td class="px-6 py-4 whitespace-nowrap space-x-2">
                   <button @click="viewDetails(election.id)" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm">
                     View Details

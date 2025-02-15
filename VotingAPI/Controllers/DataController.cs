@@ -43,6 +43,20 @@ namespace VotingAPI.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+        [HttpGet("ward")]
+        public async Task<ActionResult<List<Ward>>> GetWard([FromQuery] int? municipalityId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var wards = await _dataService.GetWardAsync(municipalityId, cancellationToken);
+                return Ok(wards);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
 
         [HttpGet("Parties")]
         public async Task<IActionResult> GetParties()

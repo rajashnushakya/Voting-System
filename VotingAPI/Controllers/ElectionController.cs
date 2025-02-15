@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.Design;
 using VotingAPI.Model;
 using VotingAPI.Service;
 
@@ -21,6 +22,20 @@ namespace VotingAPI.Controllers
             ElectionService electionService = new ElectionService(_connectionString);
             return await electionService.AddElectionAsync(election, cancellationToken);
             
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAsync( Election election, CancellationToken cancellationToken)
+        {
+            ElectionService electionService = new ElectionService(_connectionString);
+
+            var elections = await electionService.GetElectionAsync(election, cancellationToken);
+
+            if (elections.Count == 0)
+            {
+                return NotFound("No elections found.");
+            }
+
+            return Ok(elections);
         }
     }
 }

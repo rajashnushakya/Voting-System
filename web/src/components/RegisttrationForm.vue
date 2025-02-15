@@ -74,7 +74,7 @@
               <label for="dob" class="block text-gray-700 font-medium mb-2">Date of Birth</label>
               <input
                 type="date"
-                v-model="formData.dateofBirth"
+                v-model="formData.dateOfBirth"
                 id="dob"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
               />
@@ -92,15 +92,15 @@
               </select>
             </div>
 
-            <!-- Role and Credentials -->
             <div>
-              <label for="roleId" class="block text-gray-700 font-medium mb-2">Role ID</label>
+              <label for="phNo" class="block text-gray-700 font-medium mb-2">Phone Number</label>
               <input
-                type="number"
-                v-model="formData.user.roleId"
-                id="roleId"
+                type="tel"
+                v-model="formData.phno"
+                id="phno"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="1"
+                placeholder="Enter Phone Number"
+                style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
               />
             </div>
             <div>
@@ -161,7 +161,7 @@
               <label for="municipality" class="block text-gray-700 font-medium mb-2">Municipality</label>
               <input
                 type="text"
-                v-model="formData.address.municpality"
+                v-model="formData.address.municipality"
                 id="municipality"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="Kathmandu"
@@ -203,11 +203,14 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { reactive } from "vue";
-import apiService from "../service/apiService";
+import { AxiosError } from 'axios';
+import voterService from "../service/voterService"; 
 
+const service = new voterService();
+
+// Reactive data model for form data
 const formData = reactive({
   id: 0,
   name: "",
@@ -215,25 +218,26 @@ const formData = reactive({
   motherName: "",
   grandFatherName: "",
   grandMotherName: "",
+  phno: 0,
   email: "",
-  dateofBirth: "",
+  dateOfBirth: "", 
   gender: "",
-  user : {
+  user: {
     roleId: 0,
-  userName: "",
-  password: "",},
+    userName: "",
+    password: "",
+  },
   address: {
-    id: 0,
-    voterId: 0,
-    houseNumber: 0,
-    wardNumber: 0,
+    houseNumber: "",
     streetName: "",
-    municpality: "",
+    wardNumber: "",
+    municipality: "",
     district: "",
     province: "",
   },
 });
-import { AxiosError } from 'axios';
+
+// Reactive data for success message
 const successMessage = reactive({
   message: "",
   isVisible: false,
@@ -241,26 +245,30 @@ const successMessage = reactive({
 
 const handleSubmit = async () => {
   try {
-    const response = await apiService.postData("voter/register", formData);
+
+    const dateOfBirth = formData.dateOfBirth ? new Date(formData.dateOfBirth) : null;
+
+    const response = await service.addVoter({ ...formData, dateOfBirth: dateOfBirth });
     console.log("Registration successful:", response);
+    
     successMessage.message = "Registration successful!";
     successMessage.isVisible = true;
 
     setTimeout(() => {
       successMessage.isVisible = false;
     }, 3000);
-
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error details:", error.response?.data);
       console.error("Error message:", error.message);
+      
+      successMessage.message = `Error: ${error.response?.data?.message || 'An error occurred'}`;
+      successMessage.isVisible = true;
     } else {
       console.error("Unknown error:", error);
+      successMessage.message = 'An unknown error occurred.';
+      successMessage.isVisible = true;
     }
   }
 };
-
-
-
-
 </script>

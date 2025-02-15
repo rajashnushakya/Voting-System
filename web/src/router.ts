@@ -32,11 +32,6 @@ const routes = [
     component:()=>import ('./components/ElectionDetail.vue'),
   },
   {
-    path:'/addElection',
-    name:'addElection',
-    component:()=>import ('./components/childcomponents/AddElection.vue'),
-  },
-  {
     path:'/Election',
     name:'Election',
     component:()=>import ('./components/Election.vue'),

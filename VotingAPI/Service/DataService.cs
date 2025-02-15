@@ -94,6 +94,52 @@ namespace VotingAPI.Service
 
             return municipalities;
         }
+        public async Task<List<Ward>> GetWardAsync(int? municipalityId, CancellationToken cancellationToken)
+        {
+            var wards = new List<Ward>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("GetWardsByMunicipality", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        if (municipalityId.HasValue)
+                        {
+                            cmd.Parameters.AddWithValue("@municipality_id", municipalityId.Value);
+                        }
+                        else
+                        {
+                            cmd.Parameters.AddWithValue("@municipality_id", DBNull.Value);
+                        }
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                wards.Add(new Ward
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("id")), 
+                                    municipalityId = reader.GetInt32(reader.GetOrdinal("municipality_id")), 
+                                    WardNumber = reader.GetInt32(reader.GetOrdinal("ward_number")) 
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching wards.", ex);
+            }
+
+            return wards;
+        }
+
+
         public async Task<List<Party>> GetAllPartiesAsync()
         {
             var parties = new List<Party>();
