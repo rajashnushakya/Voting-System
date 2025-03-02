@@ -55,17 +55,19 @@
       </div>
     </Disclosure>
 
-    <AddElection :dialogActive="dialogActive" @update:dialogActive="dialogActive = $event" />
+    <AddElection :dialogActive="dialogActive" @update:dialogActive="dialogActive = $event" :items="districts"/>
+    <AddCentre v-model:dialog="showDialog" />
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import AddElection from './AddElection.vue'; 
+import AddCentre from './AddCentre.vue';
 import { Disclosure, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 
 const dialogActive = ref(false);
+const showDialog = ref(false);
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', current: false },
@@ -74,8 +76,8 @@ const navigation = [
     href: '#',
     current: false,
     children: [
-      { name: 'Add Election', href: '#add-election' },
-      { name: 'Add Centre', href: '#add-centre' },
+      { name: 'Add Election'},
+      { name: 'Add Centre' },
       { name: 'Add Election Centre', href: '#add-election-centre' },
     ],
   },
@@ -83,7 +85,7 @@ const navigation = [
   { name: 'Setting', href: '#', current: false },
 ];
 
-function setCurrentItem(item, isSubItem = false) {
+function setCurrentItem(item) {
   navigation.forEach(navItem => {
     navItem.current = navItem === item;
 
@@ -97,5 +99,9 @@ function setCurrentItem(item, isSubItem = false) {
   if (item.name === 'Add Election') {
     dialogActive.value = true;
   }
+  if (item.name === 'Add Centre') {
+    showDialog.value = true;
+  }
 }
 </script>
+
