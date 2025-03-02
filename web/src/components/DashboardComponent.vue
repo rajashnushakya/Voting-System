@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import MenuComponent from './childcomponents/MenuComponent.vue'
 import { VoteIcon, UsersIcon, CheckSquareIcon, FileTextIcon, UserIcon } from 'lucide-vue-next'
+import ElectionService from '../service/electionService'
 
 
 interface QuickStat {
@@ -42,10 +43,38 @@ const recentActivities = ref<RecentActivity[]>([
   { id: 3, description: 'New voter registered', timestamp: '1 day ago', icon: UserIcon },
 ])
 
-const ongoingElections = ref<Election[]>([
-  { id: 1, name: 'Student Council Election', startDate: '2023-05-01', endDate: '2023-05-07', totalVotes: 450 },
-  { id: 2, name: 'City Mayor Election', startDate: '2023-06-15', endDate: '2023-06-22', totalVotes: 12500 },
-])
+
+const ongoingElections = ref<Election[]>([]);
+
+const electionService = new ElectionService();
+
+const fetchActiveElections = async () => {
+  try {
+    const response = await electionService.getActiveElection();
+
+    ongoingElections.value = response.data.map((election: any) => {
+      const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+      };
+
+      return {
+        id: election.id,
+        name: election.name,
+        startDate: formatDate(election.start_date),
+        endDate: formatDate(election.end_date)
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching ongoing elections:', error);
+  }
+};
+
+
+
+onMounted(() => {
+  fetchActiveElections();
+});
 
 const electionResults = ref<ElectionResult[]>([
   { id: 1, name: 'School Board Election' },
