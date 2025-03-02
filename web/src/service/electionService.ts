@@ -33,4 +33,16 @@ export default class ElectionService {
             throw error;
         }
     }
+
+    async getActiveElection() {
+        const url = `api/Election/Get`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+  
+        } catch (error) {
+            console.error('Error fetching active election:', error);
+            throw error;
+        }
+    }
 }
