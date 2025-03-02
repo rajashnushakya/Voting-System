@@ -9,57 +9,59 @@
                 label="District"
                 v-model="selectedDistrict"
                 :items="districts"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 required
-                
+                variant="outlined"
+                @update:modelValue="onDistrictChange"
               >
-                <template v-slot:item="{ item }">
+                <!-- <template v-slot:item="{ item }">
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title>{{ item.name }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                </template>
+                </template> -->
               </v-select>
             </v-col>
             <v-col cols="12">
               <v-select
                 v-model="selectedMunicipality"
                 :items="municipalities"
-                item-text="name"
+                item-title="name"
                 item-value="id"
                 label="Municipality"
                 required
-                :disabled="!selectedDistrict"
-                @change="onMunicipalityChange"
+                variant="outlined"
+                @update:modelValue="onMunicipalityChange"
               >
-                <template v-slot:item="{ item }">
+                <!-- <template v-slot:item="{ item }">
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title>{{ item.name }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                </template>
+                </template> -->
               </v-select>
             </v-col>
             <v-col cols="12">
               <v-select
                 v-model="selectedWard"
                 :items="wards"
-                item-text="name"
+                item-title="wardNumber"
                 item-value="id"
                 label="Ward"
                 required
-                :disabled="!selectedMunicipality"
+                variant="outlined"
+
               >
-                <template v-slot:item="{ item }">
+                <!-- <template v-slot:item="{ item }">
                   <v-list-item>
                     <v-list-item-content>
                       <v-list-item-title>{{ item.name }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
-                </template>
+                </template> -->
               </v-select>
             </v-col>
           </v-row>
@@ -101,13 +103,15 @@ const fetchDistricts = async () => {
   try {
     const data = await centreService.getAllDistricts();
     districts.value = data;
-    console.log(districts)
+
+    console.log(districts.value)
   } catch (error) {
     console.error("Error fetching districts:", error);
   }
 };
 
 const fetchMunicipalities = async (districtId) => {
+  console.log("Fetching municipalities for district:", districtId);
   try {
     const data = await centreService.getMunicipalities(districtId);
     municipalities.value = data;
@@ -120,6 +124,7 @@ const fetchWards = async (municipalityId) => {
   try {
     const data = await centreService.getWards(municipalityId);
     wards.value = data;
+    console.log(wards.value)
   } catch (error) {
     console.error("Error fetching wards:", error);
   }
@@ -127,6 +132,7 @@ const fetchWards = async (municipalityId) => {
 
 // Handle district change
 const onDistrictChange = () => {
+  console.log("District:", selectedDistrict.value);
   if (selectedDistrict.value) {
     fetchMunicipalities(selectedDistrict.value);
   } else {
@@ -134,6 +140,7 @@ const onDistrictChange = () => {
     selectedMunicipality.value = null;
     wards.value = [];
     selectedWard.value = null;
+    
   }
 };
 
