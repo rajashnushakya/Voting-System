@@ -17,6 +17,14 @@ export interface Ward {
     municipalityId: number;
 }
 
+export interface CentreData {
+    id: number;
+    name: string;
+    districtId: string | null;
+    municipalityId: string | null;
+    WarwardId_id: string | null;
+}
+
 export default class Centre {
     #api: apiService;
 
@@ -53,6 +61,17 @@ export default class Centre {
             return response.data;
         } catch (error) {
             console.error('Error fetching wards:', error);
+            throw error;
+        }
+    }
+
+    async addCentre(centreData: CentreData) {
+        const url = `api/Data/Centre/Add`;
+        try {
+            const response = await this.#api.post(url, centreData);
+            return response;
+        } catch (error) {
+            console.error('Error adding centre:', error);
             throw error;
         }
     }
