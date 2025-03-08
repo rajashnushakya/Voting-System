@@ -177,5 +177,19 @@ namespace VotingAPI.Service
             return parties;
         }
 
-    }
+        public async Task<DbResponse> AddCentreAsync(Centre centre, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            SqlCommand cmd = dataAccess.CreateCommand("sp_add_centre");
+
+            cmd.Parameters.AddWithValue("@CentreName", centre.name);
+            cmd.Parameters.AddWithValue("@district_id", centre.districtId);
+            cmd.Parameters.AddWithValue("@municipality_id", centre.municipalityId);
+            cmd.Parameters.AddWithValue("@ward_id", centre.wardId);
+
+            return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+        }
 }
+
+    }
+

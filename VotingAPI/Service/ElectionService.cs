@@ -29,7 +29,37 @@ namespace VotingAPI.Service
             // Execute the command (non-query)
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
         }
-        public async Task<List<Election>> GetElectionAsync(Election election, CancellationToken cancellationToken)
+        public async Task<int> GetElectionCountAsync(CancellationToken cancellationToken)
+        {
+            int electionCount = 0;
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("GetElectionCount", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+                        if (result != null)
+                        {
+                            electionCount = Convert.ToInt32(result);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw; 
+            }
+
+            return electionCount;
+        }
+
+        public async Task<List<Election>> GetActiveElectionAsync(CancellationToken cancellationToken)
         {
             var elections = new List<Election>();
 
@@ -39,13 +69,9 @@ namespace VotingAPI.Service
                 {
                     await connection.OpenAsync(cancellationToken);
 
-                    using (var cmd = new SqlCommand("sp_get_election", connection))
+                    using (var cmd = new SqlCommand("sp_get_active_elections", connection))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-                        cmd.Parameters.AddWithValue("@ElectionName", election.Name);
-                        cmd.Parameters.AddWithValue("@StartDate", election.Start_date);
-                        cmd.Parameters.AddWithValue("@EndDate", election.End_date );
 
                         using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
                         {
@@ -54,9 +80,9 @@ namespace VotingAPI.Service
                                 elections.Add(new Election
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                    Name = reader.GetString(reader.GetOrdinal("ElectionName")),
-                                    Start_date = reader.GetDateTime(reader.GetOrdinal("StartDate")),
-                                    End_date = reader.GetDateTime(reader.GetOrdinal("EndDate"))
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),  
+                                    Start_date = reader.GetDateTime(reader.GetOrdinal("Start_date")),  
+                                    End_date = reader.GetDateTime(reader.GetOrdinal("End_date"))  
                                 });
                             }
                         }
@@ -65,11 +91,12 @@ namespace VotingAPI.Service
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while fetching elections.", ex);
+                throw;
             }
 
             return elections;
         }
+
 
     }
 }

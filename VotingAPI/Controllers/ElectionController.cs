@@ -12,6 +12,7 @@ namespace VotingAPI.Controllers
     {
         private readonly string _connectionString;
 
+
         public ElectionController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("VotingDb");
@@ -23,19 +24,30 @@ namespace VotingAPI.Controllers
             return await electionService.AddElectionAsync(election, cancellationToken);
             
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetAsync( Election election, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
         {
             ElectionService electionService = new ElectionService(_connectionString);
+            var elections = await electionService.GetActiveElectionAsync(cancellationToken);
 
-            var elections = await electionService.GetElectionAsync(election, cancellationToken);
-
-            if (elections.Count == 0)
+            if (elections == null || elections.Count == 0)
             {
-                return NotFound("No elections found.");
+                return NotFound("No active elections found.");
             }
 
             return Ok(elections);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CountAsync(CancellationToken cancellationToken)
+        {
+            ElectionService electionService = new ElectionService(_connectionString);
+            var electionCount= await electionService.GetElectionCountAsync(cancellationToken);
+
+
+            return Ok(electionCount);
+        }
+
     }
 }

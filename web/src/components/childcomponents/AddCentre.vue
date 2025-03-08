@@ -5,6 +5,9 @@
         <v-container>
           <v-row>
             <v-col cols="12">
+              <v-text-field v-model="name" label="Name" required></v-text-field>
+            </v-col>
+            <v-col cols="12">
               <v-select
                 label="District"
                 v-model="selectedDistrict"
@@ -101,6 +104,8 @@ const wards = ref([]);
 // Fetch data from API
 const fetchDistricts = async () => {
   try {
+    municipalities.value = [];
+    wards.value = [];
     const data = await centreService.getAllDistricts();
     districts.value = data;
 
@@ -111,8 +116,8 @@ const fetchDistricts = async () => {
 };
 
 const fetchMunicipalities = async (districtId) => {
-  console.log("Fetching municipalities for district:", districtId);
   try {
+    wards.value = [];
     const data = await centreService.getMunicipalities(districtId);
     municipalities.value = data;
   } catch (error) {
@@ -132,7 +137,8 @@ const fetchWards = async (municipalityId) => {
 
 // Handle district change
 const onDistrictChange = () => {
-  console.log("District:", selectedDistrict.value);
+  selectedMunicipality.value = [];
+  selectedWard.value = [];
   if (selectedDistrict.value) {
     fetchMunicipalities(selectedDistrict.value);
   } else {
@@ -146,6 +152,8 @@ const onDistrictChange = () => {
 
 // Handle municipality change
 const onMunicipalityChange = () => {
+  
+  selectedWard.value = [];
   if (selectedMunicipality.value) {
     fetchWards(selectedMunicipality.value);
   } else {
@@ -175,11 +183,9 @@ const close = () => {
 
 // Save the selected data
 const save = () => {
-  console.log("Saving center:", {
-    district: selectedDistrict.value,
-    municipality: selectedMunicipality.value,
-    ward: selectedWard.value,
-  });
+  
   close();
 };
+
+
 </script>

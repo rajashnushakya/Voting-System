@@ -55,7 +55,7 @@
       </div>
     </Disclosure>
 
-    <AddElection :dialogActive="dialogActive" @update:dialogActive="dialogActive = $event" :items="districts"/>
+    <AddElection :dialogActive="dialogActive" @update:dialogActive="dialogActive = $event" />
     <AddCentre v-model:dialog="showDialog" />
   </div>
 </template>

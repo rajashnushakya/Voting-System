@@ -45,4 +45,16 @@ export default class ElectionService {
             throw error;
         }
     }
+
+    async getElectionCount(){
+        const url = `api/Election/Count`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching election count:', error);
+            throw error;
+        }
+    }
 }
+

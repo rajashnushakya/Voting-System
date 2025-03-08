@@ -38,7 +38,7 @@ export default class Centre {
     async getMunicipalities(districtId?: number) {
         const url = `api/Data/municipalities`;
         try {
-            const response = await this.#api.get(url, { params: { districtId } });
+            const response = await this.#api.get(url, {   districtId } );
             return response.data;
         } catch (error) {
             console.error('Error fetching municipalities:', error);
@@ -49,7 +49,7 @@ export default class Centre {
     async getWards(municipalityId?: number) {
         const url = `api/Data/ward`;
         try {
-            const response = await this.#api.get(url, { params: { municipalityId } });
+            const response = await this.#api.get(url, {  municipalityId } );
             return response.data;
         } catch (error) {
             console.error('Error fetching wards:', error);

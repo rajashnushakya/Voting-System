@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VotingAPI.Service;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.Design;
 using VotingAPI.Model;
+using VotingAPI.Service;
+
 
 namespace VotingAPI.Controllers
 {
@@ -9,6 +12,7 @@ namespace VotingAPI.Controllers
     public class DataController : ControllerBase
     {
         private readonly DataService _dataService;
+        private readonly string _connectionString;
 
         public DataController(IConfiguration configuration)
         {
@@ -64,5 +68,21 @@ namespace VotingAPI.Controllers
             var parties = await _dataService.GetAllPartiesAsync();
             return Ok(parties);
         }
+
+        [HttpPost("Centre/Add")]
+        public async Task<ActionResult<DbResponse>> AddAsync(Centre centre, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var addedCentre = await _dataService.AddCentreAsync(centre, cancellationToken);
+
+                return Ok(addedCentre);
+            }
+            catch (Exception ex) { 
+                return BadRequest(new {Message = ex.Message});
+            }
+
+        }
+
     }
 }

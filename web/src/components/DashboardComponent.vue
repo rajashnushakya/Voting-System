@@ -32,7 +32,7 @@ interface ElectionResult {
 }
 
 const quickStats = ref<QuickStat[]>([
-  { title: 'Number of Elections', value: 15, icon: VoteIcon },
+  { title: 'Number of Elections', value:100 , icon: VoteIcon },
   { title: 'Number of Voters', value: 1250, icon: UsersIcon },
   { title: 'Votes Cast', value: 875, icon: CheckSquareIcon },
 ])
@@ -52,7 +52,7 @@ const fetchActiveElections = async () => {
   try {
     const response = await electionService.getActiveElection();
 
-    ongoingElections.value = response.data.map((election: any) => {
+    ongoingElections.value = response.map((election: any) => {
       const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
@@ -70,10 +70,20 @@ const fetchActiveElections = async () => {
   }
 };
 
+const fetchElectionCount = async () => {
+  try {
+    const response = await electionService.getElectionCount();
+    quickStats.value[0].value = response.data.count;
+    console.log('Election count:', response.data.count);
+  } catch (error) {
+    console.error('Error fetching election count:', error);
+  }
+}
 
 
 onMounted(() => {
   fetchActiveElections();
+  fetchElectionCount();
 });
 
 const electionResults = ref<ElectionResult[]>([

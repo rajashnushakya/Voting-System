@@ -1,10 +1,10 @@
 // src/types/apiService.d.ts
 declare module 'apiService' {
     interface ApiService {
-      getData(endpoint: string): Promise<any>;
-      postData(endpoint: string, data: any): Promise<any>;
-      putData(endpoint: string, data: any): Promise<any>;
-      deleteData(endpoint: string, data: any): Promise<any>;
+      get(endpoint: string): Promise<any>;
+      post(endpoint: string, data: any): Promise<any>;
+      put(endpoint: string, data: any): Promise<any>;
+      delete(endpoint: string, data: any): Promise<any>;
     }
   
     const apiService: ApiService;
