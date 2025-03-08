@@ -73,8 +73,7 @@ const fetchActiveElections = async () => {
 const fetchElectionCount = async () => {
   try {
     const response = await electionService.getElectionCount();
-    quickStats.value[0].value = response.data.count;
-    console.log('Election count:', response.data.count);
+    quickStats.value[0].value = response;
   } catch (error) {
     console.error('Error fetching election count:', error);
   }
