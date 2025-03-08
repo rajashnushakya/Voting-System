@@ -85,7 +85,7 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from "vue";
-import Centre from "../../service/Centre";  
+import Centre from "../../service/centreService";  
 
 const props = defineProps(["dialog"]);
 const emit = defineEmits(["update:dialog"]);
@@ -94,6 +94,7 @@ const localDialog = ref(false);
 const selectedDistrict = ref(null);
 const selectedMunicipality = ref(null);
 const selectedWard = ref(null);
+const name = ref('');
 
 // Initialize services
 const centreService = new Centre();
@@ -173,7 +174,6 @@ watch(
   }
 );
 
-// Close dialog and reset selected values
 const close = () => {
   emit("update:dialog", false);
   selectedDistrict.value = null;
@@ -181,10 +181,37 @@ const close = () => {
   selectedWard.value = null;
 };
 
-// Save the selected data
-const save = () => {
-  
-  close();
+const save = async () => {
+  try {
+    if (!name.value || !selectedDistrict.value || !selectedMunicipality.value || !selectedWard.value) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const districtId = selectedDistrict.value;
+    const municipalityId = selectedMunicipality.value;
+    const wardId = selectedWard.value;
+    console.log(districtId, municipalityId, wardId);
+
+    const centreData = {
+      name: name.value,
+      districtId: districtId,
+      municipalityId: municipalityId,
+      wardId: wardId
+    };
+
+    const response = await centreService.addCentre(centreData);
+
+
+    console.log('Centre added successfully:', response);
+
+
+    close();
+    
+  } catch (error) {
+    console.error('Error adding centre:', error);
+    alert("An error occurred while adding the centre. Please try again.");
+  }
 };
 
 
