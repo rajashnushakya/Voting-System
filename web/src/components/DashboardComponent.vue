@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import MenuComponent from './childcomponents/MenuComponent.vue'
 import { VoteIcon, UsersIcon, CheckSquareIcon, FileTextIcon, UserIcon } from 'lucide-vue-next'
 import ElectionService from '../service/electionService'
+import voterService from '../service/voterService'
 
 
 interface QuickStat {
@@ -47,6 +48,7 @@ const recentActivities = ref<RecentActivity[]>([
 const ongoingElections = ref<Election[]>([]);
 
 const electionService = new ElectionService();
+const VoterService = new voterService();
 
 const fetchActiveElections = async () => {
   try {
@@ -79,10 +81,19 @@ const fetchElectionCount = async () => {
   }
 }
 
+const fetchVoterCount = async () => {
+  try {
+    const response = await VoterService.getVoterCount();
+    quickStats.value[1].value = response;
+  } catch (error) {
+    console.error('Error fetching voter count:', error);
+  }
+}
 
 onMounted(() => {
   fetchActiveElections();
   fetchElectionCount();
+  fetchVoterCount();
 });
 
 const electionResults = ref<ElectionResult[]>([
