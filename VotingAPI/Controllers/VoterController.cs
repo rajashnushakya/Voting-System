@@ -30,6 +30,16 @@ namespace VotingAPI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CountAsync(CancellationToken cancellationToken)
+        {
+            VoterService voterService = new VoterService(_connectionString);
+            var voterCount = await voterService.GetVoterCountAsync(cancellationToken);
+
+
+            return Ok(voterCount);
+        }
+
+        [HttpGet]
         public string Test()
         {
             return "success";

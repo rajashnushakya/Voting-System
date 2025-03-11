@@ -47,5 +47,37 @@ namespace VotingAPI.Service
 
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
         }
+
+
+        public async Task<int> GetVoterCountAsync(CancellationToken cancellationToken)
+        {
+            int  voterCount= 0;
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("sp_voter_count", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        var result = await cmd.ExecuteScalarAsync(cancellationToken);
+                        if (result != null)
+                        {
+                            voterCount = Convert.ToInt32(result);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return voterCount;
+        }
+
     }
 }
