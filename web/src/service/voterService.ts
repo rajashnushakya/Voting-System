@@ -80,4 +80,15 @@ export default class voterService {
             throw error;
         }
     }
+
+    async getVoterCount(){
+        const url = `api/Voter/Count`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching voter count:', error);
+            throw error;
+        }
+    }
 }
