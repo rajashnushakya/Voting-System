@@ -57,17 +57,22 @@
 
     <AddElection :dialogActive="dialogActive" @update:dialogActive="dialogActive = $event" />
     <AddCentre v-model:dialog="showDialog" />
+    <AddElectionCentre v-model:EdialogActive="EdialogActive" />
+
   </div>
 </template>
 <script setup>
 import { ref } from 'vue';
 import AddElection from './AddElection.vue'; 
 import AddCentre from './AddCentre.vue';
+import AddElectionCentre from './AddElectionCentre.vue';
 import { Disclosure, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 
+
 const dialogActive = ref(false);
 const showDialog = ref(false);
+const  EdialogActive= ref(false);
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', current: false },
@@ -78,7 +83,7 @@ const navigation = [
     children: [
       { name: 'Add Election'},
       { name: 'Add Centre' },
-      { name: 'Add Election Centre', href: '#add-election-centre' },
+      { name: 'Add Election Centre'},
     ],
   },
   { name: 'Result', href: 'result', current: false },
@@ -101,6 +106,9 @@ function setCurrentItem(item) {
   }
   if (item.name === 'Add Centre') {
     showDialog.value = true;
+  }
+  if (item.name === 'Add Election Centre') {
+    EdialogActive.value = true;
   }
 }
 </script>
