@@ -97,6 +97,17 @@ namespace VotingAPI.Service
             return elections;
         }
 
+        public async Task<DbResponse> AddElectionCentreAsync(ElectionCentre electionCentre, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            SqlCommand cmd = dataAccess.CreateCommand("sp_add_election_centre");
 
+            // Adding parameters to the command
+            cmd.Parameters.AddWithValue("@CentreId", electionCentre.CentreId);
+            cmd.Parameters.AddWithValue("@ElectionId", electionCentre.ElectionId);
+
+            // Execute the command (non-query)
+            return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 }
