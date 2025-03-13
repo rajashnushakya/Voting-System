@@ -4,11 +4,54 @@
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col v-for="(option, key) in options" :key="key" cols="12" sm="6" md="3">
+            <!-- Election Type Dropdown -->
+            <v-col cols="12" sm="6" md="3">
               <v-select
-                v-model="formData[key]"
-                :items="option.items"
-                :label="option.label"
+                v-model="formData.electionName"
+                :items="['General Election', 'Local Election', 'Presidential']"
+                label="Election"
+                required
+              ></v-select>
+            </v-col>
+
+            <!-- District Dropdown -->
+            <v-col cols="12" sm="6" md="3">
+              <v-select
+                v-model="formData.district"
+                :items="districts"
+                item-title="name"
+                item-value="id"
+                label="District"
+                required
+              ></v-select>
+            </v-col>
+
+            <!-- Municipality Dropdown -->
+            <v-col cols="12" sm="6" md="3">
+              <v-select
+                v-model="formData.municipality"
+                :items="['Not Started', 'In Progress', 'Review', 'Completed']"
+                label="Municipality"
+                required
+              ></v-select>
+            </v-col>
+
+            <!-- Ward Dropdown -->
+            <v-col cols="12" sm="6" md="3">
+              <v-select
+                v-model="formData.ward"
+                :items="['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Williams']"
+                label="Ward"
+                required
+              ></v-select>
+            </v-col>
+
+            <!-- Election Centre Dropdown -->
+            <v-col cols="12" sm="6" md="3">
+              <v-select
+                v-model="formData.electionCentre"
+                :items="['Kathmandu', 'Bhaktapur', 'Lalitpur']"
+                label="Election Centre"
                 required
               ></v-select>
             </v-col>
@@ -25,13 +68,7 @@
 
         <v-data-table v-if="tableData.length > 0" :headers="dynamicHeaders" :items="tableData" class="mt-4" dense>
           <template v-slot:item.actions="{ item }">
-            <v-btn
-              color="red"
-              :text-size="8"
-              @click="removeItem(item)">
-
-            Remove
-          </v-btn>
+            <v-btn color="red" @click="removeItem(item)">Remove</v-btn>
           </template>
         </v-data-table>
       </v-card-text>
@@ -48,12 +85,15 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, reactive, computed } from 'vue';
+import { onMounted, ref, defineEmits, reactive, computed, watch } from 'vue';
 import { defineProps } from 'vue';
+import Centre from '../../service/centreService';
 
 const dialog = ref(false);
 const tableData = ref([]);
 const validationMessage = ref('');
+const centreService = new Centre();
+const districts = ref([]);
 
 const props = defineProps({
   updateElectionCentreDialog: Boolean,
@@ -61,37 +101,39 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:EdialogActive']);
-
 const ElectionCentredialog = ref(props.EdialogActive);
 
-const options = {
-  electionName: { label: 'Election', items: ['General Election', 'Local Election', 'Presidential'] },
-  district: { label: 'District', items: ['ktm', 'bkt', 'lalitput', ] },
-  municipality: { label: 'Municipality', items: ['Not Started', 'In Progress', 'Review', 'Completed'] },
-  ward: { label: 'Ward', items: ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Williams'] },
-  electionCentre : { label: 'Election Centre', items: ['Kathmandu', 'Bhaktapur', 'Lalitpur'] }
+const fetchDistricts = async () => {
+  try {
+    const data = await centreService.getAllDistricts();
+    districts.value = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching districts:", error);
+  }
 };
 
 const formData = reactive({
   electionName: '',
   district: '',
   municipality: '',
-  ward: ''
+  ward: '',
+  electionCentre: ''
 });
 
-// Dynamically generate headers based on selected labels
-const dynamicHeaders = computed(() => {
-  let headers = Object.keys(options).map((key) => ({
-    text: options[key].label,
-    value: key
-  }));
-  headers.push({ text: 'Actions', value: 'actions', sortable: false });
-  return headers;
+onMounted(() => {
+  fetchDistricts();
 });
 
-const isFormValid = computed(() => {
-  return Object.values(formData).every(value => value !== '');
-});
+const dynamicHeaders = computed(() => [
+  { text: 'Election', value: 'electionName' },
+  { text: 'District', value: 'district' },
+  { text: 'Municipality', value: 'municipality' },
+  { text: 'Ward', value: 'ward' },
+  { text: 'Election Centre', value: 'electionCentre' },
+  { text: 'Actions', value: 'actions', sortable: false }
+]);
+
+const isFormValid = computed(() => Object.values(formData).every(value => value !== ''));
 
 const addItem = () => {
   if (!isFormValid.value) {
@@ -100,12 +142,8 @@ const addItem = () => {
   }
 
   validationMessage.value = '';
-  
-  // Add selected form data to the table as an object
   tableData.value.push({ ...formData, actions: '' });
-
-  // Reset form
-  Object.keys(formData).forEach(key => formData[key] = '');
+  Object.keys(formData).forEach(key => (formData[key] = ''));
 };
 
 const removeItem = (item) => {
@@ -117,7 +155,7 @@ const submitData = () => {
   console.log('Submitting data:', tableData.value);
   dialog.value = false;
   tableData.value = [];
-  Object.keys(formData).forEach(key => formData[key] = '');
+  Object.keys(formData).forEach(key => (formData[key] = ''));
 };
 
 watch(() => props.EdialogActive, (newValue) => {
