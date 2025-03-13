@@ -30,7 +30,9 @@
             <v-col cols="12" sm="6" md="3">
               <v-select
                 v-model="formData.municipality"
-                :items="['Not Started', 'In Progress', 'Review', 'Completed']"
+                :items="municipalities"
+                item-title="name"
+                item-value="id"
                 label="Municipality"
                 required
               ></v-select>
@@ -40,7 +42,9 @@
             <v-col cols="12" sm="6" md="3">
               <v-select
                 v-model="formData.ward"
-                :items="['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Williams']"
+                :items="wards"
+                item-title="wardNumber"
+                item-value="id"
                 label="Ward"
                 required
               ></v-select>
@@ -88,12 +92,17 @@
 import { onMounted, ref, defineEmits, reactive, computed, watch } from 'vue';
 import { defineProps } from 'vue';
 import Centre from '../../service/centreService';
+import ElectionCentreService from '../../service/electionCentreService';
+
+const electionCentreService = new ElectionCentreService();
 
 const dialog = ref(false);
 const tableData = ref([]);
 const validationMessage = ref('');
 const centreService = new Centre();
 const districts = ref([]);
+const municipalities = ref([]);
+const wards = ref([]);
 
 const props = defineProps({
   updateElectionCentreDialog: Boolean,
@@ -109,6 +118,33 @@ const fetchDistricts = async () => {
     districts.value = Array.isArray(data) ? data : [];
   } catch (error) {
     console.error("Error fetching districts:", error);
+    
+  }
+};
+const fetchMunicipalities = async () => {
+  try {
+    if (!formData.district) return; // Ensure a district is selected
+    const url = `districtId=${formData.district}`; // Correct query format
+    const data = await electionCentreService.getMunicipalities(url);
+    municipalities.value = Array.isArray(data) ? data : [];
+    formData.municipality = null; // Reset municipality selection
+    wards.value = []; // Reset wards when district changes
+  } catch (error) {
+    console.error("Error fetching municipalities:", error);
+  }
+};
+
+
+
+const fetchWards = async (municipalityId) => {
+  try {
+    if (!formData.municipality) return;
+    const url = `municipalityId=${formData.municipality}`; // Correct query format
+    const data = await electionCentreService.getWards(url);
+    wards.value = Array.isArray(data) ? data : [];
+    formData.ward = null; // Reset ward selection
+  } catch (error) {
+    console.error("Error fetching wards:", error);
   }
 };
 
@@ -122,6 +158,7 @@ const formData = reactive({
 
 onMounted(() => {
   fetchDistricts();
+  fetchMunicipalities();
 });
 
 const dynamicHeaders = computed(() => [
@@ -161,7 +198,13 @@ const submitData = () => {
 watch(() => props.EdialogActive, (newValue) => {
   ElectionCentredialog.value = newValue;
 });
+watch(() => formData.district, () => {
+  fetchMunicipalities();
+});
 
+watch(() => formData.municipality, (newMunicipalityId) => {
+  fetchWards(newMunicipalityId);
+});
 const closeDialog = () => {
   emit('update:EdialogActive', false);
 };
