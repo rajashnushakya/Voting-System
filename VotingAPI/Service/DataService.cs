@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
@@ -189,7 +189,82 @@ namespace VotingAPI.Service
 
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
         }
-}
+        public async Task<List<Municipality>> GetElectionMunicipality(int districtId, CancellationToken cancellationToken)
+        {
+            var municipalities = new List<Municipality>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("sp_getmunicipality", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@district_id", districtId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                municipalities.Add(new Municipality
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("municipality_id")),
+                                    Name = reader.GetString(reader.GetOrdinal("municipality_name"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching municipalities by district.", ex);
+            }
+
+            return municipalities;
+        }
+        public async Task<List<Ward>> GetElectionWard(int municipalityId, CancellationToken cancellationToken)
+        {
+            var ward = new List<Ward>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("sp_getWard", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@municipality_id", municipalityId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                ward.Add(new Ward
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("ward_id")),
+                                    WardNumber = reader.GetInt32(reader.GetOrdinal("ward_name"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching ward by municipality.", ex);
+            }
+
+            return ward;
+        }
 
     }
+
+}
 

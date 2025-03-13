@@ -84,5 +84,44 @@ namespace VotingAPI.Controllers
 
         }
 
+        [HttpGet("Election/Municipality")]
+        public async Task<IActionResult> GetMunicipalitiesByDistrict(int districtId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var municipalities = await _dataService.GetElectionMunicipality(districtId, cancellationToken);
+                if (municipalities == null || municipalities.Count == 0)
+                {
+                    return NotFound(new { message = "No municipalities found for the given district." });
+                }
+
+                return Ok(municipalities);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("Election/Ward")]
+        public async Task<IActionResult> GetWardByMunicipality(int municipalityId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var ward = await _dataService.GetElectionWard(municipalityId, cancellationToken);
+                if (ward == null || ward.Count == 0)
+                {
+                    return NotFound(new { message = "No ward found for the given municipality." });
+                }
+
+                return Ok(ward);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
     }
 }
