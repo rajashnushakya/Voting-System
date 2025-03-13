@@ -8,7 +8,9 @@
             <v-col cols="12" sm="6" md="3">
               <v-select
                 v-model="formData.electionName"
-                :items="['General Election', 'Local Election', 'Presidential']"
+                :items="elections"
+                item-title="name"
+                item-value="id"
                 label="Election"
                 required
               ></v-select>
@@ -93,8 +95,10 @@ import { onMounted, ref, defineEmits, reactive, computed, watch } from 'vue';
 import { defineProps } from 'vue';
 import Centre from '../../service/centreService';
 import ElectionCentreService from '../../service/electionCentreService';
+import ElectionService from '../../service/electionService';
 
 const electionCentreService = new ElectionCentreService();
+const electionService = new ElectionService();
 
 const dialog = ref(false);
 const tableData = ref([]);
@@ -103,6 +107,7 @@ const centreService = new Centre();
 const districts = ref([]);
 const municipalities = ref([]);
 const wards = ref([]);
+const elections = ref([]);
 
 const props = defineProps({
   updateElectionCentreDialog: Boolean,
@@ -134,6 +139,16 @@ const fetchMunicipalities = async () => {
   }
 };
 
+const getElectionName = async () => {
+  try {
+    const data = await electionService.getActiveElection();
+    console.log(data);
+      elections.value = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching active election:", error);
+  }
+};
+
 
 
 const fetchWards = async (municipalityId) => {
@@ -157,6 +172,7 @@ const formData = reactive({
 });
 
 onMounted(() => {
+  getElectionName();
   fetchDistricts();
   fetchMunicipalities();
 });
