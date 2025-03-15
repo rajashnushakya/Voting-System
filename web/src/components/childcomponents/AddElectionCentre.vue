@@ -180,11 +180,6 @@ const fetchWards = async (municipalityId) => {
   }
 };
 
-
-const addElectionCentre = async () => {
-
-
-}
 onMounted(() => {
   getElectionName();
   fetchDistricts();
@@ -219,7 +214,6 @@ const removeItem = (item) => {
   tableData.value.splice(index, 1);
 };
 const submitData = async () => {
-  console.log('Submitting Table Data:', tableData.value); // Debugging step
 
   if (tableData.value.length === 0) {
     console.error("Error: No data to submit.");
@@ -235,21 +229,16 @@ const submitData = async () => {
       electionCentre: item.electionCentre
     }));
 
-    console.log('Final Payload:', payload); // Ensure all required fields are included
+    console.log('Final Payload:', payload); 
 
     const response = await electionCentreService.addElectionCentre(payload);
     console.log('Election Centres added:', response);
 
-    // Clear table after successful submission
     tableData.value = [];
   } catch (error) {
     console.error("Error adding election centres:", error);
   }
 };
-
-
-
-
 
 watch(() => props.EdialogActive, (newValue) => {
   ElectionCentredialog.value = newValue;
