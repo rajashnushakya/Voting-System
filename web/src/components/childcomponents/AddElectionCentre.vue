@@ -108,7 +108,7 @@ const districts = ref([]);
 const municipalities = ref([]);
 const wards = ref([]);
 const elections = ref([]);
-const centreName = ref([]);
+const centreName = ref('');
 
 const props = defineProps({
   updateElectionCentreDialog: Boolean,
@@ -117,6 +117,14 @@ const props = defineProps({
 
 const emit = defineEmits(['update:EdialogActive']);
 const ElectionCentredialog = ref(props.EdialogActive);
+const formData = reactive({
+  electionName: '',
+  district: '',
+  municipality: '',
+  ward: '',
+  electionCentre: '',
+});
+
 
 const fetchDistricts = async () => {
   try {
@@ -156,6 +164,7 @@ const getCentreName = async () => {
   } catch (error) {
     console.error("Error fetching centre name:", error);
   }
+  console.log(formData.district, formData.municipality, formData.ward, formData.electionCentre, formData.electionName );
 }
 
 
@@ -171,19 +180,17 @@ const fetchWards = async (municipalityId) => {
   }
 };
 
-const formData = reactive({
-  electionName: '',
-  district: '',
-  municipality: '',
-  ward: '',
-  electionCentre: ''
-});
 
+const addElectionCentre = async () => {
+
+
+}
 onMounted(() => {
   getElectionName();
   fetchDistricts();
   fetchMunicipalities();
 });
+
 
 const dynamicHeaders = computed(() => [
   { text: 'Election', value: 'electionName' },
@@ -211,13 +218,38 @@ const removeItem = (item) => {
   const index = tableData.value.indexOf(item);
   tableData.value.splice(index, 1);
 };
+const submitData = async () => {
+  console.log('Submitting Table Data:', tableData.value); // Debugging step
 
-const submitData = () => {
-  console.log('Submitting data:', tableData.value);
-  dialog.value = false;
-  tableData.value = [];
-  Object.keys(formData).forEach(key => (formData[key] = ''));
+  if (tableData.value.length === 0) {
+    console.error("Error: No data to submit.");
+    return; // Stop submission if the table is empty
+  }
+
+  try {
+    const payload = tableData.value.map(item => ({
+      ElectionId: item.electionName,
+      district: item.district,
+      municipality: item.municipality,
+      ward: item.ward,
+      electionCentre: item.electionCentre
+    }));
+
+    console.log('Final Payload:', payload); // Ensure all required fields are included
+
+    const response = await electionCentreService.addElectionCentre(payload);
+    console.log('Election Centres added:', response);
+
+    // Clear table after successful submission
+    tableData.value = [];
+  } catch (error) {
+    console.error("Error adding election centres:", error);
+  }
 };
+
+
+
+
 
 watch(() => props.EdialogActive, (newValue) => {
   ElectionCentredialog.value = newValue;
@@ -249,10 +281,13 @@ watch(() => formData.ward, () => {
 watch(() => formData.electionCentre, () => {
   if (formData.electionCentre) {
     getCentreName();
+    submitData();
   }
 });
 
 const closeDialog = () => {
   emit('update:EdialogActive', false);
 };
+
+
 </script>
