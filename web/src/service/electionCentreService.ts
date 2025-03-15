@@ -18,11 +18,10 @@ export interface Ward {
 
 export interface CentreData {
     id: number;
-    name: string;
-    districtId: number | null;
-    municipalityId: number | null;
-    wardId: number | null;
+    electionId: number | null;
+    electionCentre: string;
 }
+
 
 export default class ElectionCentreService {
     #api: apiService;
@@ -64,4 +63,14 @@ export default class ElectionCentreService {
             throw error;
         }
     }   
+
+    async addElectionCentre(centreData: CentreData,): Promise<void> {
+        const url = `api/Election/Centre`;
+        try {
+            await this.#api.post(url, centreData);
+        } catch (error) {
+            console.error('Error adding election centre:', error);
+            throw error;
+        }
+    }
 }
