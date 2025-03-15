@@ -263,6 +263,45 @@ namespace VotingAPI.Service
 
             return ward;
         }
+        public async Task<List<Centre>> GetCentreName(int districtId, int municipalityId, int wardId, CancellationToken cancellationToken)
+        {
+            var name = new List<Centre>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("sp_get_centre_name", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@district_id", districtId);
+                        cmd.Parameters.AddWithValue("@municipality_id", municipalityId);
+                        cmd.Parameters.AddWithValue("@ward_id", wardId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                name.Add(new Centre
+                                {
+                                    id = reader.GetInt32(reader.GetOrdinal("id")),
+                                    name = reader.GetString(reader.GetOrdinal("name")) 
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the centre name.", ex);
+            }
+
+            return name;
+        }
+
 
     }
 

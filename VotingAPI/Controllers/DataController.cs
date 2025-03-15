@@ -122,6 +122,25 @@ namespace VotingAPI.Controllers
             }
         }
 
+        [HttpGet("Centre/Name")]
+        public async Task<IActionResult>GetName(int districtId, int municipalityId, int wardId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var name = await _dataService.GetCentreName(districtId, municipalityId, wardId, cancellationToken);
+                if (name == null || name.Count == 0)
+                {
+                    return NotFound(new { message = "No centre name found" });
+                }
+
+                return Ok(name);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+        }
+
 
     }
 }
