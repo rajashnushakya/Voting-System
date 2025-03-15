@@ -54,4 +54,14 @@ export default class ElectionCentreService {
         }
     }
 
+    async getCentreName( districtId: number, municipalityId: number, wardId: number): Promise<String> {
+        const url = `api/Data/Centre/Name?districtId=${districtId}&municipalityId=${municipalityId}&wardId=${wardId}`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching centre name:', error);
+            throw error;
+        }
+    }   
 }
