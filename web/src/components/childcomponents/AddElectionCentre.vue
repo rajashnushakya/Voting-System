@@ -56,7 +56,7 @@
             <v-col cols="12" sm="6" md="3">
               <v-select
                 v-model="formData.electionCentre"
-                :items="['Kathmandu', 'Bhaktapur', 'Lalitpur']"
+                :items="[centreName]"
                 label="Election Centre"
                 required
               ></v-select>
@@ -108,6 +108,7 @@ const districts = ref([]);
 const municipalities = ref([]);
 const wards = ref([]);
 const elections = ref([]);
+const centreName = ref([]);
 
 const props = defineProps({
   updateElectionCentreDialog: Boolean,
@@ -142,13 +143,20 @@ const fetchMunicipalities = async () => {
 const getElectionName = async () => {
   try {
     const data = await electionService.getActiveElection();
-    console.log(data);
       elections.value = Array.isArray(data) ? data : [];
   } catch (error) {
     console.error("Error fetching active election:", error);
   }
 };
 
+const getCentreName = async () => {
+  try {
+    const data = await electionCentreService.getCentreName(formData.district, formData.municipality, formData.ward);
+    centreName.value = data[0].name;
+  } catch (error) {
+    console.error("Error fetching centre name:", error);
+  }
+}
 
 
 const fetchWards = async (municipalityId) => {
@@ -182,7 +190,7 @@ const dynamicHeaders = computed(() => [
   { text: 'District', value: 'district' },
   { text: 'Municipality', value: 'municipality' },
   { text: 'Ward', value: 'ward' },
-  { text: 'Election Centre', value: 'electionCentre' },
+  { text: 'Election Centre', value: 'centreName' },
   { text: 'Actions', value: 'actions', sortable: false }
 ]);
 
@@ -216,11 +224,34 @@ watch(() => props.EdialogActive, (newValue) => {
 });
 watch(() => formData.district, () => {
   fetchMunicipalities();
+  // Triggering getCentreName only when all three fields are populated
+  if (formData.district && formData.municipality && formData.ward) {
+    getCentreName();
+  }
+
 });
 
-watch(() => formData.municipality, (newMunicipalityId) => {
-  fetchWards(newMunicipalityId);
+watch(() => formData.municipality, () => {
+  // Triggering getCentreName only when all three fields are populated
+  if (formData.district && formData.municipality && formData.ward) {
+    getCentreName();
+  }
+  fetchWards(formData.municipality);
 });
+
+watch(() => formData.ward, () => {
+  // Triggering getCentreName only when all three fields are populated
+  if (formData.district && formData.municipality && formData.ward) {
+    getCentreName();
+  }
+});
+
+watch(() => formData.electionCentre, () => {
+  if (formData.electionCentre) {
+    getCentreName();
+  }
+});
+
 const closeDialog = () => {
   emit('update:EdialogActive', false);
 };
