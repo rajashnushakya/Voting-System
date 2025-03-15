@@ -3,6 +3,7 @@ using VotingAPI.Model;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 
 namespace VotingAPI.Service
 {
@@ -97,17 +98,21 @@ namespace VotingAPI.Service
             return elections;
         }
 
-        public async Task<DbResponse> AddElectionCentreAsync(ElectionCentre electionCentre, CancellationToken cancellationToken)
+        public async Task<DbResponse> AddElectionCentreAsync(List<ElectionCentre> electionCentres, CancellationToken cancellationToken)
         {
             DataAccess dataAccess = new DataAccess(_connectionString);
-            SqlCommand cmd = dataAccess.CreateCommand("sp_add_election_centre");
 
-            // Adding parameters to the command
-            cmd.Parameters.AddWithValue("@CentreId", electionCentre.CentreId);
-            cmd.Parameters.AddWithValue("@ElectionId", electionCentre.ElectionId);
+            foreach (var centre in electionCentres)
+            {
+                SqlCommand cmd = dataAccess.CreateCommand("sp_add_election_centre");
 
-            // Execute the command (non-query)
+                cmd.Parameters.AddWithValue("@CentreName", centre.electionCentre); 
+                cmd.Parameters.AddWithValue("@ElectionId", centre.ElectionId);
+
+                
+            }
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
         }
+       
     }
 }
