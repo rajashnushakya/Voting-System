@@ -108,7 +108,7 @@ const districts = ref([]);
 const municipalities = ref([]);
 const wards = ref([]);
 const elections = ref([]);
-const centreName = ref('');
+const centreName = ref([]);
 
 const props = defineProps({
   updateElectionCentreDialog: Boolean,
@@ -164,7 +164,6 @@ const getCentreName = async () => {
   } catch (error) {
     console.error("Error fetching centre name:", error);
   }
-  console.log(formData.district, formData.municipality, formData.ward, formData.electionCentre, formData.electionName );
 }
 
 
@@ -188,13 +187,14 @@ onMounted(() => {
 
 
 const dynamicHeaders = computed(() => [
-  { text: 'Election', value: 'electionName' },
-  { text: 'District', value: 'district' },
-  { text: 'Municipality', value: 'municipality' },
-  { text: 'Ward', value: 'ward' },
-  { text: 'Election Centre', value: 'centreName' },
-  { text: 'Actions', value: 'actions', sortable: false }
+  { title: 'Election', value: 'electionName' },
+  { title: 'District', value: 'district' },
+  { title: 'Municipality', value: 'municipality' },
+  { title: 'Ward', value: 'ward' },
+  { title: 'Election Centre', value: 'electionCentre' },
+  { title: 'Actions', value: 'actions', sortable: false }
 ]);
+
 
 const isFormValid = computed(() => Object.values(formData).every(value => value !== ''));
 
@@ -205,9 +205,24 @@ const addItem = () => {
   }
 
   validationMessage.value = '';
-  tableData.value.push({ ...formData, actions: '' });
+
+  const electionName = elections.value.find(e => e.id === formData.electionName)?.name || '';
+  const districtName = districts.value.find(d => d.id === formData.district)?.name || '';
+  const municipalityName = municipalities.value.find(m => m.id === formData.municipality)?.name || '';
+  const wardNumber = wards.value.find(w => w.id === formData.ward)?.wardNumber || '';
+  const electionCentreName = centreName.value; 
+
+  tableData.value.push({
+    electionName,
+    district: districtName,
+    municipality: municipalityName,
+    ward: wardNumber,
+    electionCentre: electionCentreName
+  });
+
   Object.keys(formData).forEach(key => (formData[key] = ''));
 };
+
 
 const removeItem = (item) => {
   const index = tableData.value.indexOf(item);
@@ -217,7 +232,7 @@ const submitData = async () => {
 
   if (tableData.value.length === 0) {
     console.error("Error: No data to submit.");
-    return; // Stop submission if the table is empty
+    return; 
   }
 
   try {
@@ -270,7 +285,7 @@ watch(() => formData.ward, () => {
 watch(() => formData.electionCentre, () => {
   if (formData.electionCentre) {
     getCentreName();
-    submitData();
+
   }
 });
 
