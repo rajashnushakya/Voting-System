@@ -23,4 +23,15 @@ export default class Candidate {
     constructor() {
         this.#api = new apiService();
     }
+
+        async addCandidate(CandidateData: CandidateData) {
+            const url = `api/Data/Centre/Add`;
+            try {
+                const response = await this.#api.post(url, CandidateData);
+                return response;
+            } catch (error) {
+                console.error('Error adding centre:', error);
+                throw error;
+            }
+        }
 }
