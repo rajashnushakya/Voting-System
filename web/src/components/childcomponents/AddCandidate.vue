@@ -1,0 +1,200 @@
+<template>
+    <v-dialog :model-value="Candidatedialog" max-width="1100px" @update:modelValue="updateCandidatedialog">
+      <v-card title="Add Candidate">
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <!-- Full Name -->
+              <v-col cols="12" sm="6">
+                <v-text-field v-model="formData.fullName" label="Full Name" required></v-text-field>
+              </v-col>
+  
+              <!-- Father's Name -->
+              <v-col cols="12" sm="6">
+                <v-text-field v-model="formData.fatherName" label="Father's Name" required></v-text-field>
+              </v-col>
+  
+              <!-- Mother's Name -->
+              <v-col cols="12" sm="6">
+                <v-text-field v-model="formData.motherName" label="Mother's Name" required></v-text-field>
+              </v-col>
+                <!-- Mother's Name -->
+                <v-col cols="12" sm="6">
+                <v-text-field v-model="formData.grandFatherName" label="Grand Father's Name" required></v-text-field>
+              </v-col>
+                <!-- Mother's Name -->
+                <v-col cols="12" sm="6">
+                <v-text-field v-model="formData.grandMotherNamemotherName" label="Grand Mother's Name" required></v-text-field>
+              </v-col>
+              <!-- Date of Birth -->
+              <v-col cols="12" sm="6">
+                <v-text-field v-model="formData.dateOfBirth" label="Date of Birth" type="date" required></v-text-field>
+              </v-col>
+  
+              <!-- Gender -->
+                <v-col cols="12" sm="6">
+
+                    <v-select v-model="formData.gender" :items="gender" item-title="name" item-value="id" label="Gender" required></v-select>
+
+                </v-col>
+    
+                <!-- Party -->
+                <v-col cols="12" sm="6">
+                <v-select v-model="formData.party" :items="parties" item-title="partyName" item-value="id" label="party" required></v-select>
+                </v-col>
+
+                <v-col cols = "20" md = "12">Address</v-col>
+              <!-- Election Type Dropdown -->
+              <v-col cols="12" sm="6">
+                <v-select v-model="formData.electionName" :items="elections" item-title="name" item-value="id" label="Election" required></v-select>
+              </v-col>
+  
+              <!-- District Dropdown -->
+              <v-col cols="12" sm="6" >
+                <v-select v-model="formData.district" :items="districts" item-title="name" item-value="id" label="District" required></v-select>
+              </v-col>
+  
+              <!-- Municipality Dropdown -->
+              <v-col cols="12" sm="6" >
+                <v-select v-model="formData.municipality" :items="municipalities" item-title="name" item-value="id" label="Municipality" required></v-select>
+              </v-col>
+  
+              <!-- Ward Dropdown -->
+              <v-col cols="12" sm="6" >
+                <v-select v-model="formData.ward" :items="wards" item-title="wardNumber" item-value="id" label="Ward" required></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+  
+          <v-alert v-if="validationMessage" type="error" dense outlined class="mt-2">{{ validationMessage }}</v-alert>
+  
+        </v-card-text>
+  
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="closeDialog">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="Submit" :disabled="tableData.length === 0">Submit</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </template>
+  
+  <script setup>
+  import { onMounted, ref, defineEmits, reactive, computed, watch } from 'vue';
+  import { defineProps } from 'vue';
+  import Centre from '../../service/centreService';
+  import ElectionCentreService from '../../service/electionCentreService';
+  import ElectionService from '../../service/electionService';
+  import PartyService from '../../service/partyService';
+  
+  const electionCentreService = new ElectionCentreService();
+  const electionService = new ElectionService();
+  const partyService = new PartyService();
+  
+  const tableData = ref([]);
+  const validationMessage = ref('');
+  const centreService = new Centre();
+  const districts = ref([]);
+  const municipalities = ref([]);
+  const wards = ref([]);
+  const elections = ref([]);
+  const gender = ref([
+      { name: 'Male' },
+      {  name: 'Female' },
+      {  name: 'Other' },
+  ]);
+  const parties = ref([]);
+  
+  const props = defineProps({
+    updateCandidatedialog: Boolean,
+    CdialogActive: Boolean,
+  });
+  
+  const emit = defineEmits(['update:CdialogActive']);
+  const Candidatedialog = ref(props.CdialogActive);
+  
+  const formData = reactive({
+    fullName: '',
+    fatherName: '',
+    motherName: '',
+    grandFatherName: '',
+    grandMotherName: '',
+    dateOfBirth: '',
+    gender: null,
+    electionName: '',
+    district: '',
+    municipality: '',
+    ward: '',
+    party: '',
+  });
+  
+  const fetchDistricts = async () => {
+    try {
+      const data = await centreService.getAllDistricts();
+      districts.value = Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error("Error fetching districts:", error);
+    }
+  };
+  
+  const fetchParties = async () => {
+      try {
+        const data = await partyService.getAllParties();
+        parties.value = Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error("Error fetching parties:", error);
+        }
+  }
+
+  const fetchMunicipalities = async () => {
+    try {
+      if (!formData.district) return;
+      const data = await electionCentreService.getMunicipalities(`districtId=${formData.district}`);
+      municipalities.value = Array.isArray(data) ? data : [];
+      formData.municipality = null;
+      wards.value = [];
+    } catch (error) {
+      console.error("Error fetching municipalities:", error);
+    }
+  };
+  
+  const fetchWards = async () => {
+    try {
+      if (!formData.municipality) return;
+      const data = await electionCentreService.getWards(`municipalityId=${formData.municipality}`);
+      wards.value = Array.isArray(data) ? data : [];
+      formData.ward = null;
+    } catch (error) {
+      console.error("Error fetching wards:", error);
+    }
+  };
+  
+  onMounted(() => {
+    getElectionName();
+    fetchDistricts();
+    fetchParties();
+  });
+  
+  const getElectionName = async () => {
+    try {
+      const data = await electionService.getActiveElection();
+      elections.value = Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error("Error fetching active election:", error);
+    }
+  };
+  watch(() => formData.district, () => fetchMunicipalities());
+  watch(() => formData.municipality, () => fetchWards());
+  watch(() => props.CdialogActive, (newValue) => {
+    Candidatedialog.value = newValue;
+  });
+  
+  const Submit = async () => {
+      try {
+        c
+  }
+  const closeDialog = () => {
+    emit('update:CdialogActive', false);
+  };
+  </script>
+  
