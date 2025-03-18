@@ -18,7 +18,6 @@ namespace VotingAPI.Service
             DataAccess dataAccess = new DataAccess(_connectionString);
             SqlCommand cmd = dataAccess.CreateCommand("InsertCandidate"); 
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@CandidateId", candidate.CandidateId);
             cmd.Parameters.AddWithValue("@FullName", candidate.FullName);
             cmd.Parameters.AddWithValue("@PartyId", candidate.PartyId);
             cmd.Parameters.AddWithValue("@FatherName", candidate.FatherName);
@@ -27,8 +26,10 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@GrandMotherName", candidate.GrandMotherName);
             cmd.Parameters.AddWithValue("@DateOfBirth", candidate.Dateofbirth);
             cmd.Parameters.AddWithValue("@Gender", candidate.gender);
-            cmd.Parameters.AddWithValue("@District", candidate.District);
-            cmd.Parameters.AddWithValue("@Municipality", candidate.Municipality);
+            cmd.Parameters.AddWithValue("@ElectionId", candidate.ElectionId);
+            cmd.Parameters.AddWithValue("@DistrictId", candidate.DistrictId);
+            cmd.Parameters.AddWithValue("@MunicipalityId", candidate.MunicipalityId);
+            cmd.Parameters.AddWithValue("@WardId", candidate.WardId);
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
             
         }

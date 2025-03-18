@@ -98,20 +98,22 @@ namespace VotingAPI.Service
             return elections;
         }
 
-        public async Task<DbResponse> AddElectionCentreAsync(List<ElectionCentre> electionCentres, CancellationToken cancellationToken)
+        public async Task<DbResponse> AddElectionCentreAsync(List<ElectionCentre> electionCentre, CancellationToken cancellationToken)
         {
             DataAccess dataAccess = new DataAccess(_connectionString);
+            DbResponse response = null;
 
-            foreach (var centre in electionCentres)
+            foreach (var centre in electionCentre)
             {
                 SqlCommand cmd = dataAccess.CreateCommand("sp_add_election_centre");
 
                 cmd.Parameters.AddWithValue("@CentreName", centre.electionCentre); 
-                cmd.Parameters.AddWithValue("@ElectionId", centre.ElectionId);
 
-                
+                cmd.Parameters.AddWithValue("@ElectionId", centre.ElectionId);
+                response = await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+
             }
-            return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+            return response;
         }
        
     }
