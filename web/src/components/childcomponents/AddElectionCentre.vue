@@ -213,14 +213,28 @@ const addItem = () => {
   const electionCentreName = centreName.value; 
 
   tableData.value.push({
-    electionName,
-    district: districtName,
-    municipality: municipalityName,
-    ward: wardNumber,
-    electionCentre: electionCentreName
+    electionId: formData.electionName,     
+    electionName,                           
+    districtId: formData.district,          
+    district: districtName,                 
+    municipalityId: formData.municipality,  
+    municipality: municipalityName,         
+    wardId: formData.ward,                  
+    ward: wardNumber,                       
+    electionCentre: electionCentreName      
   });
 
   Object.keys(formData).forEach(key => (formData[key] = ''));
+};
+
+const getApiPayload = () => {
+  return tableData.value.map(item => ({
+    electionId: item.electionId,       
+    districtId: item.districtId,       
+    municipalityId: item.municipalityId, 
+    wardId: item.wardId,              
+    electionCentre: item.electionCentre 
+  }));
 };
 
 
@@ -236,13 +250,7 @@ const submitData = async () => {
   }
 
   try {
-    const payload = tableData.value.map(item => ({
-      ElectionId: item.electionName,
-      district: item.district,
-      municipality: item.municipality,
-      ward: item.ward,
-      electionCentre: item.electionCentre
-    }));
+const payload = getApiPayload();
 
     console.log('Final Payload:', payload); 
 
