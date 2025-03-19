@@ -25,7 +25,7 @@ export default class Candidate {
     }
 
         async addCandidate(CandidateData: CandidateData) {
-            const url = `api/Data/Centre/Add`;
+            const url = `api/Candidate`;
             try {
                 const response = await this.#api.post(url, CandidateData);
                 return response;
