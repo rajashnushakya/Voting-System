@@ -24,7 +24,7 @@
               </v-col>
                 <!-- Mother's Name -->
                 <v-col cols="12" sm="6">
-                <v-text-field v-model="formData.grandMotherNamemotherName" label="Grand Mother's Name" required></v-text-field>
+                <v-text-field v-model="formData.grandMotherName" label="Grand Mother's Name" required></v-text-field>
               </v-col>
               <!-- Date of Birth -->
               <v-col cols="12" sm="6">
@@ -40,28 +40,28 @@
     
                 <!-- Party -->
                 <v-col cols="12" sm="6">
-                <v-select v-model="formData.party" :items="parties" item-title="partyName" item-value="id" label="party" required></v-select>
+                <v-select v-model="formData.partyId" :items="parties" item-title="partyName" item-value="id" label="party" required></v-select>
                 </v-col>
 
                 <v-col cols = "20" md = "12">Address</v-col>
               <!-- Election Type Dropdown -->
               <v-col cols="12" sm="6">
-                <v-select v-model="formData.electionName" :items="elections" item-title="name" item-value="id" label="Election" required></v-select>
+                <v-select v-model="formData.electionId" :items="elections" item-title="name" item-value="id" label="Election" required></v-select>
               </v-col>
   
               <!-- District Dropdown -->
               <v-col cols="12" sm="6" >
-                <v-select v-model="formData.district" :items="districts" item-title="name" item-value="id" label="District" required></v-select>
+                <v-select v-model="formData.districtId" :items="districts" item-title="name" item-value="id" label="District" required></v-select>
               </v-col>
   
               <!-- Municipality Dropdown -->
               <v-col cols="12" sm="6" >
-                <v-select v-model="formData.municipality" :items="municipalities" item-title="name" item-value="id" label="Municipality" required></v-select>
+                <v-select v-model="formData.municipalityId" :items="municipalities" item-title="name" item-value="id" label="Municipality" required></v-select>
               </v-col>
   
               <!-- Ward Dropdown -->
               <v-col cols="12" sm="6" >
-                <v-select v-model="formData.ward" :items="wards" item-title="wardNumber" item-value="id" label="Ward" required></v-select>
+                <v-select v-model="formData.wardId" :items="wards" item-title="wardNumber" item-value="id" label="Ward" required></v-select>
               </v-col>
             </v-row>
           </v-container>
@@ -73,7 +73,15 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeDialog">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="Submit" :disabled="tableData.length === 0">Submit</v-btn>
+
+        <v-btn 
+          color="blue darken-1" 
+          variant="text" 
+          @click="Submit" >
+          Submit
+        </v-btn>
+
+
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -86,10 +94,13 @@
   import ElectionCentreService from '../../service/electionCentreService';
   import ElectionService from '../../service/electionService';
   import PartyService from '../../service/partyService';
+  import CandidateService from '../../service/candidateService';
   
   const electionCentreService = new ElectionCentreService();
   const electionService = new ElectionService();
   const partyService = new PartyService();
+  const candidateService = new CandidateService();
+
   
   const tableData = ref([]);
   const validationMessage = ref('');
@@ -114,19 +125,20 @@
   const Candidatedialog = ref(props.CdialogActive);
   
   const formData = reactive({
-    fullName: '',
-    fatherName: '',
-    motherName: '',
-    grandFatherName: '',
-    grandMotherName: '',
-    dateOfBirth: '',
-    gender: null,
-    electionName: '',
-    district: '',
-    municipality: '',
-    ward: '',
-    party: '',
-  });
+  fullname: '',
+  fatherName: '',
+  motherName: '',
+  grandFatherName: '',
+  grandMotherName: '',
+  dateOfBirth: '',
+  gender: null,
+  partyId: '',
+  electionId: '',
+  districtId: '',
+  municipalityId: '',
+  wardId: '',
+});
+
   
   const fetchDistricts = async () => {
     try {
@@ -148,26 +160,28 @@
 
   const fetchMunicipalities = async () => {
     try {
-      if (!formData.district) return;
-      const data = await electionCentreService.getMunicipalities(`districtId=${formData.district}`);
-      municipalities.value = Array.isArray(data) ? data : [];
-      formData.municipality = null;
-      wards.value = [];
+        if (!formData.districtId) return;
+        const data = await electionCentreService.getMunicipalities(`districtId=${formData.districtId}`);
+        municipalities.value = Array.isArray(data) ? data : [];
+        formData.municipalityId = null; 
+        wards.value = [];
     } catch (error) {
-      console.error("Error fetching municipalities:", error);
+        console.error("Error fetching municipalities:", error);
     }
-  };
+};
+
   
-  const fetchWards = async () => {
+const fetchWards = async () => {
     try {
-      if (!formData.municipality) return;
-      const data = await electionCentreService.getWards(`municipalityId=${formData.municipality}`);
-      wards.value = Array.isArray(data) ? data : [];
-      formData.ward = null;
+        if (!formData.municipalityId) return; 
+        const data = await electionCentreService.getWards(`municipalityId=${formData.municipalityId}`);
+        wards.value = Array.isArray(data) ? data : [];
+        formData.wardId = null; 
     } catch (error) {
-      console.error("Error fetching wards:", error);
+        console.error("Error fetching wards:", error);
     }
-  };
+};
+
   
   onMounted(() => {
     getElectionName();
@@ -183,18 +197,39 @@
       console.error("Error fetching active election:", error);
     }
   };
-  watch(() => formData.district, () => fetchMunicipalities());
-  watch(() => formData.municipality, () => fetchWards());
+  watch(() => formData.districtId, () => fetchMunicipalities()); 
+watch(() => formData.municipalityId, () => fetchWards()); 
+
   watch(() => props.CdialogActive, (newValue) => {
     Candidatedialog.value = newValue;
   });
   
   const Submit = async () => {
-      try {
-        c
+  try {
+    await candidateService.addCandidate(formData); 
+    closeDialog();
+  } catch (error) {
+    console.error("Error adding candidate:", error);
   }
+};
+
   const closeDialog = () => {
     emit('update:CdialogActive', false);
   };
+
+  const isFormValid = computed(() => {
+  return formData.fullname &&  
+         formData.fatherName &&
+         formData.motherName &&
+         formData.dateOfBirth &&
+         formData.gender &&
+         formData.partyId &&
+         formData.electionId &&
+         formData.districtId &&
+         formData.municipalityId &&
+         formData.wardId;
+});
+
+
   </script>
   
