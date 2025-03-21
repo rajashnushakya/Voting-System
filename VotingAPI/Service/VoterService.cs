@@ -31,13 +31,14 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@Email", voter.Email);
             cmd.Parameters.AddWithValue("@Gender", voter.Gender);
             cmd.Parameters.AddWithValue("@DateOfBirth", voter.DateofBirth);
+            cmd.Parameters.AddWithValue("@PhoneNumber",voter.PhoneNumber);
 
             //voter address details
             cmd.Parameters.AddWithValue("@HouseNumber", voter.Address.HouseNumber);
-            cmd.Parameters.AddWithValue("@WardNumber", voter.Address.WardNumber);
+            cmd.Parameters.AddWithValue("@WardId", voter.Address.WardId);
             cmd.Parameters.AddWithValue("@StreetName", voter.Address.StreetName);
-            cmd.Parameters.AddWithValue("@Municipality", voter.Address.Municpality);
-            cmd.Parameters.AddWithValue("@District", voter.Address.District);
+            cmd.Parameters.AddWithValue("@MunicipalityId", voter.Address.MunicipalityId);
+            cmd.Parameters.AddWithValue("@DistrictId", voter.Address.DistrictId);
             cmd.Parameters.AddWithValue("@Province", voter.Address.Province);
 
             //voter user details

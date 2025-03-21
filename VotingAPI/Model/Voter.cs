@@ -1,4 +1,6 @@
-﻿namespace VotingAPI.Model
+﻿using System.Numerics;
+
+namespace VotingAPI.Model
 {
     public class Voter
     {
@@ -11,7 +13,7 @@
         public string Email { get; set; }
         public DateTime DateofBirth { get; set; }
         public string Gender { get; set; }
-
+        public string PhoneNumber { get; set; }
 
         public Address Address { get; set; }
 
@@ -24,11 +26,11 @@
         public int Id { get; set; }
         public int VoterId { get; set; }
         public int HouseNumber { get; set; }
-        public int WardNumber { get; set; }
+        public int WardId { get; set; }
         public string StreetName { get; set; }
-        public string Municpality { get; set; }
-        public string District { get; set; }
-        public string Province { get; set; }
+        public int MunicipalityId { get; set; }
+        public int DistrictId { get; set; }
+        public int Province { get; set; }
     }
 
   
