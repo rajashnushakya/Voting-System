@@ -19,9 +19,9 @@ interface FormData {
     address: {
         houseNumber: string;
         streetName: string;
-        wardNumber: string;
-        municipality: string;
-        district: string;
+        wardId: number;
+        municipalityId: number;
+        districtId: number;
         province: string;
     };
 }
