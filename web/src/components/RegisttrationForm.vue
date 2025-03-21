@@ -149,33 +149,43 @@
             </div>
             <div>
               <label for="wardNumber" class="block text-gray-700 font-medium mb-2">Ward Number</label>
-              <input
-                type="number"
-                v-model="formData.address.wardNumber"
-                id="wardNumber"
-                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="1"
+              <v-select
+                v-model="selectedWard"
+                :items="wards"
+                item-title="wardNumber"
+                item-value="id"
+                label="Ward"
+                required
+                variant="outlined"
+
               />
             </div>
             <div>
               <label for="municipality" class="block text-gray-700 font-medium mb-2">Municipality</label>
-              <input
-                type="text"
-                v-model="formData.address.municipality"
-                id="municipality"
-                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="Kathmandu"
+              <v-select
+                v-model="selectedMunicipality"
+                :items="municipalities"
+                item-title="name"
+                item-value="id"
+                label="Municipality"
+                required
+                variant="outlined"
+                @update:modelValue="onMunicipalityChange"
               />
             </div>
             <div>
               <label for="district" class="block text-gray-700 font-medium mb-2">District</label>
-              <input
-                type="text"
-                v-model="formData.address.district"
-                id="district"
-                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="Bagmati"
+              <v-select
+                label="District"
+                v-model="selectedDistrict"
+                :items="districts"
+                item-title="name"
+                item-value="id"
+                required
+                variant="outlined"
+                @update:modelValue="onDistrictChange"
               />
+
             </div>
             <div>
               <label for="province" class="block text-gray-700 font-medium mb-2">Province</label>
@@ -204,11 +214,21 @@
   </div>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
+import { ref,reactive, onMounted } from "vue";
 import { AxiosError } from 'axios';
 import voterService from "../service/voterService"; 
+import Centre from "../service/centreService";  
+
 
 const service = new voterService();
+const centreService = new Centre();
+const districts = ref([]);
+const municipalities = ref([]);
+const wards = ref([]);
+const selectedDistrict = ref(null);
+const selectedMunicipality = ref(null);
+const selectedWard = ref(null);
+
 
 // Reactive data model for form data
 const formData = reactive({
@@ -230,9 +250,9 @@ const formData = reactive({
   address: {
     houseNumber: "",
     streetName: "",
-    wardNumber: "",
-    municipality: "",
-    district: "",
+    wardId: "",
+    municipalityId: "",
+    districtId: "",
     province: "",
   },
 });
@@ -242,6 +262,70 @@ const successMessage = reactive({
   message: "",
   isVisible: false,
 });
+const fetchDistricts = async () => {
+  try {
+    municipalities.value = [];
+    wards.value = [];
+    const data = await centreService.getAllDistricts();
+    districts.value = data;
+
+    console.log(districts.value)
+  } catch (error) {
+    console.error("Error fetching districts:", error);
+  }
+};
+
+const fetchMunicipalities = async (districtId: number) => {
+  try {
+    wards.value = [];
+    const data = await centreService.getMunicipalities(districtId);
+    municipalities.value = data;
+  } catch (error) {
+    console.error("Error fetching municipalities:", error);
+  }
+};
+
+const fetchWards = async (municipalityId:number) => {
+  try {
+    const data = await centreService.getWards(municipalityId);
+    wards.value = data;
+    console.log(wards.value)
+  } catch (error) {
+    console.error("Error fetching wards:", error);
+  }
+};
+
+const onDistrictChange = () => {
+  selectedMunicipality.value = null;
+  selectedWard.value = null;
+  if (selectedDistrict.value) {
+    fetchMunicipalities(selectedDistrict.value);
+  } else {
+    municipalities.value = [];
+    selectedMunicipality.value = null;
+    wards.value = [];
+    selectedWard.value = null;
+    
+  }
+};
+
+onMounted(() => {
+  fetchDistricts();
+  
+})
+// Handle municipality change
+const onMunicipalityChange = () => {
+  
+  selectedWard.value = null;
+  if (selectedMunicipality.value) {
+    fetchWards(selectedMunicipality.value);
+  } else {
+    wards.value = [];
+    selectedWard.value = null;
+  }
+};
+
+
 
 const handleSubmit = async () => {
   try {
@@ -270,5 +354,6 @@ const handleSubmit = async () => {
       successMessage.isVisible = true;
     }
   }
+
 };
 </script>
