@@ -30,7 +30,7 @@ namespace VotingAPI.Model
         public string StreetName { get; set; }
         public int MunicipalityId { get; set; }
         public int DistrictId { get; set; }
-        public int Province { get; set; }
+        public string Province { get; set; }
     }
 
   

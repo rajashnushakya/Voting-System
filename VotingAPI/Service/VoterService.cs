@@ -17,6 +17,8 @@ namespace VotingAPI.Service
             AppUser user = new AppUser();
             user.Email = voter.Email;
             user.UserName = voter.User.UserName;
+            var RoleId = 1;
+            voter.User.RoleId = RoleId;
             var hasher = new PasswordHasher<AppUser>();
             var hashedPassword = hasher.HashPassword(user, voter.User.Password);
 
