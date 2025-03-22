@@ -74,7 +74,7 @@
               <label for="dob" class="block text-gray-700 font-medium mb-2">Date of Birth</label>
               <input
                 type="date"
-                v-model="formData.dateOfBirth"
+                v-model="formData.dateofBirth"
                 id="dob"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
               />
@@ -96,7 +96,7 @@
               <label for="phNo" class="block text-gray-700 font-medium mb-2">Phone Number</label>
               <input
                 type="tel"
-                v-model="formData.phno"
+                v-model="formData.phoneNumber"
                 id="phno"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="Enter Phone Number"
@@ -148,16 +148,16 @@
               />
             </div>
             <div>
-              <label for="wardNumber" class="block text-gray-700 font-medium mb-2">Ward Number</label>
+              <label for="district" class="block text-gray-700 font-medium mb-2">District</label>
               <v-select
-                v-model="selectedWard"
-                :items="wards"
-                item-title="wardNumber"
+                label="District"
+                v-model="selectedDistrict"
+                :items="districts"
+                item-title="name"
                 item-value="id"
-                label="Ward"
                 required
                 variant="outlined"
-
+                @update:modelValue="onDistrictChange"
               />
             </div>
             <div>
@@ -174,17 +174,18 @@
               />
             </div>
             <div>
-              <label for="district" class="block text-gray-700 font-medium mb-2">District</label>
+              <label for="wardNumber" class="block text-gray-700 font-medium mb-2">Ward Number</label>
               <v-select
-                label="District"
-                v-model="selectedDistrict"
-                :items="districts"
-                item-title="name"
+                v-model="selectedWard"
+                :items="wards"
+                item-title="wardNumber"
                 item-value="id"
+                label="Ward"
                 required
                 variant="outlined"
-                @update:modelValue="onDistrictChange"
+
               />
+
 
             </div>
             <div>
@@ -232,18 +233,17 @@ const selectedWard = ref(null);
 
 // Reactive data model for form data
 const formData = reactive({
-  id: 0,
+
   name: "",
   fatherName: "",
   motherName: "",
   grandFatherName: "",
   grandMotherName: "",
-  phno: 0,
+  phoneNumber: 0,
   email: "",
-  dateOfBirth: "", 
+  dateofBirth: "", 
   gender: "",
   user: {
-    roleId: 0,
     userName: "",
     password: "",
   },
@@ -330,9 +330,12 @@ const onMunicipalityChange = () => {
 const handleSubmit = async () => {
   try {
 
-    const dateOfBirth = formData.dateOfBirth ? new Date(formData.dateOfBirth) : null;
-
-    const response = await service.addVoter({ ...formData, dateOfBirth: dateOfBirth });
+    const dateofBirth = formData.dateofBirth ? new Date(formData.dateofBirth) : null;
+    formData.address.districtId = selectedDistrict.value?? '';
+    formData.address.municipalityId = selectedMunicipality.value?? '';
+    formData.address.wardId = selectedWard.value?? '';
+    console.log(formData.address);
+    const response = await service.addVoter({ ...formData, dateofBirth: dateofBirth });
     console.log("Registration successful:", response);
     
     successMessage.message = "Registration successful!";
