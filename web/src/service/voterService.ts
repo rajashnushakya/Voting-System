@@ -35,7 +35,7 @@ export default class voterService {
 
     // Add Voter
     async addVoter(formData: FormData) {
-        const url = `/Voter/Register`;  
+        const url = `api/Voter/Register`;  
         try {
             const response = await this.#api.post(url, formData);
             return response;
