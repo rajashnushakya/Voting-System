@@ -1,9 +1,9 @@
 <template>
     <v-app>
       <v-app-bar style="background-color: #003893;" >
-        <v-btn text @click="activeTab = 'elections'" style="color: white;">Elections</v-btn>
-<v-btn text @click="activeTab = 'voting'" style="color: white;">Vote</v-btn>
-<v-btn text @click="activeTab = 'history'" style="color: white;">History</v-btn>
+        <v-btn  @click="activeTab = 'elections'" style="color: white;">Elections</v-btn>
+<v-btn  @click="activeTab = 'voting'" style="color: white;">Vote</v-btn>
+<v-btn  @click="activeTab = 'history'" style="color: white;">History</v-btn>
 
       </v-app-bar>
   
@@ -17,7 +17,7 @@
             <v-card-text>
               <v-data-table
                 :headers="electionHeaders"
-                :items="elections"
+                :items="ongoingElections"
                 :items-per-page="5"
                 class="elevation-1 rounded-lg"
               >
@@ -34,7 +34,6 @@
                   <v-btn
                     small
                     color="primary"
-                    :disabled="item.status !== 'Open' || item.enrolled"
                     @click="enrollInElection(item)"
                   >
                     {{ item.enrolled ? 'Enrolled' : 'Enroll' }}
@@ -62,7 +61,6 @@
                 class="ml-auto"
                 @click="activeTab = 'elections'"
               >
-                <ArrowLeft size="24" />
               </v-btn>
             </v-card-title>
             <v-card-text v-if="selectedElection">
@@ -113,7 +111,7 @@
             </v-card-text>
             <v-card-text v-else>
               <div class="text-center py-8">
-                <FileCheck size="64" class="text-gray-400" />
+                <FileCheck class="text-gray-400" />
                 <div class="text-h6 mt-4">No Election Selected</div>
                 <div class="text-body-1 text-gray-600 dark:text-gray-400 mt-2">
                   Please go back to the elections list and select an election to vote in.
@@ -162,7 +160,7 @@
                 </v-timeline-item>
               </v-timeline>
               <div v-else class="text-center py-8">
-                <History size="64" class="text-gray-400" />
+                <History class="text-gray-400" />
                 <div class="text-h6 mt-4">No Voting History</div>
                 <div class="text-body-1 text-gray-600 dark:text-gray-400 mt-2">
                   You haven't voted in any elections yet.
@@ -186,7 +184,7 @@
               </v-card-title>
               <v-card-text class="pt-4">
                 <div class="text-center">
-                  <CheckCircle size="64" class="text-green-500" />
+                  <CheckCircle  class="text-green-500" />
                   <div class="text-h6 mt-2">Thank you for voting!</div>
                   <div class="text-body-1 mt-2">
                     Your vote has been recorded successfully.
@@ -197,7 +195,7 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   color="primary"
-                  text
+                  
                   @click="showSuccessDialog = false; activeTab = 'elections'"
                 >
                   Back to Elections
@@ -216,71 +214,33 @@
     </v-app>
   </template>
   
-  <script setup>
-  import { ref, computed } from 'vue';
-  import { Sun, Moon, ArrowLeft, History, CheckCircle, FileCheck } from 'lucide-vue-next';
-  
-  // Theme state
-  const isDark = ref(false);
-  const toggleTheme = () => {
-    isDark.value = !isDark.value;
-    document.documentElement.classList.toggle('gray', isDark.value);
-  };
+  <script setup lang="ts">
+  import { ref, onMounted} from 'vue';
+  import { History, CheckCircle, FileCheck } from 'lucide-vue-next';
+  import ElectionService from '../service/electionService';
+
+  interface Election {
+  id: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  totalVotes: number;
+  status: string;  
+  enrolled?: boolean; 
+  voted?: boolean; 
+}
+const electionService = new ElectionService();
+const ongoingElections = ref<Election[]>([]);
+
   
   // Navigation state
   const activeTab = ref('elections');
-  const selectedElection = ref(null);
-  const selectedCandidate = ref(null);
+  const selectedElection = ref();
+  const selectedCandidate = ref();
   const showSuccessDialog = ref(false);
   
-  // Elections data
-  const elections = ref([
-    {
-      id: 1,
-      name: 'Presidential Election 2024',
-      date: '2024-11-05',
-      status: 'Open',
-      enrolled: false,
-      voted: false,
-      type: 'National'
-    },
-    {
-      id: 2,
-      name: 'State Governor Election',
-      date: '2024-10-15',
-      status: 'Open',
-      enrolled: false,
-      voted: false,
-      type: 'State'
-    },
-    {
-      id: 3,
-      name: 'City Council Election',
-      date: '2024-09-20',
-      status: 'Open',
-      enrolled: false,
-      voted: false,
-      type: 'Local'
-    },
-    {
-      id: 4,
-      name: 'School Board Election',
-      date: '2024-08-10',
-      status: 'Upcoming',
-      enrolled: false,
-      voted: false,
-      type: 'Local'
-    },
-    {
-      id: 5,
-      name: 'Midterm Elections 2022',
-      date: '2022-11-08',
-      status: 'Closed',
-      enrolled: true,
-      voted: true,
-      type: 'National'
-    }
-  ]);
+  const elections = ref<Election[]>([]);
+
   
   // Candidates data
   const candidates = ref([
@@ -318,6 +278,27 @@
     }
   ]);
   
+  const fetchActiveElections = async () => {
+  try {
+    const response = await electionService.getActiveElection();
+
+    ongoingElections.value = response.map((election: any) => {
+      const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+      };
+
+      return {
+        id: election.id,
+        name: election.name,
+        startDate: formatDate(election.start_date),
+        endDate: formatDate(election.end_date)
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching ongoing elections:', error);
+  }
+};
   // Voting history
   const votingHistory = ref([
     {
@@ -348,18 +329,18 @@
       color: 'amber'
     }
   ]);
-  
+
   // Table headers
   const electionHeaders = ref([
-    { text: 'Election Name', value: 'name' },
-    { text: 'Date', value: 'date' },
-    { text: 'Type', value: 'type' },
-    { text: 'Status', value: 'status' },
-    { text: 'Actions', value: 'actions', sortable: false }
-  ]);
+  { title: 'Election Name', value: 'name' },
+  { title: 'Start Date', value: 'startDate' },
+  { title: 'End Date', value: 'endDate' },
+  { title: 'Actions', value: 'actions', sortable: false }
+]);
+
   
   // Helper functions
-  const getStatusColor = (status) => {
+  const getStatusColor = (status:string) => {
     switch (status) {
       case 'Open':
         return 'green';
@@ -372,60 +353,53 @@
     }
   };
   
-  const enrollInElection = (election) => {
-    const index = elections.value.findIndex(e => e.id === election.id);
-    if (index !== -1) {
-      elections.value[index].enrolled = true;
+  const enrollInElection = (election:Election) => {
+  const index = elections.value.findIndex((e: Election) => e.id === election.id);
+  if (index !== -1) {
+    elections.value[index].enrolled = true;
+  }
+};
+
+const castVote = () => {
+  if (selectedElection.value && selectedCandidate.value) {
+    // Update election status
+    const electionIndex = ongoingElections.value.findIndex((e: Election) => e.id === selectedElection.value.id);
+    if (electionIndex !== -1) {
+      ongoingElections.value[electionIndex].voted = true;
     }
-  };
-  
-  const castVote = () => {
-    if (selectedElection.value && selectedCandidate.value) {
-      // Update election status
-      const index = elections.value.findIndex(e => e.id === selectedElection.value.id);
-      if (index !== -1) {
-        elections.value[index].voted = true;
-      }
-  
-      // Add to voting history
-      const candidate = candidates.value.find(c => c.id === selectedCandidate.value);
-      if (candidate) {
-        const today = new Date();
-        const formattedDate = today.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-  
-        votingHistory.value.unshift({
-          election: selectedElection.value.name,
-          date: formattedDate,
-          candidate: candidate.name,
-          party: candidate.party,
-          partyColor: candidate.partyColor,
-          candidateAvatar: candidate.avatar,
-          color: candidate.partyColor
-        });
-      }
-  
-      // Show success dialog
-      showSuccessDialog.value = true;
-      
-      // Reset selection
-      selectedCandidate.value = null;
+
+    const candidate = candidates.value.find(c => c.id === selectedCandidate.value);
+    if (candidate) {
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      votingHistory.value.unshift({
+        election: selectedElection.value.name,
+        date: formattedDate,
+        candidate: candidate.name,
+        party: candidate.party,
+        partyColor: candidate.partyColor,
+        candidateAvatar: candidate.avatar,
+        color: candidate.partyColor
+      });
     }
-  };
+
+    // Show success dialog
+    showSuccessDialog.value = true;
+  }
+};
+
+
+  onMounted(() => {
+    fetchActiveElections();
+  });
   </script>
   
   <style>
-  /* Tailwind dark mode support */
-  .dark {
-    --v-theme-surface: #1e1e1e;
-    --v-theme-background: #121212;
-    color-scheme: dark;
-  }
-  
-  /* Custom styles */
   .v-timeline-item__body {
     margin-bottom: 12px;
   }
