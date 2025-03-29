@@ -115,6 +115,19 @@ namespace VotingAPI.Service
             }
             return response;
         }
-       
+
+        public async Task<DbResponse> EndElectionAsync(int electionId, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            DbResponse response = null;
+
+            SqlCommand cmd = dataAccess.CreateCommand("EndElection");
+            cmd.Parameters.AddWithValue("@ElectionId", electionId);
+            response = await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+
+            return response;
+        }
+
+
     }
 }

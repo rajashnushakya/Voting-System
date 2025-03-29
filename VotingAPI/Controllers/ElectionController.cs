@@ -56,5 +56,13 @@ namespace VotingAPI.Controllers
             return await electionService.AddElectionCentreAsync(electionCentre, cancellationToken);
 
         }
+
+        [HttpPost]
+        public async Task<DbResponse> EndElectionAsync(int electionId, CancellationToken cancellationToken)
+        {
+            ElectionService electionService = new ElectionService(_connectionString);
+            return await electionService.EndElectionAsync(electionId, cancellationToken);
+
+        }
     }
 }
