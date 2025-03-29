@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 using VotingAPI.Model;
 
 namespace VotingAPI.Service
@@ -33,5 +34,41 @@ namespace VotingAPI.Service
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
             
         }
+        public async Task<List<Candidate>> GetCandidatesAsync(int voterId, CancellationToken cancellationToken)
+        {
+            var candidates = new List<Candidate>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+                    using (var cmd = new SqlCommand("sp_get_candidates_by_voter_address", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@voterId", voterId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                candidates.Add(new Candidate
+                                {
+                                    
+                                    FullName = reader.GetString(reader.GetOrdinal("FullName"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching candidates.", ex);
+            }
+
+            return candidates;
+        }
+
     }
 }

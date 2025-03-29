@@ -81,6 +81,18 @@ namespace VotingAPI.Service
 
             return voterCount;
         }
+        public async Task<DbResponse> VoterEnrollment(int electionId, int voterId, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            DbResponse response = null;
+
+            SqlCommand cmd = dataAccess.CreateCommand("sp_voter_enrollment");
+            cmd.Parameters.AddWithValue("@electionid", electionId);
+            cmd.Parameters.AddWithValue("@voterid", voterId);
+            response = await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+
+            return response;
+        }
 
     }
 }

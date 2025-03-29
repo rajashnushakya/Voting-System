@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using VotingAPI.Model;
 using VotingAPI.Service;
 
@@ -22,5 +23,23 @@ namespace VotingAPI.Controllers
             CandidateService candidateService = new CandidateService(_connectionString);
             return await candidateService.AddCandidateAsync(candidate, cancellationToken);  
         }
+
+
+        [HttpGet("Candidates")]
+        public async Task<ActionResult<DbResponse>> GetCandidate(int voterId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                CandidateService candidateService = new CandidateService(_connectionString);
+                var candidates = await candidateService.GetCandidatesAsync(voterId, cancellationToken);
+                return Ok(candidates);
+            }
+            catch(Exception ex) 
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+
+        }
+
     }
 }

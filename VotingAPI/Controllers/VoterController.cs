@@ -39,6 +39,17 @@ namespace VotingAPI.Controllers
             return Ok(voterCount);
         }
 
+        [HttpPost]
+
+        [HttpPost]
+        public async Task<DbResponse> VoterEnrollmentAsync(int voterId, int electionId, CancellationToken cancellationToken)
+        {
+            VoterService voterService = new VoterService(_connectionString);
+            return await voterService.VoterEnrollment(electionId, voterId, cancellationToken);
+
+        }
+
+
         [HttpGet]
         public string Test()
         {
