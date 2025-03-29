@@ -18,12 +18,11 @@ interface RecentActivity {
   timestamp: string;
   icon: any;
 }
-
 interface Election {
   id: number;
   name: string;
-  startDate: string;
-  endDate: string;
+  startDate: string; 
+  endDate: string;    
   totalVotes: number;
 }
 
@@ -49,28 +48,48 @@ const ongoingElections = ref<Election[]>([]);
 
 const electionService = new ElectionService();
 const VoterService = new voterService();
-
 const fetchActiveElections = async () => {
   try {
     const response = await electionService.getActiveElection();
 
     ongoingElections.value = response.map((election: any) => {
-      const formatDate = (dateString: string) => {
+      const formatDateTime = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
+        return date.toISOString().slice(0, 16); // Returns "yyyy-mm-ddThh:mm"
       };
 
       return {
         id: election.id,
         name: election.name,
-        startDate: formatDate(election.start_date),
-        endDate: formatDate(election.end_date)
+        startDate: formatDateTime(election.start_date),  // Formatted as "yyyy-mm-ddThh:mm"
+        endDate: formatDateTime(election.end_date),    // Formatted as "yyyy-mm-ddThh:mm"
+        totalVotes: election.total_votes
       };
     });
   } catch (error) {
     console.error('Error fetching ongoing elections:', error);
   }
 };
+
+
+const endElection = async (id: number) => {
+  try {
+    const response = await electionService.endElection(id);
+
+    if (response) {
+      console.log('End election response:', response, id);
+
+    } else {
+      console.error('Election ending failed:', response);
+    }
+
+    return response; 
+  } catch (error) {
+    console.error('Error ending election:', error);
+    alert('Failed to end the election. Please try again.');
+  }
+};
+
 
 const fetchElectionCount = async () => {
   try {
@@ -101,16 +120,6 @@ const electionResults = ref<ElectionResult[]>([
   { id: 2, name: 'Local Community Council' },
 ])
 
-
-const viewDetails = (electionId: number) => {
-  // Implement view details logic
-  console.log('View details clicked for election', electionId)
-}
-
-const endElection = (electionId: number) => {
-  // Implement end election logic
-  console.log('End election clicked for election', electionId)
-}
 
 const viewDetailedResults = (resultId: number) => {
   // Implement view detailed results logic
@@ -170,9 +179,6 @@ const viewDetailedResults = (resultId: number) => {
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.startDate }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.endDate }}</td>
                 <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                  <button @click="viewDetails(election.id)" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm">
-                    View Details
-                  </button>
                   <button @click="endElection(election.id)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm">
                     End Election
                   </button>
