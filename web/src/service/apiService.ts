@@ -6,6 +6,7 @@ const apiClient = axios.create({
     headers: {
         "Content-Type": 'application/json',
         Accept: 'application/json',
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
     }
 });
 
@@ -20,6 +21,8 @@ apiClient.interceptors.response.use(
 export default class apiService {
     // GET request
     get(endpoint:string, params = {}) {
+
+       
         return apiClient.get(endpoint, { params });
     }
 
