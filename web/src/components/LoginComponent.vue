@@ -66,7 +66,9 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import loginService from "../service/loginService";
+import axios from "axios";
 
+const voterid = ref(null);
 const email = ref("");
 const password = ref("");
 const loginError = ref("");
@@ -74,18 +76,17 @@ const service = new loginService();
 const router = useRouter();
 
 const handleLogin = async () => {
-  loginError.value = ""; // Reset error message before attempting login
+  loginError.value = ""; 
 
   try {
     const response = await service.login(email.value, password.value);
 
     if (response.data.token) {
-      // Save token to localStorage
       localStorage.setItem("token", response.data.token);
       console.log("Token saved:", response.data.token);
-
-      // Redirect to dashboard or home page
-      router.push("/dashboard"); // Change "/dashboard" to your actual route
+      voterid.value = response.data.voterid;
+        // Navigate to a new route with the voteridf
+        router.push(`/dashboard/voter/${voterid.value}`);
     } else {
       throw new Error("Token not found in response");
     }
@@ -95,3 +96,4 @@ const handleLogin = async () => {
   }
 };
 </script>
+/voter
