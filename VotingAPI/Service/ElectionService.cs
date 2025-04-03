@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
+using Azure;
 
 namespace VotingAPI.Service
 {
@@ -124,6 +125,81 @@ namespace VotingAPI.Service
             SqlCommand cmd = dataAccess.CreateCommand("EndElection");
             cmd.Parameters.AddWithValue("@ElectionId", electionId);
             response = await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+
+            return response;
+        }
+
+        public async Task<List<Centre>> GetElectionCentre(int? electionId, CancellationToken cancellationToken)
+        {
+            var centres = new List<Centre>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+                    using (var cmd = new SqlCommand("GetCentresByElectionId", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        if (electionId.HasValue)
+                        {
+                            cmd.Parameters.AddWithValue("@ElectionId", electionId.Value);
+                        }
+                        else
+                        {
+                            cmd.Parameters.AddWithValue("@ElectionId", DBNull.Value);
+                        }
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                centres.Add(new Centre
+                                {
+                                    id = reader.GetInt32(reader.GetOrdinal("id")),
+                                    name = reader.GetString(reader.GetOrdinal("name")),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching centre.", ex);
+            }
+
+            return centres;
+        }
+
+        public async Task<DbResponse> InsertElectionCentreVoterAsync(int centreId, int voterId, CancellationToken cancellationToken)
+        {
+            DbResponse response = new DbResponse();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("InsertElectionCentreVoter", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        // Add parameters
+                        cmd.Parameters.AddWithValue("@CentreId", centreId);
+                        cmd.Parameters.AddWithValue("@VoterId", voterId);
+
+                        // Execute the stored procedure
+                        await cmd.ExecuteNonQueryAsync(cancellationToken);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error", ex);
+            }
 
             return response;
         }
