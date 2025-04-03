@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 using VotingAPI.Model;
 
 namespace VotingAPI.Service
@@ -57,6 +58,29 @@ namespace VotingAPI.Service
                 await command.Connection.CloseAsync();
             }
             return dbResponse;
+        }
+
+
+        public async Task<DataTable> ExecuteReader(CancellationToken cancellationToken)
+        {
+            try
+            {
+                DataTable dataTable = new DataTable();
+                await command.Connection.OpenAsync();
+                SqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+                dataTable.Load(reader);
+                return dataTable;
+               
+
+            }
+            catch (Exception )
+            {
+                throw;
+            }
+            finally
+            {
+                await command.Connection.CloseAsync();
+            }
         }
     }
 }

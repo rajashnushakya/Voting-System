@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.Design;
 using VotingAPI.Model;
@@ -22,6 +23,7 @@ namespace VotingAPI.Controllers
 
         // Get all districts
         [HttpGet("districts")]
+        [Authorize]
         public async Task<ActionResult<List<District>>> GetAllDistricts(CancellationToken cancellationToken)
         {
             try
