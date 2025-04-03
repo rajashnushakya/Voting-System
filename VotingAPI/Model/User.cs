@@ -18,4 +18,12 @@ namespace VotingAPI.Model
         }
     }
 
+
+    public class AuthResponse
+    {
+        public string Token { get; set; }
+        public DateTime ExpiryDate { get; set; }
+        public string voterid { get; set; }
+    }
+
 }
