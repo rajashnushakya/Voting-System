@@ -14,9 +14,12 @@ namespace VotingAPI.Controllers
     {
         private readonly string _connectionString;
 
+        public IConfiguration Configuration { get; }
+
         public VoterController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("VotingDb");
+            Configuration = configuration;
         }
 
 
@@ -48,6 +51,14 @@ namespace VotingAPI.Controllers
             return await voterService.VoterEnrollment(electionId, voterId, cancellationToken);
 
         }
+
+        [HttpPost]
+        public async Task<AuthResponse> LoginAsync( string email, string password, CancellationToken cancellationToken)
+        {
+            VoterService voterService = new VoterService(_connectionString);
+            return await voterService.VoterLogin(email, password, Configuration, cancellationToken);
+        }
+
 
 
         [HttpGet]
