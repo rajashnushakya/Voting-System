@@ -55,7 +55,19 @@ namespace VotingAPI.Service
                                 candidates.Add(new Candidate
                                 {
                                     
-                                    FullName = reader.GetString(reader.GetOrdinal("FullName"))
+                                    FullName = reader.GetString(reader.GetOrdinal("FullName")),
+                                    PartyId = reader.GetInt32(reader.GetOrdinal("PartyId")),
+                                    FatherName = reader.GetString(reader.GetOrdinal("FatherName")),
+                                    MotherName = reader.GetString(reader.GetOrdinal("MotherName")),
+                                    GrandFatherName = reader.GetString(reader.GetOrdinal("GrandFatherName")),
+                                    GrandMotherName = reader.GetString(reader.GetOrdinal("GrandMotherName")),
+                                    Dateofbirth = reader.GetFieldValue<DateOnly>(reader.GetOrdinal("Dateofbirth")),
+                                    gender = reader.GetString(reader.GetOrdinal("gender")),
+                                    ElectionId = reader.GetInt32(reader.GetOrdinal("ElectionId")),
+                                    DistrictId = reader.GetInt32(reader.GetOrdinal("DistrictId")),
+                                    MunicipalityId = reader.GetInt32(reader.GetOrdinal("MunicipalityId")),
+                                    WardId = reader.GetInt32(reader.GetOrdinal("WardId"))
+
                                 });
                             }
                         }
