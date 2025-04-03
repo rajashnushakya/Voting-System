@@ -47,9 +47,10 @@ const routes = [
     component:()=>import ('./components/Result.vue'),
   },
   {
-    path:'/dashboard/voter',
+    path:'/dashboard/voter/:voterid',
     name:'voter-dashboard',
     component:()=>import ('./components/VoterDashboard.vue'),
+    props: true,
   },
 
 
