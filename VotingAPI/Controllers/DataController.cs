@@ -23,7 +23,7 @@ namespace VotingAPI.Controllers
 
         // Get all districts
         [HttpGet("districts")]
-        [Authorize]
+        
         public async Task<ActionResult<List<District>>> GetAllDistricts(CancellationToken cancellationToken)
         {
             try
