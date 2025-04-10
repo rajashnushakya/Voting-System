@@ -32,13 +32,14 @@
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn
-                  small
-                  color="primary"
-                  @click="activeTab = 'enrollment'; selectedElection = item"
-                  :disabled="item.enrolled"
-                >
-                  {{ item.enrolled ? 'Enrolled' : 'Enroll' }}
-                </v-btn>
+                    small
+                    color="primary"
+                    :disabled="item.enrolled"
+                    @click="navigateToEnrollment(item.id)"
+                  >
+                    {{ item.enrolled ? 'Enrolled' : 'Enroll' }}
+                  </v-btn>
+
                 <v-btn
                   small
                   color="success"
@@ -114,14 +115,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import ElectionService from '../service/electionService';
 import ElectionCenterEnrollment from './ElectionCenterEnrollment.vue';
 import VotingInterface from './VotingInterface.vue';
 import VotingHistory from './VotingHistory.vue';
 
-const route = useRoute();
+const router = useRouter();
 
 interface Election {
   id: number;
@@ -129,8 +130,8 @@ interface Election {
   startDate: string;
   endDate: string;
   totalVotes: number;
-  status: string;  
-  enrolled?: boolean; 
+  status: string;
+  enrolled?: boolean;
   voted?: boolean;
   electionCenter?: string;
 }
@@ -163,42 +164,7 @@ const votingHistory = ref([
     candidateAvatar: 'https://randomuser.me/api/portraits/women/22.jpg',
     color: 'purple'
   },
-  {
-    election: 'State Referendum 2022',
-    date: 'June 15, 2022',
-    candidate: 'Proposition A: Infrastructure Bond',
-    party: 'N/A',
-    partyColor: 'grey',
-    candidateAvatar: 'https://via.placeholder.com/150?text=Prop+A',
-    color: 'grey'
-  },
-  {
-    election: 'Midterm Elections 2022',
-    date: 'November 8, 2022',
-    candidate: 'Sarah Johnson',
-    party: 'Progressive Party',
-    partyColor: 'blue',
-    candidateAvatar: 'https://randomuser.me/api/portraits/women/23.jpg',
-    color: 'blue'
-  },
-  {
-    election: 'School Board Election 2023',
-    date: 'April 4, 2023',
-    candidate: 'David Chen',
-    party: 'Education First',
-    partyColor: 'teal',
-    candidateAvatar: 'https://randomuser.me/api/portraits/men/67.jpg',
-    color: 'teal'
-  },
-  {
-    election: 'Special Election: Transit Funding 2023',
-    date: 'September 12, 2023',
-    candidate: 'Proposition B: Transit Expansion',
-    party: 'N/A',
-    partyColor: 'grey',
-    candidateAvatar: 'https://via.placeholder.com/150?text=Prop+B',
-    color: 'orange'
-  }
+  // Add other history entries as needed
 ]);
 
 // Table headers
@@ -227,6 +193,7 @@ const getStatusColor = (status: string) => {
 const fetchActiveElections = async () => {
   try {
     const response = await electionService.getActiveElection();
+    console.log('Active Elections:', response);
 
     ongoingElections.value = response.map((election: any) => {
       const formatDate = (dateString: string) => {
@@ -294,6 +261,9 @@ const handleEnrollmentComplete = (data: { electionId: number, centerId: string }
   // Switch back to elections tab
   activeTab.value = 'elections';
 };
+const navigateToEnrollment = (electionId: number) => {
+  router.push({ name: 'voter-enroll', params: { electionId } });
+};
 
 const handleVoteCast = (voteData: any) => {
   // Update election status
@@ -332,7 +302,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .v-timeline-item__body {
   margin-bottom: 12px;
 }
@@ -349,4 +319,3 @@ onMounted(() => {
   margin-inline-end: 8px;
 }
 </style>
-
