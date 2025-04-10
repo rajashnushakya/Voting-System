@@ -135,10 +135,10 @@ const fetchDistricts = async () => {
     
   }
 };
-const fetchMunicipalities = async () => {
+const fetchMunicipalities = async (districtId) => {
   try {
     if (!formData.district) return;
-    const url = `districtId=${formData.district}`; 
+    const url = `${formData.district}`; 
     const data = await electionCentreService.getMunicipalities(url);
     municipalities.value = Array.isArray(data) ? data : [];
     formData.municipality = null; // Reset municipality selection
@@ -170,7 +170,7 @@ const getCentreName = async () => {
 const fetchWards = async (municipalityId) => {
   try {
     if (!formData.municipality) return;
-    const url = `municipalityId=${formData.municipality}`;
+    const url = `${formData.municipality}`;
     const data = await electionCentreService.getWards(url);
     wards.value = Array.isArray(data) ? data : [];
     formData.ward = null; // Reset ward selection
