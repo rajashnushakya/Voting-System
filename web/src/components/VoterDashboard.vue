@@ -40,75 +40,24 @@
                     {{ item.enrolled ? 'Enrolled' : 'Enroll' }}
                   </v-btn>
 
-                <v-btn
-                  small
-                  color="success"
-                  class="ml-2"
-                  :disabled="!item.enrolled || item.status !== 'Open' || item.voted"
-                  @click="activeTab = 'voting'; selectedElection = item"
-                >
-                  Vote
-                </v-btn>
+                  <v-btn
+  small
+  color="success"
+  class="ml-2"
+  :disabled="!item.enrolled || item.status !== 'Open' || item.voted"
+  @click="goToVoting(item)"
+>
+  Vote
+</v-btn>
+
+
               </template>
             </v-data-table>
           </v-card-text>
         </v-card>
 
-        <!-- Enrollment Interface -->
-        <ElectionCenterEnrollment 
-          v-if="activeTab === 'enrollment'"
-          :election-id="selectedElection ? selectedElection.id : ''"
-          @update:active-tab="activeTab = $event"
-          @enrollment-complete="handleEnrollmentComplete"
-        />
 
-        <!-- Voting Interface -->
-        <VotingInterface
-          v-if="activeTab === 'voting'"
-          :selected-election="selectedElection"
-          @update:active-tab="activeTab = $event"
-          @vote-cast="handleVoteCast"
-        />
 
-        <!-- Voting History -->
-        <VotingHistory
-          v-if="activeTab === 'history'"
-          :voting-history="votingHistory"
-          @update:active-tab="activeTab = $event"
-        />
-
-        <!-- Success Dialog -->
-        <v-dialog v-model="showSuccessDialog" max-width="400">
-          <v-card>
-            <v-card-title class="text-h5 bg-success text-white">
-              Vote Cast Successfully
-            </v-card-title>
-            <v-card-text class="pt-4">
-              <div class="text-center">
-                <v-icon size="x-large" color="success">mdi-check-circle</v-icon>
-                <div class="text-h6 mt-2">Thank you for voting!</div>
-                <div class="text-body-1 mt-2">
-                  Your vote has been recorded successfully.
-                </div>
-              </div>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="primary"
-                @click="showSuccessDialog = false; activeTab = 'elections'"
-              >
-                Back to Elections
-              </v-btn>
-              <v-btn
-                color="primary"
-                @click="showSuccessDialog = false; activeTab = 'history'"
-              >
-                View History
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
@@ -118,9 +67,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import ElectionService from '../service/electionService';
-import ElectionCenterEnrollment from './ElectionCenterEnrollment.vue';
-import VotingInterface from './VotingInterface.vue';
-import VotingHistory from './VotingHistory.vue';
+
 
 const router = useRouter();
 
@@ -143,6 +90,7 @@ const ongoingElections = ref<Election[]>([]);
 const activeTab = ref('elections');
 const selectedElection = ref<Election | null>(null);
 const showSuccessDialog = ref(false);
+
 
 // Voting history with enhanced data
 const votingHistory = ref([
@@ -189,11 +137,21 @@ const getStatusColor = (status: string) => {
       return 'grey';
   }
 };
+const goToVoting = (election: any) => {
+  selectedElection.value = election;
+  activeTab.value = 'voting'; // Optional if you're using tabs
+
+  // Navigate to a route
+  router.push({
+    name: 'vote', // 👈 Your route name from router/index.js
+  });
+};
 
 const fetchActiveElections = async () => {
   try {
     const response = await electionService.getActiveElection();
-    console.log('Active Elections:', response);
+
+    const enrolledIds = JSON.parse(localStorage.getItem('enrolledElections') || '[]');
 
     ongoingElections.value = response.map((election: any) => {
       const formatDate = (dateString: string) => {
@@ -206,96 +164,55 @@ const fetchActiveElections = async () => {
         name: election.name,
         startDate: formatDate(election.start_date),
         endDate: formatDate(election.end_date),
-        status: 'Open', // You might want to calculate this based on dates
-        enrolled: false,
-        voted: false
+        status: 'Open', // or compute based on date
+        enrolled: enrolledIds.includes(election.id),
+        voted: false // you could persist this too if needed
       };
     });
+
   } catch (error) {
     console.error('Error fetching ongoing elections:', error);
-    
-    // Fallback mock data if API fails
-    ongoingElections.value = [
-      {
-        id: 1,
-        name: "2024 Presidential Election",
-        startDate: "2024-11-01",
-        endDate: "2024-11-08",
-        totalVotes: 0,
-        status: "Upcoming",
-        enrolled: false,
-        voted: false
-      },
-      {
-        id: 2,
-        name: "Local City Council Election",
-        startDate: "2024-06-01",
-        endDate: "2024-06-15",
-        totalVotes: 0,
-        status: "Open",
-        enrolled: false,
-        voted: false
-      },
-      {
-        id: 3,
-        name: "State Referendum",
-        startDate: "2024-07-10",
-        endDate: "2024-07-24",
-        totalVotes: 0,
-        status: "Upcoming",
-        enrolled: false,
-        voted: false
+  }
+};
+
+
+const navigateToEnrollment = async (electionId: number) => {
+  try {
+    const voterId = localStorage.getItem('voterid');
+
+    if (!voterId) {
+      alert("Voter ID not found. Please log in again.");
+      return;
+    }
+
+    await electionService.enrollVoter(voterId, electionId);
+
+    const election = ongoingElections.value.find(e => e.id === electionId);
+    if (election) {
+      election.enrolled = true;
+
+      // 👇 Save to localStorage
+      let enrolled = JSON.parse(localStorage.getItem('enrolledElections') || '[]');
+      if (!enrolled.includes(electionId)) {
+        enrolled.push(electionId);
+        localStorage.setItem('enrolledElections', JSON.stringify(enrolled));
       }
-    ];
+    }
+
+    alert('Enrollment successful!');
+
+    // Go to the enrollment center page
+    router.push({ name: 'voter-enroll', params: { electionId } });
+
+  } catch (error) {
+    console.error('Enrollment error:', error);
+    alert('Failed to enroll. Please try again.');
   }
 };
 
-const handleEnrollmentComplete = (data: { electionId: number, centerId: string }) => {
-  // Update the election status to enrolled
-  const index = ongoingElections.value.findIndex(e => e.id === data.electionId);
-  if (index !== -1) {
-    ongoingElections.value[index].enrolled = true;
-    ongoingElections.value[index].electionCenter = data.centerId;
-  }
-  
-  // Switch back to elections tab
-  activeTab.value = 'elections';
-};
-const navigateToEnrollment = (electionId: number) => {
-  router.push({ name: 'voter-enroll', params: { electionId } });
-};
 
-const handleVoteCast = (voteData: any) => {
-  // Update election status
-  const electionIndex = ongoingElections.value.findIndex(e => e.id === voteData.electionId);
-  if (electionIndex !== -1) {
-    ongoingElections.value[electionIndex].voted = true;
-  }
 
-  // Add to voting history
-  const election = ongoingElections.value.find(e => e.id === voteData.electionId);
-  if (election) {
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
 
-    votingHistory.value.unshift({
-      election: election.name,
-      date: formattedDate,
-      candidate: voteData.candidateName,
-      party: voteData.candidateParty,
-      partyColor: voteData.candidatePartyColor,
-      candidateAvatar: voteData.candidateAvatar,
-      color: voteData.candidatePartyColor
-    });
-  }
-
-  // Show success dialog
-  showSuccessDialog.value = true;
-};
 
 onMounted(() => {
   fetchActiveElections();
