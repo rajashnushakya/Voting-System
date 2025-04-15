@@ -96,5 +96,16 @@ export default class ElectionService {
             throw new Error('Failed to end the election');
         }
     }
+
+      async enrollVoter(voterId: string, electionId: number): Promise<void> {
+        const url = `api/Voter/VoterEnrollment?voterId=${voterId}&electionId=${electionId}`;
+      
+        try {
+          await this.#api.post(url);
+        } catch (error) {
+          console.error('Error enrolling voter:', error);
+          throw error;
+        }
+      }
     
 }
