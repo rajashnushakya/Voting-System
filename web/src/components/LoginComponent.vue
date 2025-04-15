@@ -30,9 +30,6 @@
         <div>
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-            <div class="text-sm">
-              <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-            </div>
           </div>
           <div class="mt-2">
             <input
@@ -60,15 +57,12 @@
     </div>
 
   </div>
-</template>
-
-<script setup lang="ts">
+</template><script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import loginService from "../service/loginService";
-import axios from "axios";
 
-const voterid = ref(null);
+
 const email = ref("");
 const password = ref("");
 const loginError = ref("");
@@ -84,9 +78,13 @@ const handleLogin = async () => {
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
       console.log("Token saved:", response.data.token);
-      voterid.value = response.data.voterid;
-        // Navigate to a new route with the voteridf
-        router.push(`/dashboard/voter/${voterid.value}`);
+
+      // Store the voterid in localStorage
+      localStorage.setItem("voterid", response.data.voterid);
+      console.log("Voter ID saved:", response.data.voterid);
+      
+      // Navigate to the dashboard
+      router.push(`/dashboard/voter`);
     } else {
       throw new Error("Token not found in response");
     }
@@ -96,4 +94,3 @@ const handleLogin = async () => {
   }
 };
 </script>
-/voter
