@@ -82,15 +82,8 @@ export default class ElectionCentreService {
     }
   }
 
-  async enrollVoter(electionId: number, centerId: number): Promise<void> {
-    const url = `/Election/Enroll`;
-    try {
-      await this.#api.post(url, { electionId, centerId });
-    } catch (error) {
-      console.error('Error enrolling voter:', error);
-      throw error;
-    }
-  }
+
+  
 
   async getCentersByElection(electionId: string): Promise<ElectionCenter[]> {
     const url = `api/Election/ElectionCentre?electionId=${electionId}`;
