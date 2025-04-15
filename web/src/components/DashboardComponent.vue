@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Previous script content remains the same
 import { ref, onMounted } from 'vue'
 import MenuComponent from './childcomponents/MenuComponent.vue'
 import { VoteIcon, UsersIcon, CheckSquareIcon, FileTextIcon, UserIcon } from 'lucide-vue-next'
@@ -43,6 +44,40 @@ const recentActivities = ref<RecentActivity[]>([
   { id: 3, description: 'New voter registered', timestamp: '1 day ago', icon: UserIcon },
 ])
 
+// Track which election's menu is open by ID
+const openMenuId = ref<number | null>(null);
+// Store menu position
+const menuPosition = ref({ top: 0, left: 0 });
+
+const toggleMenu = (electionId: number, event: MouseEvent) => {
+  // Get the button position
+  const button = event.currentTarget as HTMLElement;
+  const rect = button.getBoundingClientRect();
+  
+  // Set the menu position
+  menuPosition.value = {
+    top: rect.bottom + window.scrollY,
+    left: rect.left + window.scrollX
+  };
+  
+  if (openMenuId.value === electionId) {
+    openMenuId.value = null; // Close if already open
+  } else {
+    openMenuId.value = electionId; // Open this election's menu
+  }
+};
+
+const startElection = (electionId: number) => {
+  openMenuId.value = null;
+  alert(`Start Election clicked for election ID: ${electionId}`);
+  // Add logic here
+};
+
+const UpdateElection = (electionId: number) => {
+  openMenuId.value = null;
+  alert(`Update Election clicked for election ID: ${electionId}`);
+  // Add logic here
+};
 
 const ongoingElections = ref<Election[]>([]);
 
@@ -74,11 +109,13 @@ const fetchActiveElections = async () => {
 
 const endElection = async (id: number) => {
   try {
+    openMenuId.value = null;
     const response = await electionService.endElection(id);
 
     if (response) {
       console.log('End election response:', response, id);
-
+      // Refresh the elections list after ending an election
+      fetchActiveElections();
     } else {
       console.error('Election ending failed:', response);
     }
@@ -109,10 +146,23 @@ const fetchVoterCount = async () => {
   }
 }
 
+// Close menu when clicking outside
+const closeMenu = () => {
+  openMenuId.value = null;
+};
+
 onMounted(() => {
   fetchActiveElections();
   fetchElectionCount();
   fetchVoterCount();
+  
+  // Add event listener to close menu when clicking outside
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.menu-button') && !target.closest('.menu-dropdown')) {
+      closeMenu();
+    }
+  });
 });
 
 const electionResults = ref<ElectionResult[]>([
@@ -125,10 +175,8 @@ const viewDetailedResults = (resultId: number) => {
   // Implement view detailed results logic
   console.log('View detailed results clicked for', resultId)
 }
-
-
-
 </script>
+
 <template>
   <div class="min-h-screen bg-gray-100">
     <MenuComponent></MenuComponent>
@@ -145,8 +193,6 @@ const viewDetailedResults = (resultId: number) => {
           </div>
         </div>
       </section>
-
-
 
       <!-- Recent Activities Section -->
       <section class="bg-white rounded-lg shadow p-6 mb-8">
@@ -179,8 +225,11 @@ const viewDetailedResults = (resultId: number) => {
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.startDate }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ election.endDate }}</td>
                 <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                  <button @click="endElection(election.id)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded text-sm">
-                    End Election
+                  <button 
+                    @click="toggleMenu(election.id, $event)" 
+                    class="p-2 text-gray-600 hover:text-black menu-button"
+                  >
+                    ⋮
                   </button>
                 </td>
               </tr>
@@ -207,6 +256,22 @@ const viewDetailedResults = (resultId: number) => {
           </div>
         </div>
       </section>
+    </div>
+    
+    <!-- Dropdown menu positioned absolutely in the document -->
+    <div 
+      v-if="openMenuId !== null"
+      class="fixed w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 menu-dropdown"
+      :style="{
+        top: menuPosition.top + 'px',
+        left: menuPosition.left + 'px'
+      }"
+    >
+      <div class="py-1">
+        <button @click="startElection(openMenuId)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">Start Election</button>
+        <button @click="endElection(openMenuId)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">End Election</button>
+        <button @click="UpdateElection(openMenuId)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">Update</button>
+      </div>
     </div>
   </div>
 </template>
