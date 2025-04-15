@@ -91,15 +91,13 @@
   import { onMounted, ref, defineEmits, reactive, computed, watch } from 'vue';
   import { defineProps } from 'vue';
   import Centre from '../../service/centreService';
-  import ElectionCentreService from '../../service/electionCentreService';
   import ElectionService from '../../service/electionService';
   import PartyService from '../../service/partyService';
-  import CandidateService from '../../service/candidateService';
+  import candidateService from '../../service/candidateService';
   
-  const electionCentreService = new ElectionCentreService();
   const electionService = new ElectionService();
   const partyService = new PartyService();
-  const candidateService = new CandidateService();
+  const service = new candidateService();
 
   
   const tableData = ref([]);
@@ -161,7 +159,7 @@
   const fetchMunicipalities = async () => {
     try {
         if (!formData.districtId) return;
-        const data = await electionCentreService.getMunicipalities(`districtId=${formData.districtId}`);
+        const data = await centreService.getMunicipalities(formData.districtId);
         municipalities.value = Array.isArray(data) ? data : [];
         formData.municipalityId = null; 
         wards.value = [];
@@ -174,7 +172,7 @@
 const fetchWards = async () => {
     try {
         if (!formData.municipalityId) return; 
-        const data = await electionCentreService.getWards(`municipalityId=${formData.municipalityId}`);
+        const data = await centreService.getWards(formData.municipalityId);
         wards.value = Array.isArray(data) ? data : [];
         formData.wardId = null; 
     } catch (error) {
@@ -206,7 +204,7 @@ watch(() => formData.municipalityId, () => fetchWards());
   
   const Submit = async () => {
   try {
-    await candidateService.addCandidate(formData); 
+    await service.addCandidate(formData); 
     closeDialog();
   } catch (error) {
     console.error("Error adding candidate:", error);
