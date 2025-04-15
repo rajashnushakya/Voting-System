@@ -91,4 +91,17 @@ export default class voterService {
             throw error;
         }
     }
+
+    async enrollVoterToElectionCenter(voterId: string, centreId: string) {
+        const url = `api/Election/VoterElectionCentreEnrollment?centreId=${centreId}&voterId=${voterId}`;
+        try {
+            const response = await this.#api.post(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error enrolling voter to election center:', error);
+            throw error;
+        }
+    }
 }
+
+
