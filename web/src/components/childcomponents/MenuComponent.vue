@@ -59,6 +59,8 @@
     <AddCentre v-model:dialog="showDialog" />
     <AddElectionCentre v-model:EdialogActive="EdialogActive" />
     <AddCandidate v-model:CdialogActive="CdialogActive" />
+    <ChangeCredentials v-model:settingActive="settingActive" />
+
 
 
   </div>
@@ -71,12 +73,13 @@ import AddElectionCentre from './AddElectionCentre.vue';
 import { Disclosure, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 import AddCandidate from './AddCandidate.vue';
-
+import ChangeCredentials  from './ChangeCredentials.vue';
 
 const dialogActive = ref(false);
 const showDialog = ref(false);
 const  EdialogActive= ref(false);
 const CdialogActive = ref(false);
+const settingActive = ref(false);
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', current: false },
@@ -117,6 +120,9 @@ function setCurrentItem(item) {
   }
   if (item.name === 'Add Candidate') {
     CdialogActive.value = true;
+  }
+  if (item.name === 'Setting') {
+    settingActive.value = true;
   }
 }
 </script>
