@@ -59,6 +59,13 @@ const routes = [
     props: true,
   },
 
+    {
+      path: '/vote',
+      name: 'vote',
+      component:()=> import('./components/VotingInterface.vue'),
+    }
+  
+
 
 
 ];
