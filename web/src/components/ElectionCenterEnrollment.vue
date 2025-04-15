@@ -65,9 +65,9 @@
       </v-card-text>
 
       <v-card-actions class="px-4 pb-4">
-        <v-btn variant="outlined" @click="emit('update:activeTab', 'elections')">Back to Elections</v-btn>
+        <v-btn variant="outlined" @click="navigateToEnrollment">Back to Elections</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" :disabled="!selectedCenter" @click="handleEnroll">Enroll at Selected Center</v-btn>
+        <v-btn color="primary" :disabled="!selectedCenter" @click="confirmEnrollment">Enroll at Selected Center</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -110,9 +110,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="showSuccessDialog = false; emit('update:activeTab', 'elections')">
-            Back to Elections
-          </v-btn>
+          <v-btn variant="outlined" @click="navigateToEnrollment">Back to Elections</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -122,10 +120,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import ElectionCentreService from '../service/electionCentreService';
+import { useRouter } from 'vue-router';
 
+import voterService from '../service/voterService';
+
+const router = useRouter();
 // Props & Emits
 const props = defineProps<{ electionId: string }>();
 const emit = defineEmits(['update:activeTab', 'enrollment-complete']);
+const voterEnrollment = new voterService();
 
 // State
 const electionCentreService = new ElectionCentreService();
@@ -135,6 +138,10 @@ const showConfirmation = ref(false);
 const showSuccessDialog = ref(false);
 const electionCenters = ref<any[]>([]);
 const loading = ref(true);
+
+const navigateToEnrollment = () => {
+  router.push({ name: 'voter-dashboard' });
+};
 
 // Fetch election centers from API
 onMounted(async () => {
@@ -164,26 +171,42 @@ const selectedCenterName = computed(() => {
   return center ? center.name : '';
 });
 
-// Methods
-const handleEnroll = () => {
-  if (selectedCenter.value) showConfirmation.value = true;
-};
+
 
 const confirmEnrollment = async () => {
   try {
     showConfirmation.value = false;
 
-    await electionCentreService.getCentersByElection(props.electionId);
+    // Get the voterId from localStorage
+    const voterIdFromLocalStorage = localStorage.getItem("voterid");
+
+    if (!voterIdFromLocalStorage) {
+      throw new Error("Voter ID not found in localStorage");
+    }
+
+    const selectedCenterObj = electionCenters.value.find(
+      (center) => center.name === selectedCenterName.value
+    );
+    if (!selectedCenterObj) {
+      throw new Error("Selected center not found");
+    }
+
+    // Perform the enrollment API call here
+    await voterEnrollment.enrollVoterToElectionCenter(
+      voterIdFromLocalStorage, 
+      selectedCenterObj.id 
+    );
 
     showSuccessDialog.value = true;
 
     emit('enrollment-complete', {
       electionId: props.electionId,
-      centerId: selectedCenter.value,
+      centerId: selectedCenterObj.id,
     });
   } catch (err) {
     console.error('Enrollment failed:', err);
-    // You might want to show an error dialog here
+    // Optionally show an error dialog
+    alert('Enrollment failed. Please try again.');
   }
 };
 </script>
