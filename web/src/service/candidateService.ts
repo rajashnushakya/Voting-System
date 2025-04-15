@@ -1,6 +1,5 @@
 import apiService from "./apiService";
 
-
 export interface CandidateData {
     id: number;
     fullname: string;
@@ -17,21 +16,33 @@ export interface CandidateData {
     electionId: string | null;
 }
 
-export default class Candidate {
+export default class candidateService {
 
     #api: apiService;
+
     constructor() {
         this.#api = new apiService();
     }
 
-        async addCandidate(CandidateData: CandidateData) {
-            const url = `api/Candidate`;
-            try {
-                const response = await this.#api.post(url, CandidateData);
-                return response;
-            } catch (error) {
-                console.error('Error adding centre:', error);
-                throw error;
-            }
+    async addCandidate(candidateData: CandidateData) {
+        const url = `api/Candidate`;
+        try {
+            const response = await this.#api.post(url, candidateData);
+            return response;
+        } catch (error) {
+            console.error('Error adding candidate:', error);
+            throw error;
         }
+    }
+
+    async getCandidatesByVoterId(voterId: string) {
+        const url = `/api/Candidate/Candidates?voterId=${voterId}`;
+        try {
+            const response = await this.#api.get(url);
+            return response;
+        } catch (error) {
+            console.error("Error fetching candidates:", error);
+            throw error;
+        }
+    }
 }
