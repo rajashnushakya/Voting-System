@@ -46,7 +46,7 @@ export default class Centre {
     async getMunicipalities(districtId?: number) {
         const url = `api/Data/municipalities`;
         try {
-            const response = await this.#api.get(url, {   districtId } );
+            const response = await this.#api.get(url, {  districtId } );
             return response.data;
         } catch (error) {
             console.error('Error fetching municipalities:', error);
