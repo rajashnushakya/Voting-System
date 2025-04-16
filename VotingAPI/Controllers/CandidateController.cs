@@ -17,7 +17,7 @@ namespace VotingAPI.Controllers
             _connectionString = configuration.GetConnectionString("VotingDb");
         }
 
-        [HttpPost]
+        [HttpPost()]
         public async Task<DbResponse> RegisterCandidate(Candidate candidate, CancellationToken cancellationToken)
         {
             CandidateService candidateService = new CandidateService(_connectionString);
@@ -39,6 +39,34 @@ namespace VotingAPI.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
 
+        }
+        [HttpPost("CandidateCentre")]
+        public async Task<DbResponse> CandidateCentreAsync(List<CandidateCentre> candidateCentre, CancellationToken cancellationToken)
+        {
+            CandidateService candidateService = new CandidateService(_connectionString);
+            return await candidateService.centreCandidateAsync(candidateCentre, cancellationToken);
+
+        }
+
+        [HttpGet("GetCandidateByElection")]
+        public async Task<ActionResult<List<Candidate>>> GetCandidatesByElectionId(int electionId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var candidateService = new CandidateService(_connectionString);
+                var candidates = await candidateService.GetCandidatesByElectionIdAsync(electionId, cancellationToken);
+
+                if (candidates == null || candidates.Count == 0)
+                {
+                    return NotFound("No candidates found for this election ID.");
+                }
+
+                return Ok(candidates);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
     }
