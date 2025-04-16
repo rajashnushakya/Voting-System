@@ -60,6 +60,7 @@
     <AddElectionCentre v-model:EdialogActive="EdialogActive" />
     <AddCandidate v-model:CdialogActive="CdialogActive" />
     <ChangeCredentials v-model:settingActive="settingActive" />
+    <CandidateCentre v-model:ECdialogActive="ECdialogActive" />
 
 
 
@@ -74,12 +75,14 @@ import { Disclosure, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/v
 import { ChevronDownIcon } from '@heroicons/vue/20/solid';
 import AddCandidate from './AddCandidate.vue';
 import ChangeCredentials  from './ChangeCredentials.vue';
+import CandidateCentre from './CandidateCentre.vue';
 
 const dialogActive = ref(false);
 const showDialog = ref(false);
 const  EdialogActive= ref(false);
 const CdialogActive = ref(false);
 const settingActive = ref(false);
+const ECdialogActive = ref(false);
 
 const navigation = [
   { name: 'Dashboard', href: 'dashboard', current: false },
@@ -95,7 +98,13 @@ const navigation = [
   },
   { name: 'Result', href: 'result', current: false },
   { name: 'Setting', href: '#', current: false },
-  {name: 'Add Candidate', href: '#', current: false},
+  {name: 'Candidate', 
+  href: '#', 
+  current: false,
+  children: [
+    {name: 'Add Candidate'},
+    {name: 'Enroll Candidate'}
+  ]},
 ];
 
 function setCurrentItem(item) {
@@ -120,6 +129,9 @@ function setCurrentItem(item) {
   }
   if (item.name === 'Add Candidate') {
     CdialogActive.value = true;
+  }
+  if (item.name === 'Enroll Candidate') {
+    ECdialogActive.value = true;
   }
   if (item.name === 'Setting') {
     settingActive.value = true;
