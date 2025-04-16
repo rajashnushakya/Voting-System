@@ -1,15 +1,130 @@
+
+<template>
+  <v-dialog
+    :model-value="Settingdialog"
+    max-width="600px"
+    @update:modelValue="updateSettingDialog"
+  >
+  
+      <v-card title="Update Admin Credentials">
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <!-- Email Section -->
+              <v-col cols="12">
+                <div class="d-flex align-center justify-space-between mb-2">
+                  <div class="text-subtitle-1">Email Address</div>
+                  <v-checkbox
+                    v-model="isChangingEmail"
+                    label="Update email"
+                    hide-details
+                    density="compact"
+                  ></v-checkbox>
+                </div>
+                <v-text-field
+                  v-model="formData.email"
+                  label="Email"
+                  type="email"
+                  :disabled="!isChangingEmail"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-text-field>
+              </v-col>
+  
+              <!-- Password Section -->
+              <v-col cols="12">
+                <div class="d-flex align-center justify-space-between mb-2">
+                  <div class="text-subtitle-1">Password</div>
+                  <v-checkbox
+                    v-model="isChangingPassword"
+                    label="Update password"
+                    hide-details
+                    density="compact"
+                  ></v-checkbox>
+                </div>
+              </v-col>
+  
+              <!-- Current Password -->
+              <v-col cols="12" v-if="isChangingPassword">
+                <v-text-field
+                  v-model="formData.currentPassword"
+                  label="Current Password"
+                  type="password"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-text-field>
+              </v-col>
+  
+              <!-- New Password -->
+              <v-col cols="12" v-if="isChangingPassword">
+                <v-text-field
+                  v-model="formData.newPassword"
+                  label="New Password"
+                  type="password"
+                  variant="outlined"
+                  density="comfortable"
+                  hint="Password must be at least 8 characters"
+                ></v-text-field>
+              </v-col>
+  
+              <!-- Confirm Password -->
+              <v-col cols="12" v-if="isChangingPassword">
+                <v-text-field
+                  v-model="formData.confirmPassword"
+                  label="Confirm New Password"
+                  type="password"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+  
+          <v-alert
+            v-if="validationMessage"
+            type="error"
+            density="compact"
+            variant="outlined"
+            class="mt-2"
+          >{{ validationMessage }}</v-alert>
+        </v-card-text>
+  
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue-darken-1" variant="text" @click="closeDialog">Cancel</v-btn>
+          <v-btn
+            color="blue-darken-1"
+            variant="text"
+            @click="submit"
+            :loading="isSubmitting"
+            :disabled="!isFormValid"
+          >
+            Save Changes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </template>
 <script setup lang="ts">
 import { ref, computed, watch} from 'vue';
   import { defineProps } from 'vue';
 // Props
-const props = defineProps({
 
+
+const Settingdialog = ref(false);
+
+
+
+const props = defineProps({
   settingActive: Boolean,
+  updateSettingDialog: Boolean
 });
 
+const emit = defineEmits(['update:settingActive']);
+Settingdialog.value = props.settingActive;
 
 // Emits
-const emit = defineEmits(['update:settingActive', 'update']);
+
 
 interface FormData {
   email: string;
@@ -145,7 +260,6 @@ if (isChangingPassword.value) {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Emit update event with the updated data
-    emit('update', updateData);
     
     // Close dialog
     closeDialog();
@@ -167,110 +281,3 @@ watch(localSettingActive, (val) => {
 });
 
 </script>
-
-<template>
-<v-dialog
-  :model-value="props.settingActive"
-  max-width="600px"
-  @update:modelValue="(val) => emit('update:settingActive', val)"
->
-
-    <v-card title="Update Admin Credentials">
-      <v-card-text>
-        <v-container>
-          <v-row>
-            <!-- Email Section -->
-            <v-col cols="12">
-              <div class="d-flex align-center justify-space-between mb-2">
-                <div class="text-subtitle-1">Email Address</div>
-                <v-checkbox
-                  v-model="isChangingEmail"
-                  label="Update email"
-                  hide-details
-                  density="compact"
-                ></v-checkbox>
-              </div>
-              <v-text-field
-                v-model="formData.email"
-                label="Email"
-                type="email"
-                :disabled="!isChangingEmail"
-                variant="outlined"
-                density="comfortable"
-              ></v-text-field>
-            </v-col>
-
-            <!-- Password Section -->
-            <v-col cols="12">
-              <div class="d-flex align-center justify-space-between mb-2">
-                <div class="text-subtitle-1">Password</div>
-                <v-checkbox
-                  v-model="isChangingPassword"
-                  label="Update password"
-                  hide-details
-                  density="compact"
-                ></v-checkbox>
-              </div>
-            </v-col>
-
-            <!-- Current Password -->
-            <v-col cols="12" v-if="isChangingPassword">
-              <v-text-field
-                v-model="formData.currentPassword"
-                label="Current Password"
-                type="password"
-                variant="outlined"
-                density="comfortable"
-              ></v-text-field>
-            </v-col>
-
-            <!-- New Password -->
-            <v-col cols="12" v-if="isChangingPassword">
-              <v-text-field
-                v-model="formData.newPassword"
-                label="New Password"
-                type="password"
-                variant="outlined"
-                density="comfortable"
-                hint="Password must be at least 8 characters"
-              ></v-text-field>
-            </v-col>
-
-            <!-- Confirm Password -->
-            <v-col cols="12" v-if="isChangingPassword">
-              <v-text-field
-                v-model="formData.confirmPassword"
-                label="Confirm New Password"
-                type="password"
-                variant="outlined"
-                density="comfortable"
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-container>
-
-        <v-alert
-          v-if="validationMessage"
-          type="error"
-          density="compact"
-          variant="outlined"
-          class="mt-2"
-        >{{ validationMessage }}</v-alert>
-      </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="blue-darken-1" variant="text" @click="closeDialog">Cancel</v-btn>
-        <v-btn
-          color="blue-darken-1"
-          variant="text"
-          @click="submit"
-          :loading="isSubmitting"
-          :disabled="!isFormValid"
-        >
-          Save Changes
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-</template>
