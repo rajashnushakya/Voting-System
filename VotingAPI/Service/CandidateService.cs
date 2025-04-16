@@ -82,5 +82,72 @@ namespace VotingAPI.Service
             return candidates;
         }
 
+        public async Task<DbResponse>centreCandidateAsync(List<CandidateCentre> CandidateCentre, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            DbResponse response = null;
+
+            foreach (var candidate in CandidateCentre)
+            {
+                SqlCommand cmd = dataAccess.CreateCommand("InsertCandidateElectionCentre");
+
+                cmd.Parameters.AddWithValue("@CandidateId", candidate.CandidateId);
+
+                cmd.Parameters.AddWithValue("@CentreId", candidate.CentreId);
+                response = await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+
+            }
+            return response;
+        }
+
+        public async Task<List<Candidate>> GetCandidatesByElectionIdAsync(int electionId, CancellationToken cancellationToken)
+        {
+            var candidates = new List<Candidate>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("GetCandidatesByElectionId", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ElectionId", electionId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            // First result set: Candidate data
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                candidates.Add(new Candidate
+                                {
+                                    
+                                    FullName = reader.GetString(reader.GetOrdinal("FullName"))
+                                });
+                            }
+                            if (await reader.NextResultAsync(cancellationToken))
+                            {
+                                while (await reader.ReadAsync(cancellationToken))
+                                {
+                                    int status = reader.GetInt32(reader.GetOrdinal("status"));
+                                    string message = reader.GetString(reader.GetOrdinal("error_msg"));
+                                    string sysError = reader.GetString(reader.GetOrdinal("sys_error"));
+                                    int severity = reader.GetInt32(reader.GetOrdinal("error_severity"));
+
+                                    // You can log these if needed
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching candidates by election ID.", ex);
+            }
+
+            return candidates;
+        }
     }
 }
