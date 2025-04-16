@@ -45,4 +45,16 @@ export default class candidateService {
             throw error;
         }
     }
+    async getCandidatesByElectionId(electionId: string) {
+        const url = `/api/Candidate/GetCandidateByElection?electionId=${electionId}`;
+        try {
+            const response = await this.#api.get(url);
+            return response;
+        } catch (error) {
+            console.error("Error fetching candidates by election ID:", error);
+            throw error;
+        }
+    }
+    
+
 }
