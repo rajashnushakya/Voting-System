@@ -55,6 +55,18 @@ export default class candidateService {
             throw error;
         }
     }
+    async enrollCandidateinElectionCentre (centreId: string, candidateId: string) {
+        const url = '/api/Candidate/CandidateCentre';
+        try {
+            const response = await this.#api.post(url, [{
+                candidateId,
+                centreId  // corrected here
+            }]);
+            return response;
+        } catch (error) {
+            console.error("Error enrolling candidate in election centre:", error);
+            throw error;
+        }
+    }
     
-
 }
