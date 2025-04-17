@@ -69,5 +69,29 @@ namespace VotingAPI.Controllers
             }
         }
 
+
+        [HttpGet("GetCandidateByElectionCentre")]
+        public async Task<ActionResult<List<CandidateWithParty>>> GetCandidateByElectionCentre(int centreId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var candidateService = new CandidateService(_connectionString);
+                var candidates = await candidateService.GetCandidatesByCentreIdAsync(centreId, cancellationToken);
+
+                if (candidates == null || candidates.Count == 0)
+                {
+                    return NotFound("No candidates found for this election centre ID.");
+                }
+
+                return Ok(candidates);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
     }
 }
