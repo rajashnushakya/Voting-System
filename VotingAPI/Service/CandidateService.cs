@@ -117,27 +117,30 @@ namespace VotingAPI.Service
 
                         using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
                         {
-                            // First result set: Candidate data
-                            while (await reader.ReadAsync(cancellationToken))
+                            
+                            while (await reader.ReadAsync())
                             {
                                 candidates.Add(new Candidate
                                 {
-                                    
+
+                                    Id = reader.GetInt32(reader.GetOrdinal("CandidateId")).ToString(),
+
+
                                     FullName = reader.GetString(reader.GetOrdinal("FullName"))
                                 });
                             }
-                            if (await reader.NextResultAsync(cancellationToken))
-                            {
-                                while (await reader.ReadAsync(cancellationToken))
-                                {
-                                    int status = reader.GetInt32(reader.GetOrdinal("status"));
-                                    string message = reader.GetString(reader.GetOrdinal("error_msg"));
-                                    string sysError = reader.GetString(reader.GetOrdinal("sys_error"));
-                                    int severity = reader.GetInt32(reader.GetOrdinal("error_severity"));
+                            //if (await reader.NextResultAsync(cancellationToken))
+                            //{
+                            //    while (await reader.ReadAsync(cancellationToken))
+                            //    {
+                            //        int status = reader.GetInt32(reader.GetOrdinal("status"));
+                            //        string message = reader.GetString(reader.GetOrdinal("error_msg"));
+                            //        string sysError = reader.GetString(reader.GetOrdinal("sys_error"));
+                            //        int severity = reader.GetInt32(reader.GetOrdinal("error_severity"));
 
-                                    // You can log these if needed
-                                }
-                            }
+                                  
+                            //    }
+                            //}
                         }
                     }
                 }
