@@ -152,5 +152,34 @@ namespace VotingAPI.Service
 
             return candidates;
         }
+
+        public async Task<List<CandidateWithParty>> GetCandidatesByCentreIdAsync(int centreId, CancellationToken cancellationToken)
+        {
+            var candidates = new List<CandidateWithParty>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("GetCandidatesByCentreId", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@CentreId", centreId);
+
+                await conn.OpenAsync();
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        candidates.Add(new CandidateWithParty
+                        {
+                            CandidateId = reader.GetInt32(reader.GetOrdinal("candidateid")),
+                            FullName = reader.GetString(reader.GetOrdinal("FullName")),
+                            PartyId = reader.GetInt32(reader.GetOrdinal("partyid")),
+                            PartyName = reader.GetString(reader.GetOrdinal("partyname"))
+                        });
+                    }
+                }
+            }
+
+            return candidates;
+        }
     }
 }
