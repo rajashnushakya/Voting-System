@@ -19,11 +19,14 @@
               <!-- Election Centre Dropdown -->
               <v-col cols="12" sm="6" md="4">
                 <v-select
-                  v-model="formData.electionCentre"
-                  :items="[centreName]"
-                  label="Election Centre"
-                  required
-                ></v-select>
+  v-model="formData.electionCentre"
+  :items="centreName"
+  item-title="name"
+  item-value="id"
+  label="Election Centre"
+  required
+></v-select>
+
               </v-col>
   
               <!-- Candidate Name Input -->
@@ -32,11 +35,13 @@
   v-model="formData.candidateName"
   :items="candidates"
   item-title="fullName"
-  item-value="candidateId"
+  item-value="id"
   label="Select Candidate"
   required
   outlined
-></v-select>
+  @change="handleCandidateChange"
+/>
+
 
 
 </v-col>
@@ -100,6 +105,11 @@ const props = defineProps({
   ECdialogActive: Boolean,
 });
 
+const handleCandidateChange = (selectedId) => {
+  formData.candidateName = Number(selectedId);
+};
+
+
 const emit = defineEmits(['update:ECdialogActive']);
 ElectionCentredialog.value = props.ECdialogActive;
 
@@ -123,7 +133,8 @@ const getCentreName = async (electionId) => {
   try {
     const data = await electionCentreService.getCentersByElection(electionId);
     console.log("Centre data:", data);
-    centreName.value = data.map(c => c.name); // adapt this if API structure changes
+    centreName.value = Array.isArray(data) ? data : [];
+
   } catch (error) {
     console.error("Error fetching centre names:", error);
   }
@@ -134,11 +145,17 @@ const getcandidateName = async (electionId) => {
   try {
     const response = await cservice.getCandidatesByElectionId(electionId);
     console.log("Candidate data:", response);
-    candidates.value = Array.isArray(response.data) ? response.data : [];
+    candidates.value = Array.isArray(response.data) 
+      ? response.data.map(candidate => ({
+          ...candidate,
+          id: Number(candidate.id)  // Ensure id is a number
+      }))
+      : [];
   } catch (error) {
     console.error("Error fetching candidate names:", error);
   }
 };
+
 
 
 onMounted(() => {
@@ -177,12 +194,15 @@ const addItem = () => {
   }
 
   const electionName = elections.value.find(e => e.id === formData.electionName)?.name || '';
+  const candidateName = candidates.value.find(c => c.id === formData.candidateName)?.fullName || '';  // Ensure correct mapping here
 
+  // Ensure candidateId is included here
   tableData.value.push({
     electionId: formData.electionName,
     electionName,
     electionCentre: formData.electionCentre,
-    candidateName: formData.candidateName
+    candidateName: candidateName,  // You may only need to store the name here, or ID depending on use case
+    candidateId: formData.candidateName  // Ensure candidateId is included
   });
 
   validationMessage.value = '';
@@ -190,6 +210,7 @@ const addItem = () => {
   formData.electionCentre = '';
   formData.candidateName = '';
 };
+
 
 const getApiPayload = () => {
   return tableData.value.map(item => ({
@@ -206,15 +227,25 @@ const submitData = async () => {
   }
 
   try {
-    const payload = getApiPayload();
-    console.log('Payload:', payload);
-    const response = await electionCentreService.addElectionCentre(payload);
-    console.log('Response:', response);
+    for (const item of tableData.value) {
+      const centreId = item.electionCentre;
+      const candidateId = item.candidateId;
+
+      console.log('Payload for API:', { centreId: centreId, candidateId: candidateId });
+      await cservice.enrollCandidateinElectionCentre(centreId, candidateId);
+    }
+
+    console.log('All candidates successfully enrolled.');
     tableData.value = [];
   } catch (error) {
     console.error("Error submitting data:", error);
   }
 };
+
+console.log(tableData.value);
+
+
+
 
 const removeItem = (item) => {
   const index = tableData.value.indexOf(item);
