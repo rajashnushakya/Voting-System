@@ -4,6 +4,7 @@ namespace VotingAPI.Model
 {
     public class Candidate
     {
+        public string Id { get; set; }
         public string FullName { get; set; }
         public int PartyId { get; set; }
         public string FatherName { get; set; }
