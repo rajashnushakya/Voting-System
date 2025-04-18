@@ -129,6 +129,18 @@ namespace VotingAPI.Service
             return response;
         }
 
+        public async Task<DbResponse> StartElectionAsync(int electionId, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            DbResponse response = null;
+
+            SqlCommand cmd = dataAccess.CreateCommand("StartElection");
+            cmd.Parameters.AddWithValue("@ElectionId", electionId);
+            response = await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+
+            return response;
+        }
+
         public async Task<List<Centre>> GetElectionCentre(int? electionId, CancellationToken cancellationToken)
         {
             var centres = new List<Centre>();
