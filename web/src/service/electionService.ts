@@ -97,6 +97,17 @@ export default class ElectionService {
         }
     }
 
+    async startElection(id: number) {
+        const url = `api/Election/StartElection?electionId=${id}`;
+        try {
+            const response = await this.#api.post(url, { electionId: id });
+            return response.data;
+        } catch (error) {
+            console.error("Error starting election:", error);
+            throw new Error("Failed to start the election");
+        }
+    }
+    
       async enrollVoter(voterId: string, electionId: number): Promise<void> {
         const url = `api/Voter/VoterEnrollment?voterId=${voterId}&electionId=${electionId}`;
       
