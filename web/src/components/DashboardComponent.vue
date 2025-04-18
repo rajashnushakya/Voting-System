@@ -67,11 +67,19 @@ const toggleMenu = (electionId: number, event: MouseEvent) => {
   }
 };
 
-const startElection = (electionId: number) => {
-  openMenuId.value = null;
-  alert(`Start Election clicked for election ID: ${electionId}`);
-  // Add logic here
+const startElection = async (electionId: number) => {
+
+  try {
+    const response = await electionService.startElection(electionId);
+    alert(`Election started successfully for election ID: ${electionId}`);
+    console.log(response); // Optional: check what the server returns
+    // Add more logic here (e.g., refresh election list, update UI)
+  } catch (error) {
+    console.error("Error starting election:", error);
+    alert(`Failed to start election for ID: ${electionId}`);
+  }
 };
+
 
 const UpdateElection = (electionId: number) => {
   openMenuId.value = null;
@@ -268,10 +276,26 @@ const viewDetailedResults = (resultId: number) => {
       }"
     >
       <div class="py-1">
-        <button @click="startElection(openMenuId)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">Start Election</button>
-        <button @click="endElection(openMenuId)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">End Election</button>
-        <button @click="UpdateElection(openMenuId)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">Update</button>
+        <button 
+          @click="startElection(openMenuId!)" 
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+        >
+          Start Election
+        </button>
+        <button 
+          @click="UpdateElection(openMenuId!)" 
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+        >
+          Update Election
+        </button>
+        <button 
+          @click="endElection(openMenuId!)" 
+          class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left"
+        >
+          End Election
+        </button>
       </div>
     </div>
   </div>
 </template>
+
