@@ -7,5 +7,7 @@
         public int districtId { get; set; }
         public int municipalityId { get; set; }
         public int wardId { get; set; }
+
+        public int electionCentreId { get; set; }
     }
 }
