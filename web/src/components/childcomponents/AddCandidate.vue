@@ -123,7 +123,8 @@
   const Candidatedialog = ref(props.CdialogActive);
   
   const formData = reactive({
-  fullname: '',
+    Id:'',
+  fullName: '',
   fatherName: '',
   motherName: '',
   grandFatherName: '',
@@ -216,7 +217,7 @@ watch(() => formData.municipalityId, () => fetchWards());
   };
 
   const isFormValid = computed(() => {
-  return formData.fullname &&  
+  return formData.fullName &&  
          formData.fatherName &&
          formData.motherName &&
          formData.dateOfBirth &&
