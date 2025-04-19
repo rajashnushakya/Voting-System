@@ -193,16 +193,27 @@ const addItem = () => {
     return;
   }
 
-  const electionName = elections.value.find(e => e.id === formData.electionName)?.name || '';
-  const candidateName = candidates.value.find(c => c.id === formData.candidateName)?.fullName || '';  // Ensure correct mapping here
+  const selectedElection = elections.value.find(e => e.id === formData.electionName);
+  const selectedCandidate = candidates.value.find(c => c.id === formData.candidateName);
+  const selectedCentre = centreName.value.find(c => c.id === formData.electionCentre);
 
-  // Ensure candidateId is included here
+  const electionName = selectedElection?.name || '';
+  const candidateName = selectedCandidate?.fullName || '';
+  const electionCentreName = selectedCentre?.name || '';
+  const electionCentreId = selectedCentre?.electionCentreId || null; // 👈 important
+
+  if (!electionCentreId) {
+    validationMessage.value = 'Invalid election centre.';
+    return;
+  }
+
   tableData.value.push({
     electionId: formData.electionName,
     electionName,
-    electionCentre: formData.electionCentre,
-    candidateName: candidateName,  // You may only need to store the name here, or ID depending on use case
-    candidateId: formData.candidateName  // Ensure candidateId is included
+    electionCentreId, // 👈 use this for API
+    electionCentre: electionCentreName,
+    candidateName,
+    candidateId: formData.candidateName
   });
 
   validationMessage.value = '';
@@ -212,13 +223,14 @@ const addItem = () => {
 };
 
 
+
 const getApiPayload = () => {
   return tableData.value.map(item => ({
-    electionId: item.electionId,
-    electionCentre: item.electionCentre,
-    candidateName: item.candidateName
+    electionCentreId: item.electionCentre,  // This holds the id
+    candidateId: item.candidateId           // This holds the id
   }));
 };
+
 
 const submitData = async () => {
   if (tableData.value.length === 0) {
@@ -228,10 +240,10 @@ const submitData = async () => {
 
   try {
     for (const item of tableData.value) {
-      const centreId = item.electionCentre;
+      const centreId = item.electionCentreId; // 👈 now using correct ID
       const candidateId = item.candidateId;
 
-      console.log('Payload for API:', { centreId: centreId, candidateId: candidateId });
+      console.log('Payload for API:', { centreId, candidateId });
       await cservice.enrollCandidateinElectionCentre(centreId, candidateId);
     }
 
@@ -241,6 +253,7 @@ const submitData = async () => {
     console.error("Error submitting data:", error);
   }
 };
+
 
 console.log(tableData.value);
 
