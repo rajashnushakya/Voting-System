@@ -120,11 +120,24 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import ElectionCentreService from '../service/electionCentreService';
-import { useRouter } from 'vue-router';
 
 import voterService from '../service/voterService';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
 const router = useRouter();
+
+const navigateToEnrollment = () => {
+  const electionId = route.params.electionId;
+
+  if (!electionId) {
+    alert("Election ID not found in route parameters.");
+    return;
+  }
+
+  router.push({ name: 'vote', params: { electionId } });
+};
+
 // Props & Emits
 const props = defineProps<{ electionId: string }>();
 const emit = defineEmits(['update:activeTab', 'enrollment-complete']);
@@ -139,9 +152,6 @@ const showSuccessDialog = ref(false);
 const electionCenters = ref<any[]>([]);
 const loading = ref(true);
 
-const navigateToEnrollment = () => {
-  router.push({ name: 'voter-dashboard' });
-};
 
 // Fetch election centers from API
 onMounted(async () => {
@@ -172,7 +182,6 @@ const selectedCenterName = computed(() => {
 });
 
 
-
 const confirmEnrollment = async () => {
   try {
     showConfirmation.value = false;
@@ -191,6 +200,10 @@ const confirmEnrollment = async () => {
       throw new Error("Selected center not found");
     }
 
+    // Save the selected center ID to localStorage
+    localStorage.setItem("electionCenterId", selectedCenterObj.electionCentreId.toString());
+    console.log("Selected center electionCentreId saved to localStorage:", selectedCenterObj.electionCentreId);
+
     // Perform the enrollment API call here
     await voterEnrollment.enrollVoterToElectionCenter(
       voterIdFromLocalStorage, 
@@ -205,10 +218,10 @@ const confirmEnrollment = async () => {
     });
   } catch (err) {
     console.error('Enrollment failed:', err);
-    // Optionally show an error dialog
     alert('Enrollment failed. Please try again.');
   }
 };
+
 </script>
 
 <style scoped>
