@@ -169,8 +169,10 @@ namespace VotingAPI.Service
                             {
                                 centres.Add(new Centre
                                 {
-                                    id = reader.GetInt32(reader.GetOrdinal("id")),
+                                    id = reader.GetInt32(reader.GetOrdinal("centreID")),
                                     name = reader.GetString(reader.GetOrdinal("name")),
+                                    electionCentreId = reader.GetInt32(reader.GetOrdinal("electionCentreId"))
+
                                 });
                             }
                         }
