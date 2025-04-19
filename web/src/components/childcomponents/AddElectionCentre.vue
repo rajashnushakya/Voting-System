@@ -241,27 +241,32 @@ const getApiPayload = () => {
 const removeItem = (item) => {
   const index = tableData.value.indexOf(item);
   tableData.value.splice(index, 1);
-};
-const submitData = async () => {
-
+};const submitData = async () => {
   if (tableData.value.length === 0) {
     console.error("Error: No data to submit.");
     return; 
   }
 
   try {
-const payload = getApiPayload();
-
-    console.log('Final Payload:', payload); 
-
+    const payload = getApiPayload();
     const response = await electionCentreService.addElectionCentre(payload);
-    console.log('Election Centres added:', response);
+    
+    console.log("API Response:", response); 
+    
+    if (response && response.message === "Centre Added Successfully") {
+      alert("Centre added successfully!");
+    } else if (response && response.message) {
+      alert(response.message);  
+    } 
 
-    tableData.value = [];
+    tableData.value = [];  
   } catch (error) {
     console.error("Error adding election centres:", error);
+    alert("An unexpected error occurred.");
   }
 };
+
+
 
 watch(() => props.EdialogActive, (newValue) => {
   ElectionCentredialog.value = newValue;
