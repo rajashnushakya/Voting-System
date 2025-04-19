@@ -17,7 +17,7 @@ namespace VotingAPI.Controllers
             _connectionString = configuration.GetConnectionString("VotingDb");
         }
 
-        [HttpPost()]
+        [HttpPost("RegisterCandidate")]
         public async Task<DbResponse> RegisterCandidate(Candidate candidate, CancellationToken cancellationToken)
         {
             CandidateService candidateService = new CandidateService(_connectionString);
