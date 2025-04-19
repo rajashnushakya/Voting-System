@@ -244,10 +244,16 @@ const submitData = async () => {
       const candidateId = item.candidateId;
 
       console.log('Payload for API:', { centreId, candidateId });
-      await cservice.enrollCandidateinElectionCentre(centreId, candidateId);
+      const response = await cservice.enrollCandidateinElectionCentre(centreId, candidateId);
+      console.log('API Response:', response);
+      if (response.message !== "Candidate Enrolled in Centre Successfully") {
+        alert(response.data.message);
+        return;
+      }else {
+        alert("Candidate Enrolled in Centre Successfully");
+      }
     }
 
-    console.log('All candidates successfully enrolled.');
     tableData.value = [];
   } catch (error) {
     console.error("Error submitting data:", error);
