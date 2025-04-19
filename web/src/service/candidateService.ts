@@ -25,7 +25,7 @@ export default class candidateService {
     }
 
     async addCandidate(candidateData: CandidateData) {
-        const url = `api/Candidate`;
+        const url = `api/Candidate/RegisterCandidate`;
         try {
             const response = await this.#api.post(url, candidateData);
             return response;
@@ -35,7 +35,7 @@ export default class candidateService {
         }
     }
 
-    async getCandidatesByVoterId(voterId: string) {
+    async getCandidatesByCentreId(voterId: string) {
         const url = `/api/Candidate/Candidates?voterId=${voterId}`;
         try {
             const response = await this.#api.get(url);
@@ -60,7 +60,20 @@ export default class candidateService {
         try {
             const response = await this.#api.post(url, [{
                 candidateId,
-                centreId  // corrected here
+                centreId  
+            }]);
+            return response;
+        } catch (error) {
+            console.error("Error enrolling candidate in election centre:", error);
+            throw error;
+        }
+    }
+
+    async getCandidateByCentreId (centreId: string,) {
+        const url = `/api/Candidate/GetCandidateByElectionCentre?centreId=${centreId}`;
+        try {
+            const response = await this.#api.get(url, [{
+                centreId  
             }]);
             return response;
         } catch (error) {
