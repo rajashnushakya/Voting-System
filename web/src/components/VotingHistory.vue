@@ -180,12 +180,20 @@
       </v-card>
     </v-dialog>
   </v-card>
+  <v-btn variant="outlined" @click="navigateToEnrollment">Back to Elections</v-btn>
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import voteService from '../service/voteService';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const vservice = new voteService();
+
+const navigateToEnrollment = () => {
+
+router.push({ name: 'voter-dashboard'});
+};
 
 interface VotingHistoryItem {
   date: string;
