@@ -72,15 +72,19 @@ export default class ElectionCentreService {
     }
   }
 
-  async addElectionCentre(centreData: CentreData): Promise<void> {
+  async addElectionCentre(centreData: CentreData): Promise<any> {
     const url = `api/Election/Centre`;
     try {
-      await this.#api.post(url, centreData);
+      const response = await this.#api.post(url, centreData);
+      
+      // Return the response data
+      return response.data; // Assuming the message is inside response.data
     } catch (error) {
       console.error('Error adding election centre:', error);
-      throw error;
+      throw error;  // Throw the error to be caught in the caller
     }
   }
+  
 
 
   
