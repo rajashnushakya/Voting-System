@@ -1,11 +1,11 @@
 <template>
   <v-app>
     <v-app-bar style="background-color: #003893;">
-      <v-btn @click="activeTab = 'elections'" style="color: white;">Elections</v-btn>
-      <v-btn @click="activeTab = 'enrollment'" style="color: white;">Enrollment</v-btn>
-      <v-btn @click="activeTab = 'voting'" style="color: white;">Vote</v-btn>
-      <v-btn @click="activeTab = 'history'" style="color: white;">History</v-btn>
-    </v-app-bar>
+    <v-btn @click="navigateTo('elections')" style="color: white;">Elections</v-btn>
+    <v-btn @click="navigateTo('enrollment')" style="color: white;">Enrollment</v-btn>
+    <v-btn @click="navigateTo('voting')" style="color: white;">Vote</v-btn>
+    <v-btn @click="navigateTo('history')" style="color: white;">History</v-btn>
+  </v-app-bar>
 
     <v-main class="bg-gray-100 dark:bg-gray-900 min-h-screen">
       <v-container fluid>
@@ -70,6 +70,18 @@ import ElectionService from '../service/electionService';
 
 
 const router = useRouter();
+const navigateTo = (tab: string) => {
+  switch (tab) {
+    case 'elections':
+      router.push('/elections'); break;
+    case 'enrollment':
+      router.push('/enrollment'); break;
+    case 'voting':
+      router.push('/vote'); break;
+    case 'history':
+      router.push('/vote/history'); break;
+  }
+};
 
 interface Election {
   id: number;
@@ -139,11 +151,11 @@ const getStatusColor = (status: string) => {
 };
 const goToVoting = (election: any) => {
   selectedElection.value = election;
-  activeTab.value = 'voting'; // Optional if you're using tabs
+  activeTab.value = 'voting';
 
-  // Navigate to a route
   router.push({
-    name: 'vote', // 👈 Your route name from router/index.js
+    name: 'vote',
+    params: { electionId: election.id }
   });
 };
 
