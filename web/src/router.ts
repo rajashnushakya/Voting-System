@@ -60,9 +60,15 @@ const routes = [
   },
 
     {
-      path: '/vote',
+      path: '/vote/:electionId',
       name: 'vote',
       component:()=> import('./components/VotingInterface.vue'),
+    },
+    
+    {
+      path: '/vote/history',
+      name: 'vote-history',
+      component:()=> import('./components/VotingHistory.vue'),
     }
   
 
