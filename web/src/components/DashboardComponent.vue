@@ -70,9 +70,8 @@ const toggleMenu = (electionId: number, event: MouseEvent) => {
 const startElection = async (electionId: number) => {
 
   try {
-    const response = await electionService.startElection(electionId);
+    await electionService.startElection(electionId);
     alert(`Election started successfully for election ID: ${electionId}`);
-    console.log(response); // Optional: check what the server returns
     // Add more logic here (e.g., refresh election list, update UI)
   } catch (error) {
     console.error("Error starting election:", error);
@@ -98,21 +97,27 @@ const fetchActiveElections = async () => {
     ongoingElections.value = response.map((election: any) => {
       const formatDateTime = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toISOString().slice(0, 16); // Returns "yyyy-mm-ddThh:mm"
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        return `${year}-${month}-${day} ${hours}:${minutes}`; 
       };
 
       return {
         id: election.id,
         name: election.name,
-        startDate: formatDateTime(election.start_date),  // Formatted as "yyyy-mm-ddThh:mm"
-        endDate: formatDateTime(election.end_date),    // Formatted as "yyyy-mm-ddThh:mm"
+        startDate: formatDateTime(election.start_date),
+        endDate: formatDateTime(election.end_date),
         totalVotes: election.total_votes
       };
     });
   } catch (error) {
-    console.error('Error fetching ongoing elections:', error);
+    console.error("Error fetching ongoing elections:", error);
   }
 };
+
 
 
 const endElection = async (id: number) => {
@@ -121,8 +126,7 @@ const endElection = async (id: number) => {
     const response = await electionService.endElection(id);
 
     if (response) {
-      console.log('End election response:', response, id);
-      // Refresh the elections list after ending an election
+
       fetchActiveElections();
     } else {
       console.error('Election ending failed:', response);
@@ -278,13 +282,13 @@ const viewDetailedResults = (resultId: number) => {
       <div class="py-1">
         <button 
           @click="startElection(openMenuId!)" 
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+          class="block px-4 py-2 text-sm text-green-700 hover:bg-green-100 w-full text-left"
         >
           Start Election
         </button>
         <button 
           @click="UpdateElection(openMenuId!)" 
-          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+          class="block px-4 py-2 text-sm text-orange-400 hover:bg-orange-100 w-full text-left"
         >
           Update Election
         </button>
@@ -293,6 +297,12 @@ const viewDetailedResults = (resultId: number) => {
           class="block px-4 py-2 text-sm text-red-600 hover:bg-red-100 w-full text-left"
         >
           End Election
+        </button>
+        <button 
+          @click="endElection(openMenuId!)" 
+          class="block px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 w-full text-left"
+        >
+          Details
         </button>
       </div>
     </div>
