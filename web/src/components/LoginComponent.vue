@@ -1,11 +1,6 @@
 <template>
   <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <img
-        class="mx-auto h-10 w-auto"
-        src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-        alt="Your Company"
-      />
       <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
         Sign in to your account
       </h2>
@@ -53,11 +48,16 @@
         </div>
       </form>
 
-
+      <!-- Register link -->
+      <p class="mt-4 text-center text-sm text-gray-600">
+        Don’t have an account?
+        <a href="/Registration" class="font-semibold text-indigo-600 hover:text-indigo-500">Register as a voter</a>
+      </p>
     </div>
-
   </div>
-</template><script setup lang="ts">
+</template>
+
+<script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import loginService from "../service/loginService";
