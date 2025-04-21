@@ -59,7 +59,8 @@
     <AddCentre v-model:dialog="showDialog" />
     <AddElectionCentre v-model:EdialogActive="EdialogActive" />
     <AddCandidate v-model:CdialogActive="CdialogActive" />
-    <ChangeCredentials v-model:settingActive="settingActive" />
+    <ChangeCredentials :settingActive="settingActive" @update:settingActive="settingActive = $event" />
+
     <CandidateCentre v-model:ECdialogActive="ECdialogActive" />
 
 
@@ -97,7 +98,11 @@ const navigation = [
     ],
   },
   { name: 'Result', href: 'result', current: false },
-  { name: 'Setting', href: '#', current: false },
+  { name: 'Setting', href: '#', current: false, children:[
+    {name: 'Change Credentials'},
+    {name: 'Logout'}
+  ],
+},
   {name: 'Candidate', 
   href: '#', 
   current: false,
@@ -133,8 +138,14 @@ function setCurrentItem(item) {
   if (item.name === 'Enroll Candidate') {
     ECdialogActive.value = true;
   }
-  if (item.name === 'Setting') {
+  if (item.name === 'Change Credentials') {
     settingActive.value = true;
+    console.log('Change Credentials clicked');
+  }
+  if (item.name === 'Logout') {
+    localStorage.removeItem('token');
+    localStorage.removeItem('voterid');
+    window.location.href = '/login';
   }
 }
 </script>
