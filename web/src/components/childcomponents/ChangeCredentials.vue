@@ -1,11 +1,7 @@
 
 <template>
   <v-dialog
-    :model-value="Settingdialog"
-    max-width="600px"
-    @update:modelValue="updateSettingDialog"
-  >
-  
+    :model-value="Settingdialog" max-width="600px" @update:modelValue="updatesettingDialog">
       <v-card title="Update Admin Credentials">
         <v-card-text>
           <v-container>
@@ -107,21 +103,24 @@
   </template>
 <script setup lang="ts">
 import { ref, computed, watch} from 'vue';
-  import { defineProps } from 'vue';
+  import { defineProps} from 'vue';
 // Props
 
-
-const Settingdialog = ref(false);
-
-
-
 const props = defineProps({
+  updatesettingDialog: Boolean,
   settingActive: Boolean,
-  updateSettingDialog: Boolean
 });
+const Settingdialog = ref(props.settingActive);
 
 const emit = defineEmits(['update:settingActive']);
-Settingdialog.value = props.settingActive;
+const updatesettingDialog = (val: boolean) => {
+  Settingdialog.value = val;
+};
+
+watch(() => props.settingActive, (newValue) => {
+  Settingdialog.value = newValue;
+});
+
 
 // Emits
 
@@ -270,14 +269,6 @@ if (isChangingPassword.value) {
     isSubmitting.value = false;
   }
 };
-const localSettingActive = ref(props.settingActive);
 
-watch(() => props.settingActive, (newVal) => {
-  localSettingActive.value = newVal;
-});
-
-watch(localSettingActive, (val) => {
-  emit('update:settingActive', val);
-});
 
 </script>
