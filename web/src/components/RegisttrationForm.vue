@@ -200,15 +200,26 @@
             </div>
           </div>
 
-          <!-- Submit Button -->
-          <div class="text-right mx-2">
-            <button
-              type="submit"
-              class="bg-[#003893] hover:bg-[#002b73] text-white font-bold py-2 px-6 rounded"
-            >
-              Submit
-            </button>
-          </div>
+          <div class="text-right mx-2 mb-4">
+  <!-- Submit Button -->
+  <button
+    type="submit"
+    class="bg-[#003893] hover:bg-[#002b73] text-white font-bold py-2 px-6 rounded"
+  >
+    Submit
+  </button>
+
+  <!-- Back to Login Button with spacing -->
+  <button
+    type="button"
+    @click="goToLogin"
+    class="ml-2 bg-gray-500 hover:bg-[#002b73] text-white font-bold py-2 px-6 rounded"
+  >
+    Back to login
+  </button>
+</div>
+
+
         </form>
       </div>
     </div>
@@ -275,6 +286,10 @@ const fetchDistricts = async () => {
   }
 };
 
+
+const goToLogin = () => {
+  window.location.href = "/login";
+};
 const fetchMunicipalities = async (districtId: number) => {
   try {
     wards.value = [];
