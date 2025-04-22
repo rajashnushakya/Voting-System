@@ -133,18 +133,18 @@ watch(() => props.settingActive, (newValue) => {
 
 // Form data
 interface FormData {
-  email: string;
-  currentPassword: string;
+  userId: string; // Renamed from userid to userId
+
   newPassword: string;
   confirmPassword: string;
 }
 
 const formData = ref<FormData>({
-  email: '',
-  currentPassword: '',
+  userId: localStorage.getItem('userid') || '',
   newPassword: '',
   confirmPassword: ''
 });
+
 
 // Validation
 const validationMessage = ref('');
@@ -158,8 +158,7 @@ const closeDialog = () => {
 
 const resetForm = () => {
   formData.value = {
-    email: '',
-    currentPassword: '',
+    userId: localStorage.getItem('userid') || '',
     newPassword: '',
     confirmPassword: ''
   };
@@ -206,7 +205,7 @@ const submit = async () => {
       validationMessage.value = 'User ID not found. Please log in again.';
       return;
     }
-    const response = await service.changePassword(userId, formData.value.newPassword);
+    const response = await service.changePassword(formData.value);
 
     if (response.status === 0) {
       alert('Password updated successfully!');
