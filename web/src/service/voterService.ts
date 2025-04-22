@@ -26,6 +26,7 @@ interface FormData {
     };
 }
 
+
 export default class voterService {
     #api: apiService;
 
@@ -103,13 +104,24 @@ export default class voterService {
         }
     }
 
-    async changePassword (userId: string, newPassword: string) {
-        const url = `api/Voter/ChangePassword?user_id=${userId}&newPassword=${newPassword}`;
+    async changePassword (ChangePassword:string, userId: string) {
+        const url = `api/Voter/ChangePassword`;
         try {
-            const response = await this.#api.put(url);
+            const response = await this.#api.put(url, userId, ChangePassword);
             return response.data;
         } catch (error) {
             console.error('Error changing password:', error);
+            throw error;
+        }
+    }
+
+    async getUserId (email:string){
+        const url = `api/Voter/GetUserId?email=${email}`;
+        try{
+            const response = await this.#api.get(url);
+            return response.data;
+        }catch(error){
+            console.error('Error fetching user ID:', error);
             throw error;
         }
     }
