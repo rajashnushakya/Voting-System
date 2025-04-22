@@ -93,6 +93,17 @@
             </div>
 
             <div>
+              <label for="NationalId" class="block text-gray-700 font-medium mb-2">National Id </label>
+              <input
+                type="tel"
+                v-model="formData.NationalId"
+                id="phno"
+                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+                placeholder="Enter Phone Number"
+                style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
+              />
+            </div>
+            <div>
               <label for="phNo" class="block text-gray-700 font-medium mb-2">Phone Number</label>
               <input
                 type="tel"
@@ -113,15 +124,22 @@
                 placeholder="Enter Username"
               />
             </div>
-            <div>
+            <div class="mt-2 relative">
               <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
               <input
-                type="password"
-                v-model="formData.user.password"
-                id="password"
-                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="Enter Password"
-              />
+              :type="showPassword ? 'text' : 'password'"
+              v-model="formData.user.password"
+              id="password"
+              autocomplete="current-password"
+              class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+              required
+            />
+            <span
+              @click="togglePassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-indigo-600 cursor-pointer select-none"
+            >
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </span>
             </div>
           </div>
 
@@ -240,6 +258,7 @@ const wards = ref([]);
 const selectedDistrict = ref(null);
 const selectedMunicipality = ref(null);
 const selectedWard = ref(null);
+const showPassword = ref(false);
 
 
 // Reactive data model for form data
@@ -251,6 +270,7 @@ const formData = reactive({
   grandFatherName: "",
   grandMotherName: "",
   phoneNumber: 0,
+  NationalId: 0,
   email: "",
   dateofBirth: "", 
   gender: "",
@@ -267,6 +287,10 @@ const formData = reactive({
     province: "",
   },
 });
+
+const togglePassword = () => {
+  showPassword.value = !showPassword.value;
+};
 
 // Reactive data for success message
 const successMessage = reactive({
