@@ -99,7 +99,7 @@ const navigation = [
   },
   { name: 'Result', href: 'result', current: false },
   { name: 'Setting', href: '#', current: false, children:[
-    {name: 'Change Credentials'},
+    {name: 'Change Password'},
     {name: 'Logout'}
   ],
 },
@@ -138,7 +138,7 @@ function setCurrentItem(item) {
   if (item.name === 'Enroll Candidate') {
     ECdialogActive.value = true;
   }
-  if (item.name === 'Change Credentials') {
+  if (item.name === 'Change Password') {
     settingActive.value = true;
     console.log('Change Credentials clicked');
   }
