@@ -43,6 +43,7 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@Gender", voter.Gender);
             cmd.Parameters.AddWithValue("@DateOfBirth", voter.DateofBirth);
             cmd.Parameters.AddWithValue("@PhoneNumber", voter.PhoneNumber);
+            cmd.Parameters.AddWithValue("@NationalId", voter.NationalId);
 
             //voter address details
             cmd.Parameters.AddWithValue("@HouseNumber", voter.Address.HouseNumber);
@@ -59,6 +60,21 @@ namespace VotingAPI.Service
 
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
         }
+        public async Task<DbResponse> ChangePasswordAsync(int userId, string plainPassword, CancellationToken cancellationToken)
+        {
+            // Hash the password using BCrypt
+            var hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(plainPassword, 5);
+
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            SqlCommand cmd = dataAccess.CreateCommand("ChangeUserPassword");
+
+            // Add parameters
+            cmd.Parameters.AddWithValue("@userId", userId);
+            cmd.Parameters.AddWithValue("@newPassword", hashedPassword);
+
+            return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
+        }
+
 
 
         public async Task<int> GetVoterCountAsync(CancellationToken cancellationToken)
@@ -130,7 +146,9 @@ namespace VotingAPI.Service
                     resp.ExpiryDate = DateTime.Now.AddMinutes(30);
                     resp.voterid = tbl.Rows[0]["VoterId"].ToString();
                     resp.roleid = tbl.Rows[0]["role_id"].ToString();
-                    
+                    resp.user_id = tbl.Rows[0]["user_id"].ToString();
+
+
 
                 }
             }
