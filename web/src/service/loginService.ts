@@ -1,5 +1,8 @@
 import apiService from './apiService';
-
+interface loginFormData {
+  email: string;
+  password: string; 
+}
 
 export default class loginService {
     #api: apiService;
@@ -8,11 +11,12 @@ export default class loginService {
         this.#api = new apiService();  
     }
 
+
     // Add Voter
-    async login(email: string, password: string) {
-        const url = `api/Voter/Login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+    async login(loginFormData: loginFormData) {
+        const url = `api/Voter/Login`;
         try {
-          const response = await this.#api.post(url); 
+          const response = await this.#api.post(url, loginFormData); 
           return response;
         } catch (error) {
           console.error("Error logging in", error);
