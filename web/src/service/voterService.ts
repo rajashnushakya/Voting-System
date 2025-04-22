@@ -25,7 +25,9 @@ interface FormData {
         province: string;
     };
 }
-
+interface ChangePassword {
+    userId: string;
+    newPassword: string;}
 
 export default class voterService {
     #api: apiService;
@@ -104,10 +106,10 @@ export default class voterService {
         }
     }
 
-    async changePassword (ChangePassword:string, userId: string) {
+    async changePassword (ChangePassword:ChangePassword) {
         const url = `api/Voter/ChangePassword`;
         try {
-            const response = await this.#api.put(url, userId, ChangePassword);
+            const response = await this.#api.put(url, ChangePassword);
             return response.data;
         } catch (error) {
             console.error('Error changing password:', error);
