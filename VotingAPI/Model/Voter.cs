@@ -14,6 +14,7 @@ namespace VotingAPI.Model
         public DateTime DateofBirth { get; set; }
         public string Gender { get; set; }
         public string PhoneNumber { get; set; }
+        public string NationalId { get; set; }
 
         public Address Address { get; set; }
 
