@@ -102,6 +102,18 @@ export default class voterService {
             throw error;
         }
     }
+
+    async changePassword (userId: string, newPassword: string) {
+        const url = `api/Voter/ChangePassword?user_id=${userId}&newPassword=${newPassword}`;
+        try {
+            const response = await this.#api.put(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error changing password:', error);
+            throw error;
+        }
+    }
+
 }
 
 
