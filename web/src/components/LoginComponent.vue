@@ -100,6 +100,7 @@ const handleLogin = async () => {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("voterid", response.data.voterid);
       const roleid = Number(response.data.roleid);
+      localStorage.setItem("userid", response.data.user_id);
     console.log(roleid);
 
       if (roleid === 2) {
