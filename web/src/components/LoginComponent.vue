@@ -99,7 +99,17 @@ const handleLogin = async () => {
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("voterid", response.data.voterid);
-      router.push("/dashboard/voter");
+      const roleid = Number(response.data.roleid);
+    console.log(roleid);
+
+      if (roleid === 2) {
+        router.push("/dashboard");
+      } else if (roleid === 1) {
+        router.push("/dashboard/voter");
+      } else {
+        throw new Error("Invalid role id");
+      }
+
     } else {
       throw new Error("Token not found in response");
     }
