@@ -6,17 +6,19 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <!-- Email Section -->
+              <!-- Email Section
               <v-col cols="12">
                 <div class="d-flex align-center justify-space-between mb-2">
                   <div class="text-subtitle-1">Email Address</div>
                   <v-checkbox
-                    v-model="isChangingEmail"
-                    label="Update email"
+                    v-model="isChangingPassword"
+                    label="Update email only"
                     hide-details
                     density="compact"
+                    class = "text-blue-darken-1"
                   ></v-checkbox>
                 </div>
+                <v-col cols="12" v-if="isChangingEmail">
                 <v-text-field
                   v-model="formData.email"
                   label="Email"
@@ -24,24 +26,28 @@
                   :disabled="!isChangingEmail"
                   variant="outlined"
                   density="comfortable"
+
                 ></v-text-field>
               </v-col>
+              </v-col> -->
+
   
-              <!-- Password Section -->
+              <!-- Password Section
               <v-col cols="12">
                 <div class="d-flex align-center justify-space-between mb-2">
                   <div class="text-subtitle-1">Password</div>
                   <v-checkbox
-                    v-model="isChangingPassword"
-                    label="Update password"
+                    v-model="isChangingEmail"
+                    label="Update password only"
                     hide-details
                     density="compact"
+                    class = "text-blue-darken-1"
                   ></v-checkbox>
                 </div>
-              </v-col>
+              </v-col> -->
   
-              <!-- Current Password -->
-              <v-col cols="12" v-if="isChangingPassword">
+              <!-- Current Password
+              <v-col cols="12" >
                 <v-text-field
                   v-model="formData.currentPassword"
                   label="Current Password"
@@ -49,10 +55,10 @@
                   variant="outlined"
                   density="comfortable"
                 ></v-text-field>
-              </v-col>
+              </v-col> -->
   
               <!-- New Password -->
-              <v-col cols="12" v-if="isChangingPassword">
+              <v-col cols="12" >
                 <v-text-field
                   v-model="formData.newPassword"
                   label="New Password"
@@ -64,7 +70,7 @@
               </v-col>
   
               <!-- Confirm Password -->
-              <v-col cols="12" v-if="isChangingPassword">
+              <v-col cols="12" >
                 <v-text-field
                   v-model="formData.confirmPassword"
                   label="Confirm New Password"
@@ -93,7 +99,7 @@
             variant="text"
             @click="submit"
             :loading="isSubmitting"
-            :disabled="!isFormValid"
+
           >
             Save Changes
           </v-btn>
@@ -102,7 +108,7 @@
     </v-dialog>
   </template>
 <script setup lang="ts">
-import { ref, computed, watch} from 'vue';
+import { ref,  watch} from 'vue';
   import { defineProps} from 'vue';
 // Props
 
@@ -140,33 +146,29 @@ const formData = ref<FormData>({
 });
 
 
-// Toggle options
-const isChangingEmail = ref(true);
-const isChangingPassword = ref(true);
-
 // Validation
 const validationMessage = ref('');
 const isSubmitting = ref(false);
 
 // Computed properties
-const isFormValid = computed(() => {
-  // Validate email if changing
-  if (isChangingEmail.value) {
-    if (!formData.value.email) return false;
-    if (!/^\S+@\S+\.\S+$/.test(formData.value.email)) return false;
-  }
+// const isFormValid = computed(() => {
+//   // Validate email if changing
+//   if (isChangingEmail.value) {
+//     if (!formData.value.email) return false;
+//     if (!/^\S+@\S+\.\S+$/.test(formData.value.email)) return false;
+//   }
   
-  // Validate password if changing
-  if (isChangingPassword.value) {
-    if (!formData.value.currentPassword) return false;
-    if (!formData.value.newPassword) return false;
-    if (formData.value.newPassword.length < 8) return false;
-    if (formData.value.newPassword !== formData.value.confirmPassword) return false;
-  }
+//   // Validate password if changing
+//   if (isChangingPassword.value) {
+//     if (!formData.value.currentPassword) return false;
+//     if (!formData.value.newPassword) return false;
+//     if (formData.value.newPassword.length < 8) return false;
+//     if (formData.value.newPassword !== formData.value.confirmPassword) return false;
+//   }
   
-  // At least one field must be changing
-  return isChangingEmail.value || isChangingPassword.value;
-});
+//   // At least one field must be changing
+//   return isChangingEmail.value || isChangingPassword.value;
+// });
 
 // Methods
 const closeDialog = () => {
@@ -189,40 +191,40 @@ const resetForm = () => {
 const validateForm = () => {
   validationMessage.value = '';
   
-  if (isChangingEmail.value) {
-    if (!formData.value.email) {
-      validationMessage.value = 'Email is required';
-      return false;
-    }
+  // if (isChangingEmail.value) {
+  //   if (!formData.value.email) {
+  //     validationMessage.value = 'Email is required';
+  //     return false;
+  //   }
     if (!/^\S+@\S+\.\S+$/.test(formData.value.email)) {
       validationMessage.value = 'Please enter a valid email';
       return false;
     }
-  }
   
-  if (isChangingPassword.value) {
-    if (!formData.value.currentPassword) {
-      validationMessage.value = 'Current password is required';
-      return false;
-    }
-    if (!formData.value.newPassword) {
-      validationMessage.value = 'New password is required';
-      return false;
-    }
-    if (formData.value.newPassword.length < 8) {
-      validationMessage.value = 'Password must be at least 8 characters';
-      return false;
-    }
-    if (formData.value.newPassword !== formData.value.confirmPassword) {
-      validationMessage.value = 'Passwords do not match';
-      return false;
-    }
-  }
   
-  if (!isChangingEmail.value && !isChangingPassword.value) {
-    validationMessage.value = 'No changes selected';
-    return false;
-  }
+  // if (isChangingPassword.value) {
+  //   if (!formData.value.currentPassword) {
+  //     validationMessage.value = 'Current password is required';
+  //     return false;
+  //   }
+  //   if (!formData.value.newPassword) {
+  //     validationMessage.value = 'New password is required';
+  //     return false;
+  //   }
+  //   if (formData.value.newPassword.length < 8) {
+  //     validationMessage.value = 'Password must be at least 8 characters';
+  //     return false;
+  //   }
+  //   if (formData.value.newPassword !== formData.value.confirmPassword) {
+  //     validationMessage.value = 'Passwords do not match';
+  //     return false;
+  //   }
+  // }
+  
+  // if (!isChangingEmail.value && !isChangingPassword.value) {
+  //   validationMessage.value = 'No changes selected';
+  //   return false;
+  // }
   
   return true;
 };
@@ -235,20 +237,20 @@ const submit = async () => {
     
     // Create update data object
 // Create update data object with explicit typing
-const updateData: {
-  email?: string;
-  currentPassword?: string;
-  newPassword?: string;
-} = {};
+// const updateData: {
+//   email?: string;
+//   currentPassword?: string;
+//   newPassword?: string;
+// } = {};
 
-if (isChangingEmail.value) {
-  updateData.email = formData.value.email;
-}
+// if (isChangingEmail.value) {
+//   updateData.email = formData.value.email;
+// }
 
-if (isChangingPassword.value) {
-  updateData.currentPassword = formData.value.currentPassword;
-  updateData.newPassword = formData.value.newPassword;
-}
+// if (isChangingPassword.value) {
+//   updateData.currentPassword = formData.value.currentPassword;
+//   updateData.newPassword = formData.value.newPassword;
+// }
 
     
     // Here you would typically make an API call to update credentials
