@@ -69,7 +69,14 @@ const routes = [
       path: '/vote/history',
       name: 'vote-history',
       component:()=> import('./components/VotingHistory.vue'),
+    },
+        
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component:()=> import('./components/ForgotPassword.vue'),
     }
+
   
 
 
