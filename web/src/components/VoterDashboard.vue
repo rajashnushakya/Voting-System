@@ -2,9 +2,20 @@
   <v-app>
     <v-app-bar style="background-color: #003893;">
     <v-btn @click="navigateTo('elections')" style="color: white;">Elections</v-btn>
-    <v-btn @click="navigateTo('enrollment')" style="color: white;">Enrollment</v-btn>
-    <v-btn @click="navigateTo('voting')" style="color: white;">Vote</v-btn>
     <v-btn @click="navigateTo('history')" style="color: white;">History</v-btn>
+    <v-menu offset-y>
+    <template v-slot:activator="{ props }">
+      <v-btn v-bind="props" style="color: white;">Settings </v-btn>
+    </template>
+    <v-list>
+      <v-list-item @click="navigateToChangePassword">
+        <v-list-item-title>Change Password</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="logout">
+        <v-list-item-title>Logout</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
   </v-app-bar>
 
     <v-main class="bg-gray-100 dark:bg-gray-900 min-h-screen">
@@ -61,23 +72,32 @@
       </v-container>
     </v-main>
   </v-app>
+  <ChangeCredentials :settingActive="settingActive" @update:settingActive="settingActive = $event" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import ElectionService from '../service/electionService';
+import ChangeCredentials from './childcomponents/ChangeCredentials.vue';
+
+const settingActive = ref(false);
+
+const navigateToChangePassword = () => {
+settingActive.value = true;
+};
+
+const logout = () => {
+  localStorage.clear(); // ✅ Clear any saved login data
+  router.push('/login'); // ✅ Redirect to login screen
+};
 
 
 const router = useRouter();
 const navigateTo = (tab: string) => {
   switch (tab) {
     case 'elections':
-      router.push('/elections'); break;
-    case 'enrollment':
-      router.push('/enrollment'); break;
-    case 'voting':
-      router.push('/vote'); break;
+      router.push('/dashboard/voter'); break;
     case 'history':
       router.push('/vote/history'); break;
   }
