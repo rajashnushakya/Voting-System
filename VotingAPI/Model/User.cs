@@ -25,6 +25,7 @@ namespace VotingAPI.Model
         public DateTime ExpiryDate { get; set; }
         public string voterid { get; set; }
         public string roleid { get; set; }
+        public string user_id { get; set; }
     }
 
 }
