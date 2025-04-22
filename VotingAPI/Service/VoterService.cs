@@ -129,6 +129,8 @@ namespace VotingAPI.Service
                     resp.Token = GenerateJwtToken(user_id, email, roleName, configuration);
                     resp.ExpiryDate = DateTime.Now.AddMinutes(30);
                     resp.voterid = tbl.Rows[0]["VoterId"].ToString();
+                    resp.roleid = tbl.Rows[0]["role_id"].ToString();
+                    
 
                 }
             }
