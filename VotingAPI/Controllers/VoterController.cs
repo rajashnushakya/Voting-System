@@ -53,10 +53,10 @@ namespace VotingAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<AuthResponse> LoginAsync( string email, string password, CancellationToken cancellationToken)
+        public async Task<AuthResponse> LoginAsync( [FromBody]LoginRequest loginRequest, CancellationToken cancellationToken)
         {
             VoterService voterService = new VoterService(_connectionString);
-            return await voterService.VoterLogin(email, password, Configuration, cancellationToken);
+            return await voterService.VoterLogin(loginRequest.email, loginRequest.password, Configuration, cancellationToken);
         }
 
 
@@ -73,5 +73,16 @@ namespace VotingAPI.Controllers
             VoterService voterService = new VoterService(_connectionString);
             return await voterService.ChangePasswordAsync(user_id, newPassword, cancellationToken);
         }
+
+        [HttpGet]
+        public async Task<int> GetUserId(string email,CancellationToken cancellationToken)
+        {
+            VoterService voterService = new VoterService(_connectionString);
+            var user_id = await voterService.ForgotPassword(email,cancellationToken);
+
+
+            return user_id;
+        }
+
     }
 }
