@@ -86,7 +86,6 @@
             v-if="validationMessage"
             type="error"
             density="compact"
-            variant="outlined"
             class="mt-2"
           >{{ validationMessage }}</v-alert>
         </v-card-text>
@@ -107,15 +106,20 @@
       </v-card>
     </v-dialog>
   </template>
-<script setup lang="ts">
-import { ref,  watch} from 'vue';
-  import { defineProps} from 'vue';
-// Props
+  
+  
+  <script setup lang="ts">
+import { ref, watch } from 'vue';
+import { defineProps } from 'vue';
+import voterService from '../../service/voterService'; 
+
+const service = new voterService();
 
 const props = defineProps({
   updatesettingDialog: Boolean,
   settingActive: Boolean,
 });
+
 const Settingdialog = ref(props.settingActive);
 
 const emit = defineEmits(['update:settingActive']);
@@ -127,10 +131,7 @@ watch(() => props.settingActive, (newValue) => {
   Settingdialog.value = newValue;
 });
 
-
-// Emits
-
-
+// Form data
 interface FormData {
   email: string;
   currentPassword: string;
@@ -145,32 +146,11 @@ const formData = ref<FormData>({
   confirmPassword: ''
 });
 
-
 // Validation
 const validationMessage = ref('');
 const isSubmitting = ref(false);
 
-// Computed properties
-// const isFormValid = computed(() => {
-//   // Validate email if changing
-//   if (isChangingEmail.value) {
-//     if (!formData.value.email) return false;
-//     if (!/^\S+@\S+\.\S+$/.test(formData.value.email)) return false;
-//   }
-  
-//   // Validate password if changing
-//   if (isChangingPassword.value) {
-//     if (!formData.value.currentPassword) return false;
-//     if (!formData.value.newPassword) return false;
-//     if (formData.value.newPassword.length < 8) return false;
-//     if (formData.value.newPassword !== formData.value.confirmPassword) return false;
-//   }
-  
-//   // At least one field must be changing
-//   return isChangingEmail.value || isChangingPassword.value;
-// });
-
-// Methods
+// Close dialog
 const closeDialog = () => {
   emit('update:settingActive', false);
   resetForm();
@@ -187,90 +167,58 @@ const resetForm = () => {
   isSubmitting.value = false;
 };
 
-
+// Validation logic
 const validateForm = () => {
   validationMessage.value = '';
-  
-  // if (isChangingEmail.value) {
-  //   if (!formData.value.email) {
-  //     validationMessage.value = 'Email is required';
-  //     return false;
-  //   }
-    if (!/^\S+@\S+\.\S+$/.test(formData.value.email)) {
-      validationMessage.value = 'Please enter a valid email';
-      return false;
-    }
-  
-  
-  // if (isChangingPassword.value) {
-  //   if (!formData.value.currentPassword) {
-  //     validationMessage.value = 'Current password is required';
-  //     return false;
-  //   }
-  //   if (!formData.value.newPassword) {
-  //     validationMessage.value = 'New password is required';
-  //     return false;
-  //   }
-  //   if (formData.value.newPassword.length < 8) {
-  //     validationMessage.value = 'Password must be at least 8 characters';
-  //     return false;
-  //   }
-  //   if (formData.value.newPassword !== formData.value.confirmPassword) {
-  //     validationMessage.value = 'Passwords do not match';
-  //     return false;
-  //   }
-  // }
-  
-  // if (!isChangingEmail.value && !isChangingPassword.value) {
-  //   validationMessage.value = 'No changes selected';
-  //   return false;
-  // }
-  
+
+  if (!formData.value.newPassword) {
+    validationMessage.value = 'New password is required';
+    return false;
+  }
+
+  if (formData.value.newPassword.length < 8) {
+    validationMessage.value = 'Password must be at least 8 characters';
+    return false;
+  }
+
+  if (!formData.value.confirmPassword) {
+    validationMessage.value = 'Please confirm your new password';
+    return false;
+  }
+
+  if (formData.value.newPassword !== formData.value.confirmPassword) {
+    validationMessage.value = 'Passwords do not match';
+    return false;
+  }
+
   return true;
 };
 
+// Submit handler
 const submit = async () => {
   if (!validateForm()) return;
-  
+
   try {
     isSubmitting.value = true;
-    
-    // Create update data object
-// Create update data object with explicit typing
-// const updateData: {
-//   email?: string;
-//   currentPassword?: string;
-//   newPassword?: string;
-// } = {};
+    const userId = localStorage.getItem('userid');
+    console.log(userId);
+    if (!userId) {
+      validationMessage.value = 'User ID not found. Please log in again.';
+      return;
+    }
+    const response = await service.changePassword(userId, formData.value.newPassword);
 
-// if (isChangingEmail.value) {
-//   updateData.email = formData.value.email;
-// }
-
-// if (isChangingPassword.value) {
-//   updateData.currentPassword = formData.value.currentPassword;
-//   updateData.newPassword = formData.value.newPassword;
-// }
-
-    
-    // Here you would typically make an API call to update credentials
-    // For example:
-    // await adminService.updateCredentials(updateData);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Emit update event with the updated data
-    
-    // Close dialog
-    closeDialog();
+    if (response.status === 0) {
+      alert('Password updated successfully!');
+      closeDialog();
+    } else {
+      validationMessage.value = response.error_msg || 'Failed to update password. Please try again.';
+    }
   } catch (error) {
-    console.error('Failed to update credentials:', error);
-    validationMessage.value = 'Failed to update credentials. Please try again.';
+    console.error('Error changing password:', error);
+    validationMessage.value = 'Failed to update password. Please try again.';
   } finally {
     isSubmitting.value = false;
   }
 };
-
-
 </script>
