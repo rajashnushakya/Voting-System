@@ -13,7 +13,7 @@
           <div class="mt-2">
             <input
               type="email"
-              v-model="email"
+              v-model="loginForm.email"
               id="email"
               autocomplete="email"
               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -32,7 +32,7 @@
           <div class="mt-2 relative">
             <input
               :type="showPassword ? 'text' : 'password'"
-              v-model="password"
+              v-model="loginForm.password"
               id="password"
               autocomplete="current-password"
               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -70,15 +70,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import loginService from "../service/loginService";
 
 // State
-const email = ref("");
-const password = ref("");
+
 const loginError = ref("");
 const showPassword = ref(false);
+
+const loginForm = reactive({
+  email: "",
+  password: "",
+});
+
 
 // Router
 const router = useRouter();
@@ -94,7 +99,8 @@ const handleLogin = async () => {
   loginError.value = "";
 
   try {
-    const response = await service.login(email.value, password.value);
+    console.log("Login form data:", loginForm);
+    const response = await service.login(loginForm);
 
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
