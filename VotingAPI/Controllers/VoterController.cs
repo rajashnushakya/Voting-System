@@ -68,10 +68,10 @@ namespace VotingAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<DbResponse> ChangePassword(int user_id, string newPassword , CancellationToken cancellationToken)
+        public async Task<DbResponse> ChangePassword([FromBody] ForgotPassword forgotPassword , CancellationToken cancellationToken)
         {
             VoterService voterService = new VoterService(_connectionString);
-            return await voterService.ChangePasswordAsync(user_id, newPassword, cancellationToken);
+            return await voterService.ChangePasswordAsync(Convert.ToInt32(forgotPassword.userId), forgotPassword.newPassword, cancellationToken);
         }
 
         [HttpGet]
