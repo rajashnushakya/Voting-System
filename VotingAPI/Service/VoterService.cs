@@ -106,6 +106,25 @@ namespace VotingAPI.Service
 
             return voterCount;
         }
+
+
+
+        public async Task<int> ForgotPassword(string email, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            SqlCommand cmd = dataAccess.CreateCommand("getUserId");
+
+            cmd.Parameters.AddWithValue("@email", email);
+            DataTable tbl= await dataAccess.ExecuteReader(cancellationToken);
+            if (tbl.Rows.Count > 0)
+            {
+                return Convert.ToInt32( tbl.Rows[0][0]);
+            }
+            return -1;
+
+        }
+
+
         public async Task<DbResponse> VoterEnrollment(int electionId, int voterId, CancellationToken cancellationToken)
         {
             DataAccess dataAccess = new DataAccess(_connectionString);
