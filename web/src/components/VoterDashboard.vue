@@ -88,8 +88,8 @@ settingActive.value = true;
 };
 
 const logout = () => {
-  localStorage.clear(); // ✅ Clear any saved login data
-  router.push('/login'); // ✅ Redirect to login screen
+  localStorage.clear(); 
+  router.push('/login'); 
 };
 
 
@@ -217,13 +217,18 @@ const navigateToEnrollment = async (electionId: number) => {
       return;
     }
 
-    await electionService.enrollVoter(voterId, electionId);
+    const response = await electionService.enrollVoter(voterId, electionId);
+    const result = response.data;
+
+    if (result.status !== 0) {
+      alert(result.message); 
+      return;
+    }
 
     const election = ongoingElections.value.find(e => e.id === electionId);
     if (election) {
       election.enrolled = true;
 
-      // 👇 Save to localStorage
       let enrolled = JSON.parse(localStorage.getItem('enrolledElections') || '[]');
       if (!enrolled.includes(electionId)) {
         enrolled.push(electionId);
@@ -231,9 +236,6 @@ const navigateToEnrollment = async (electionId: number) => {
       }
     }
 
-    alert('Enrollment successful!');
-
-    // Go to the enrollment center page
     router.push({ name: 'voter-enroll', params: { electionId } });
 
   } catch (error) {
@@ -241,6 +243,8 @@ const navigateToEnrollment = async (electionId: number) => {
     alert('Failed to enroll. Please try again.');
   }
 };
+
+
 
 
 
