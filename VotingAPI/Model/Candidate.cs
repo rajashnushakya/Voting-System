@@ -18,6 +18,8 @@ namespace VotingAPI.Model
         public int MunicipalityId { get; set; }
         public int WardId { get; set; }
 
+        public int Position { get; set; }
+
 
 
     }
