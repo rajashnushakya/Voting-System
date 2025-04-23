@@ -50,6 +50,78 @@ namespace VotingAPI.Service
             return districts;
         }
 
+
+        public async Task<List<ElectionType>> GetAllElection(CancellationToken cancellationToken)
+        {
+            var electionType = new List<ElectionType>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+                    using (var cmd = new SqlCommand("GetAllElectionTypes", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                electionType.Add(new ElectionType
+                                {
+                                    ElectionTypeId = reader.GetInt32(reader.GetOrdinal("ElectionTypeId")),
+                                    ElectionTypeName = reader.GetString(reader.GetOrdinal("ElectionTypeName"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching election type.", ex);
+            }
+
+            return electionType;
+        }
+
+
+        public async Task<List<CandidatesPosition>> GetCandidatePosition(CancellationToken cancellationToken)
+        {
+            var CandidatePosition = new List<CandidatesPosition>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+                    using (var cmd = new SqlCommand("GetAllCandidatePositions", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                CandidatePosition.Add(new CandidatesPosition
+                                {
+                                    id = reader.GetInt32(reader.GetOrdinal("id")),
+                                    PositionName = reader.GetString(reader.GetOrdinal("PositionName"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching Candidate Position.", ex);
+            }
+
+            return CandidatePosition;
+        }
+
         public async Task<List<Municipality>> GetMunicipalitiesAsync(int? districtId, CancellationToken cancellationToken)
         {
             var municipalities = new List<Municipality>();
