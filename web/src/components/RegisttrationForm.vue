@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="text-gray-600 mb-8 mx-4">
-      <p class="font-medium text-lg mb-2">Voters Details</p>
+      <p class="font-semibold text-lg mb-2">Voters Details</p>
     </div>
 
     <div class="lg:col-span-2">
@@ -364,30 +364,34 @@ const onMunicipalityChange = () => {
   }
 };
 
-
-
 const handleSubmit = async () => {
   try {
-
     const dateofBirth = formData.dateofBirth ? new Date(formData.dateofBirth) : null;
-    formData.address.districtId = selectedDistrict.value?? '';
-    formData.address.municipalityId = selectedMunicipality.value?? '';
-    formData.address.wardId = selectedWard.value?? '';
-    console.log(formData.address);
-    const response = await service.addVoter({ ...formData, dateofBirth: dateofBirth });
-    console.log("Registration successful:", response);
-    
+    formData.address.districtId = selectedDistrict.value ?? '';
+    formData.address.municipalityId = selectedMunicipality.value ?? '';
+    formData.address.wardId = selectedWard.value ?? '';
+
+    const response = await service.addVoter({ ...formData, dateofBirth });
+
+    // Check backend status before success message
+    if (response.data.status === 0) {
+      alert(response.data.message || "Registration failed.");
+      return; // Exit early if registration is not successful
+    }
+
+    // Show success message
     successMessage.message = "Registration successful!";
     successMessage.isVisible = true;
 
     setTimeout(() => {
       successMessage.isVisible = false;
     }, 3000);
+    
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Error details:", error.response?.data);
       console.error("Error message:", error.message);
-      
+
       successMessage.message = `Error: ${error.response?.data?.message || 'An error occurred'}`;
       successMessage.isVisible = true;
     } else {
@@ -396,6 +400,6 @@ const handleSubmit = async () => {
       successMessage.isVisible = true;
     }
   }
-
 };
+
 </script>
