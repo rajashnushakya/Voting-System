@@ -7,6 +7,7 @@ export interface ElectionData {
     end_date: string | null;
     formatted_start_date?: string;
     formatted_end_date?: string;
+    election_type_id: number;
 }
 
 export default class ElectionService {
@@ -107,16 +108,26 @@ export default class ElectionService {
             throw new Error("Failed to start the election");
         }
     }
-    
-      async enrollVoter(voterId: string, electionId: number): Promise<void> {
+    async enrollVoter(voterId: string, electionId: number): Promise<any> {
         const url = `api/Voter/VoterEnrollment?voterId=${voterId}&electionId=${electionId}`;
       
         try {
-          await this.#api.post(url);
+          const response = await this.#api.post(url);
+          return response; 
         } catch (error) {
           console.error('Error enrolling voter:', error);
           throw error;
         }
       }
-    
+      
+      async getElectionType() {
+        const url = `api/Data/Election/Type`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching election type:', error);
+            throw error;
+        }
+    }
 }
