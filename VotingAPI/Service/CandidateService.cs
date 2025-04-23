@@ -31,6 +31,7 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@DistrictId", candidate.DistrictId);
             cmd.Parameters.AddWithValue("@MunicipalityId", candidate.MunicipalityId);
             cmd.Parameters.AddWithValue("@WardId", candidate.WardId);
+            cmd.Parameters.AddWithValue("@Position", candidate.Position);
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
             
         }
