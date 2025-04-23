@@ -20,20 +20,26 @@ namespace VotingAPI.Service
         }
         public async Task<DbResponse> RegisterAsync(Voter voter, CancellationToken cancellationToken)
         {
-            //generate user hash password
-            //AppUser user = new AppUser();
-            //user.Email = voter.Email;
-            
-            //var RoleId = 1;
-            voter.User.RoleId = 1;
-            //var hasher = new PasswordHasher<AppUser>();
-            var hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(voter.User.Password, 5);
-            //user.UserName = voter.User.UserName;
+            int age = DateTime.Today.Year - voter.DateofBirth.Year;
+            if (voter.DateofBirth.Date > DateTime.Today.AddYears(-age)) age--;
 
-            
+            if (age < 18)
+            {
+                return new DbResponse
+                {
+                    Status = 0,
+                    Message = "Voter must be at least 18 years old."
+                };
+            }
+
+            // Hash the password
+            voter.User.RoleId = 1;
+            var hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(voter.User.Password, 5);
+
             DataAccess dataAccess = new DataAccess(_connectionString);
             SqlCommand cmd = dataAccess.CreateCommand("sp_voter_registration");
-            //voter details
+
+            // voter details
             cmd.Parameters.AddWithValue("@FullName", voter.Name);
             cmd.Parameters.AddWithValue("@FatherName", voter.FatherName);
             cmd.Parameters.AddWithValue("@MotherName", voter.MotherName);
@@ -45,7 +51,7 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@PhoneNumber", voter.PhoneNumber);
             cmd.Parameters.AddWithValue("@NationalId", voter.NationalId);
 
-            //voter address details
+            // address details
             cmd.Parameters.AddWithValue("@HouseNumber", voter.Address.HouseNumber);
             cmd.Parameters.AddWithValue("@WardId", voter.Address.WardId);
             cmd.Parameters.AddWithValue("@StreetName", voter.Address.StreetName);
@@ -53,13 +59,14 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@DistrictId", voter.Address.DistrictId);
             cmd.Parameters.AddWithValue("@Province", voter.Address.Province);
 
-            //voter user details
+            // user credentials
             cmd.Parameters.AddWithValue("@UserName", voter.User.UserName);
             cmd.Parameters.AddWithValue("@Password", hashedPassword);
             cmd.Parameters.AddWithValue("@RoleId", voter.User.RoleId);
 
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
         }
+
         public async Task<DbResponse> ChangePasswordAsync(int userId, string plainPassword, CancellationToken cancellationToken)
         {
             // Hash the password using BCrypt
