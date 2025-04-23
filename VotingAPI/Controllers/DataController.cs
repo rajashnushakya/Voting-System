@@ -63,6 +63,35 @@ namespace VotingAPI.Controllers
             }
         }
 
+        [HttpGet("Election/Type")]
+        public async Task<ActionResult<List<ElectionType>>> GetElectionTypes(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var electionTypes = await _dataService.GetAllElection(cancellationToken);
+                return Ok(electionTypes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
+        [HttpGet("Candidate/Position")]
+        public async Task<ActionResult<List<CandidatesPosition>>> GetCandidatesPosition(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var candidatesPositions = await _dataService.GetCandidatePosition(cancellationToken);
+                return Ok(candidatesPositions);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
 
         [HttpGet("Parties")]
         public async Task<IActionResult> GetParties()
