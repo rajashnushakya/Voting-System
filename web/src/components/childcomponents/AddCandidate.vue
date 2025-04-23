@@ -48,7 +48,12 @@
               <v-col cols="12" sm="6">
                 <v-select v-model="formData.electionId" :items="elections" item-title="name" item-value="id" label="Election" required></v-select>
               </v-col>
-  
+
+
+              <v-col cols="12" sm="6" >
+                <v-select v-model="formData.Position" :items="positions" item-title="positionName" item-value="id" label="Position" required></v-select>
+              </v-col>
+
               <!-- District Dropdown -->
               <v-col cols="12" sm="6" >
                 <v-select v-model="formData.districtId" :items="districts" item-title="name" item-value="id" label="District" required></v-select>
@@ -106,6 +111,8 @@
   const districts = ref([]);
   const municipalities = ref([]);
   const wards = ref([]);
+  const positions = ref([]);
+
   const elections = ref([]);
   const gender = ref([
       { name: 'Male' },
@@ -132,6 +139,7 @@
   dateOfBirth: '',
   gender: null,
   partyId: '',
+  Position:'',
   electionId: '',
   districtId: '',
   municipalityId: '',
@@ -156,6 +164,15 @@
         console.error("Error fetching parties:", error);
         }
   }
+  const fetchPositions = async () => {
+  try {
+    const data = await service.getCandidatePosition();
+    positions.value = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching positions:", error);
+  }
+};
+
 
   const fetchMunicipalities = async () => {
     try {
@@ -186,6 +203,7 @@ const fetchWards = async () => {
     getElectionName();
     fetchDistricts();
     fetchParties();
+    fetchPositions();
   });
   
   const getElectionName = async () => {
