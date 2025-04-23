@@ -27,7 +27,7 @@ namespace VotingAPI.Service
             {
                 return new DbResponse
                 {
-                    Status = 0,
+                    Status = 100,
                     Message = "Voter must be at least 18 years old."
                 };
             }
