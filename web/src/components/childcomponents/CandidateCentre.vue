@@ -245,7 +245,6 @@ const submitData = async () => {
 
       console.log('Payload for API:', { centreId, candidateId });
       const response = await cservice.enrollCandidateinElectionCentre(centreId, candidateId);
-      console.log('API Response:', response);
       if (response.message !== "Candidate Enrolled in Centre Successfully") {
         alert(response.data.message);
         return;

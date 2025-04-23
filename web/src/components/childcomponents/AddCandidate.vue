@@ -202,15 +202,25 @@ watch(() => formData.municipalityId, () => fetchWards());
   watch(() => props.CdialogActive, (newValue) => {
     Candidatedialog.value = newValue;
   });
-  
   const Submit = async () => {
   try {
-    await service.addCandidate(formData); 
-    closeDialog();
+    const response = await service.addCandidate(formData); // assuming it returns the backend response
+
+    // Access the response data
+    const result = response.data;
+
+    if (result.status === 0) {
+      alert(result.message); 
+      closeDialog();
+    } else {
+      alert(` ${result.message}`); 
+    }
   } catch (error) {
     console.error("Error adding candidate:", error);
+    alert("An unexpected error occurred.");
   }
 };
+
 
   const closeDialog = () => {
     emit('update:CdialogActive', false);
