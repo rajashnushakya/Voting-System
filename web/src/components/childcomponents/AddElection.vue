@@ -37,6 +37,18 @@
                 class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
             </div>
+            <div class="mt-1 block w-full">
+              <label for="election-type" class="block text-sm font-medium text-gray-700 mb-1">Election Type</label>
+              <v-select
+                label="Election Type"
+                v-model="electionData.type_id"  
+                :items="electionTypes"
+                item-title="name"   
+                item-value="id" 
+                required
+                variant="outlined"
+              />
+            </div>
           </div>
         </form>
       </v-card-text>
@@ -64,19 +76,37 @@ const emit = defineEmits(['update:dialogActive']);
 const localDialogActive = ref(props.dialogActive);
 
 const electionData = ref({
-  id: 0,
   name: '',
   start_date: null,
   end_date: null,
+  type_id: null
 });
 
 const service = new electionService();
+const electionTypes = ref([]);
 
+// Fetch the election types
+const getElectionTypes = async () => {
+  try {
+    const data = await service.getElectionType();
+    console.log("Raw election type data:", data); 
+    electionTypes.value = data.map(item => ({
+      id: item.electionTypeId,
+      name: item.electionTypeName
+    }));
+    console.log("Election Types:", electionTypes.value);
+  } catch (error) {
+    console.error("Error fetching election types:", error);
+  }
+};
+
+// Computed property for today's date
 const todayDate = computed(() => {
   const now = new Date();
   return now.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
 });
 
+// Computed property for minimum end date (1 hour after start date)
 const minEndDate = computed(() => {
   if (electionData.value.start_date) {
     const startDate = new Date(electionData.value.start_date);
@@ -86,7 +116,7 @@ const minEndDate = computed(() => {
   return todayDate.value;
 });
 
-
+// Watcher for start date change, adjusting end date accordingly
 watch(() => electionData.value.start_date, (newStartDate) => {
   if (newStartDate && (!electionData.value.end_date || newStartDate >= electionData.value.end_date)) {
     const endDate = new Date(newStartDate);
@@ -95,20 +125,34 @@ watch(() => electionData.value.start_date, (newStartDate) => {
   }
 });
 
+// Watcher for dialog active state, to reload election types when opening the dialog
 watch(() => props.dialogActive, (newValue) => {
   localDialogActive.value = newValue;
 });
 
+watch(localDialogActive, (newVal) => {
+  if (newVal) {
+    getElectionTypes();
+  }
+});
+
+// Submit the form and save the data
 const submitForm = async () => {
   try {
+    // Ensure only the 'id' is sent in type_id
+    if (electionData.value.type_id && typeof electionData.value.type_id === 'object') {
+      electionData.value.type_id = electionData.value.type_id.id;
+    }
     await service.addElection(electionData.value);
-    electionData.value = { id: 0, name: '', start_date: null, end_date: null };
+    console.log("Election added successfully:", electionData.value);
+    electionData.value = { id: 0, name: '', start_date: null, end_date: null, type_id: null };
     closeDialog();
   } catch (error) {
     console.error('Error adding election:', error);
   }
 };
 
+// Close the dialog
 const closeDialog = () => {
   localDialogActive.value = false;
   emit('update:dialogActive', false);
