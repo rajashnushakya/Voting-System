@@ -81,5 +81,17 @@ export default class candidateService {
             throw error;
         }
     }
+
+    async getCandidatePosition() {
+        const url = `api/Data/Candidate/Position`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching election type:', error);
+            throw error;
+        }
+    }
+
     
 }
