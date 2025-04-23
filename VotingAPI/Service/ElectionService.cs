@@ -27,6 +27,7 @@ namespace VotingAPI.Service
             cmd.Parameters.AddWithValue("@ElectionName", election.Name);
             cmd.Parameters.AddWithValue("@StartDate", election.Start_date);
             cmd.Parameters.AddWithValue("@EndDate", election.End_date);
+            cmd.Parameters.AddWithValue("@Type", election.type_id);
 
             // Execute the command (non-query)
             return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
@@ -84,7 +85,7 @@ namespace VotingAPI.Service
                                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
                                     Name = reader.GetString(reader.GetOrdinal("Name")),  
                                     Start_date = reader.GetDateTime(reader.GetOrdinal("Start_date")),  
-                                    End_date = reader.GetDateTime(reader.GetOrdinal("End_date"))  
+                                    End_date = reader.GetDateTime(reader.GetOrdinal("End_date"))
                                 });
                             }
                         }
