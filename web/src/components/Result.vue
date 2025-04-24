@@ -9,7 +9,7 @@
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Filters</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Region</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Election</label>
             <select
               v-model="filters.region"
               class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
@@ -20,7 +20,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Position</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Centres</label>
             <select
               v-model="filters.position"
               class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
@@ -31,15 +31,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Party</label>
-            <select
-              v-model="filters.party"
-              class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option v-for="party in parties" :key="party" :value="party">
-                {{ party }}
-              </option>
-            </select>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <button>Search</button>
           </div>
         </div>
       </section>
@@ -73,22 +66,6 @@
           </table>
         </div>
       </section>
-
-      <!-- Graphical Analytics Section -->
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Vote Distribution by Candidate</h2>
-          <div class="h-64">
-            <canvas id="pieChart"></canvas>
-          </div>
-        </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Votes by Region</h2>
-          <div class="h-64">
-            <canvas id="barChart"></canvas>
-          </div>
-        </div>
-      </section>
     </div>
   </div>
 </template>
@@ -105,7 +82,6 @@ const filters = ref({
 
 const regions = ['Region 1', 'Region 2', 'Region 3']
 const positions = ['President', 'Secretary', 'Treasurer']
-const parties = ['Party A', 'Party B', 'Party C']
 
 const overallResultsHeaders = [
   { text: 'Candidate', value: 'name' },
