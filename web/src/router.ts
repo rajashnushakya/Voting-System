@@ -75,8 +75,13 @@ const routes = [
       path: '/forgot-password',
       name: 'forgot-password',
       component:()=> import('./components/ForgotPassword.vue'),
-    }
+    },
 
+    {
+      path: '/election/detail',
+      name: 'election-detail',
+      component:()=> import('./components/ElectionDetails.vue'),
+    }
   
 
 
