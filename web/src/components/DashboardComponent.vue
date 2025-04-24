@@ -79,13 +79,6 @@ const startElection = async (electionId: number) => {
   }
 };
 
-
-const UpdateElection = (electionId: number) => {
-  openMenuId.value = null;
-  alert(`Update Election clicked for election ID: ${electionId}`);
-  // Add logic here
-};
-
 const ongoingElections = ref<Election[]>([]);
 
 const electionService = new ElectionService();
@@ -285,12 +278,6 @@ const viewDetailedResults = (resultId: number) => {
           class="block px-4 py-2 text-sm text-green-700 hover:bg-green-100 w-full text-left"
         >
           Start Election
-        </button>
-        <button 
-          @click="UpdateElection(openMenuId!)" 
-          class="block px-4 py-2 text-sm text-orange-400 hover:bg-orange-100 w-full text-left"
-        >
-          Update Election
         </button>
         <button 
           @click="endElection(openMenuId!)" 
