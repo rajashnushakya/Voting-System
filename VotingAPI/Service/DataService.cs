@@ -1,5 +1,6 @@
 ﻿ using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using VotingAPI.Model;
@@ -210,6 +211,87 @@ namespace VotingAPI.Service
 
             return wards;
         }
+        public async Task<List<CentreDetails>> GetCentreDetailsAsync(int electionId, CancellationToken cancellationToken)
+        {
+            var centreDetailsList = new List<CentreDetails>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("GetCentreDetailsByElectionId", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@electionId", electionId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                centreDetailsList.Add(new CentreDetails
+                                {
+                                    CentreId = reader.GetInt32(reader.GetOrdinal("CentreId")),
+                                    CentreName = reader.GetString(reader.GetOrdinal("CentreName")),
+                                    DistrictName = reader.GetString(reader.GetOrdinal("DistrictName")),
+                                    MunicipalityName = reader.GetString(reader.GetOrdinal("MunicipalityName")),
+                                    WardNumber = reader.GetInt32(reader.GetOrdinal("WardNumber"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching centre details by election ID.", ex);
+            }
+
+            return centreDetailsList;
+        }
+
+        public async Task<List<ElectionCentreDetails>> GetElectionCentreDetailsAsync(int CentreId, CancellationToken cancellationToken)
+        {
+            var centreDetailsList = new List<ElectionCentreDetails>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    // Fetch the centre details along with the counts (candidates, voters, votes) using a single SP
+                    using (var cmd = new SqlCommand("GetCandidatesAndVotersCountByCentreId", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@centreId", CentreId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                var centreDetails = new ElectionCentreDetails
+                                {
+                                    TotalCandidates = reader.GetInt32(reader.GetOrdinal("TotalCandidates")),
+                                    TotalVoters = reader.GetInt32(reader.GetOrdinal("TotalVoters")),
+                                    TotalVotes = reader.GetInt32(reader.GetOrdinal("TotalVotes"))
+                                };
+
+                                centreDetailsList.Add(centreDetails);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching election centre details.", ex);
+            }
+
+            return centreDetailsList;
+        }
+
 
 
         public async Task<List<Party>> GetAllPartiesAsync()
