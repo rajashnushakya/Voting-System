@@ -130,4 +130,27 @@ export default class ElectionService {
             throw error;
         }
     }
+
+    async getAllElection() {
+        const url = `api/Election/GetAllElection`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching  election:', error);
+            throw error;
+        }
+    }
+
+    async getElectionCentreDetail(electionId:number) {
+        const url = `api/Data/Centre/Detail?electionId=${electionId}`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error(`Error fetching details for election ID ${electionId}:`, error);
+            throw error;
+        }
+    }
+    
 }
