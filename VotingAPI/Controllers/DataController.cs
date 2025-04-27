@@ -187,6 +187,28 @@ namespace VotingAPI.Controllers
             }
         }
 
+        [HttpGet("Candidate/Votes")]
+        public async Task<IActionResult> GetCandidateVotes(int centreId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Call the service method to get the candidate votes by the centre
+                var candidateVotes = await _dataService.GetCandidateVotesByCentreAsync(centreId, cancellationToken);
+
+                if (candidateVotes == null || candidateVotes.Count == 0)
+                {
+                    return NotFound(new { message = "No votes found for this centre." });
+                }
+
+                return Ok(candidateVotes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+
         [HttpGet("Centre/Name")]
         public async Task<IActionResult>GetName(int districtId, int municipalityId, int wardId, CancellationToken cancellationToken)
         {
