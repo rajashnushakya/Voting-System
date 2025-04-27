@@ -250,6 +250,47 @@ namespace VotingAPI.Service
 
             return centreDetailsList;
         }
+        public async Task<List<CandidateVotesByCentre>> GetCandidateVotesByCentreAsync(int CentreId, CancellationToken cancellationToken)
+        {
+            var candidateVotesList = new List<CandidateVotesByCentre>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    // Fetch the candidate votes by centre
+                    using (var cmd = new SqlCommand("GetCandidateVotesByCentre", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@CentreId", CentreId);
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                var candidateVotes = new CandidateVotesByCentre
+                                {
+                                    CandidateName = reader.GetString(reader.GetOrdinal("CandidateName")),
+                                    PartyName = reader.GetString(reader.GetOrdinal("PartyName")),
+                                    Votes = reader.GetInt32(reader.GetOrdinal("Votes")),
+                                    VotePercentage = reader.GetDecimal(reader.GetOrdinal("VotePercentage"))
+                                };
+
+                                candidateVotesList.Add(candidateVotes);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching candidate votes by centre.", ex);
+            }
+
+            return candidateVotesList;
+        }
 
         public async Task<List<ElectionCentreDetails>> GetElectionCentreDetailsAsync(int CentreId, CancellationToken cancellationToken)
         {
@@ -417,6 +458,7 @@ namespace VotingAPI.Service
 
             return ward;
         }
+
         public async Task<List<Centre>> GetCentreName(int districtId, int municipalityId, int wardId, CancellationToken cancellationToken)
         {
             var name = new List<Centre>();
