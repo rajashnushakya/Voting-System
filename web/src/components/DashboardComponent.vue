@@ -285,12 +285,6 @@ const viewDetailedResults = (resultId: number) => {
         >
           End Election
         </button>
-        <button 
-          @click="endElection(openMenuId!)" 
-          class="block px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 w-full text-left"
-        >
-          Details
-        </button>
       </div>
     </div>
   </div>
