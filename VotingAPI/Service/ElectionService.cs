@@ -100,6 +100,45 @@ namespace VotingAPI.Service
             return elections;
         }
 
+
+        public async Task<List<Election>> GetAllElectionAsync(CancellationToken cancellationToken)
+        {
+            var elections = new List<Election>();
+
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync(cancellationToken);
+
+                    using (var cmd = new SqlCommand("sp_get_all_elections", connection))
+                    {
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                elections.Add(new Election
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                                    Start_date = reader.GetDateTime(reader.GetOrdinal("Start_date")),
+                                    End_date = reader.GetDateTime(reader.GetOrdinal("End_date"))
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return elections;
+        }
+
         public async Task<DbResponse> AddElectionCentreAsync(List<ElectionCentre> electionCentre, CancellationToken cancellationToken)
         {
             DataAccess dataAccess = new DataAccess(_connectionString);
