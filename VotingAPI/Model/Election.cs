@@ -11,4 +11,5 @@ namespace VotingAPI.Model
 
         public int type_id { get; set; }
     }
+
 }
