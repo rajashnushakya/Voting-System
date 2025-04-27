@@ -95,6 +95,7 @@ const navigation = [
       { name: 'Add Election'},
       { name: 'Add Centre' },
       { name: 'Add Election Centre'},
+      {name: 'All Election Details'}
     ],
   },
   { name: 'Result', href: 'result', current: false },
@@ -141,6 +142,10 @@ function setCurrentItem(item) {
   if (item.name === 'Change Password') {
     settingActive.value = true;
     console.log('Change Credentials clicked');
+  }
+  if (item.name === 'All Election Details') {
+    window.location.href = '/election/detail'; 
+
   }
   if (item.name === 'Logout') {
     localStorage.removeItem('token');
