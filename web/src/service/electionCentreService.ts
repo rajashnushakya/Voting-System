@@ -32,6 +32,12 @@ export interface ElectionCenter {
   distance: string;
 }
 
+export interface ElectionCentreDetails {
+  TotalCandidates: number;
+  TotalVoters: number;
+  TotalVotes: number;
+}
+
 export default class ElectionCentreService {
   #api: apiService;
 
@@ -91,6 +97,17 @@ export default class ElectionCentreService {
 
   async getCentersByElection(electionId: string): Promise<ElectionCenter[]> {
     const url = `api/Election/ElectionCentre?electionId=${electionId}`;
+    try {
+      const response = await this.#api.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching election centers:', error);
+      throw error;
+    }
+  }
+
+  async getElectionCentreDetails(electionCentreId: string): Promise<ElectionCentreDetails[]> {
+    const url = `api/Data/Election/Centre/Detail?electionCentreId=${electionCentreId}`;
     try {
       const response = await this.#api.get(url);
       return response.data;
