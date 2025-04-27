@@ -11,28 +11,34 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Election</label>
             <select
-              v-model="filters.region"
+              v-model="filters.election"
               class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option v-for="region in regions" :key="region" :value="region">
-                {{ region }}
+              <option v-for="election in elections" :key="election" :value="election">
+                {{ election }}
               </option>
             </select>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Centres</label>
             <select
-              v-model="filters.position"
-              class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+              v-model="filters.centre"
+              :disabled="centres.length === 0"
+              class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
             >
-              <option v-for="position in positions" :key="position" :value="position">
-                {{ position }}
+              <option v-for="centre in centres" :key="centre.id" :value="centre.name">
+                {{ centre.name }}
               </option>
             </select>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-            <button>Search</button>
+            <button
+              @click="fetchResults"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
+            >
+              Search
+            </button>
           </div>
         </div>
       </section>
@@ -69,19 +75,24 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import MenuComponent from '../components/childcomponents/MenuComponent.vue'
+import ElectionService from '../service/electionService'
+import ElectionCentreService from '../service/electionCentreService'
+
+const Eservice = new ElectionService();
+const ECservice = new ElectionCentreService();
 
 const filters = ref({
-  region: '',
-  position: '',
+  election: '',
+  centre: '',
   party: '',
 })
 
-const regions = ['Region 1', 'Region 2', 'Region 3']
-const positions = ['President', 'Secretary', 'Treasurer']
+const elections = ref<string[]>([])   // List of election names
+const centres = ref<{ id: string; name: string }[]>([]);  // List of centre names
+const electionsData = ref<any[]>([])  // Store full elections with id and name
 
 const overallResultsHeaders = [
   { text: 'Candidate', value: 'name' },
@@ -90,13 +101,91 @@ const overallResultsHeaders = [
   { text: 'Percentage', value: 'percentage' },
 ]
 
-const filteredOverallResults = ref([
+const filteredOverallResults = ref([ 
   { name: 'John Doe', party: 'Party A', votes: 450, percentage: 50.0, isWinner: true },
   { name: 'Jane Smith', party: 'Party B', votes: 300, percentage: 33.3, isWinner: false },
   { name: 'Alex Johnson', party: 'Party C', votes: 150, percentage: 16.7, isWinner: false },
-])
+]);
+const fetchResults = async () => {
+  if (filters.value.election && filters.value.centre) {
+    try {
+      console.log('Selected Centre from filters:', filters.value.centre);  // Debugging: Log selected centre value
+
+      // Find the selected centre object from the centres list based on the name
+      const selectedCentre = centres.value.find(centre => centre.name.trim() === filters.value.centre.trim());
+
+      console.log('Selected Centre:', selectedCentre);  // Debugging: Log selected centre object
+
+      if (!selectedCentre) {
+        console.warn('Centre not found');
+        return;
+      }
+
+      const centreId = selectedCentre.id;  // Use the 'id' of the selected centre
+      const electionId = filters.value.election;
+
+      // Debugging: Log the centreId being used
+      console.log('Using Centre ID:', centreId);
+
+      // Fetch the results using the ElectionCentreService
+      const results = await ECservice.getCandidateVotes(centreId);
+
+      // Debugging: Log the results returned
+      console.log('Election Results:', results);
+
+      // Update the filteredOverallResults
+      filteredOverallResults.value = results.map((result: any) => ({
+        name: result.candidateName,
+        party: result.partyName,
+        votes: result.votes,
+        percentage: result.votePercentage,
+        isWinner: result.votePercentage > 50 // Example condition for determining the winner
+      }));
+    } catch (error) {
+      console.error('Error fetching results:', error);
+    }
+  } else {
+    console.warn('Please select both an election and a centre.');
+  }
+};
+
+const fetchElections = async () => {
+  try {
+    const fetchedElections = await Eservice.getAllElection();
+    electionsData.value = fetchedElections;
+    elections.value = fetchedElections.map((election: any) => election.name);
+  } catch (error) {
+    console.error('Failed to fetch elections', error);
+  }
+}
+
+const fetchCentres = async (electionId: string) => {
+  try {
+    const centers = await ECservice.getCentersByElection(electionId);
+    console.log('Fetched centers:', centers);
+
+    // Extracting the id values
+    centres.value = centers.map((center: any) => ({
+      id: center.id,
+      name: center.name,
+    }));
+  } catch (error) {
+    console.error('Failed to fetch centers', error);
+  }
+}
+
+// When election changes, load centres
+watch(() => filters.value.election, (newElectionName) => {
+  const selectedElection = electionsData.value.find(e => e.name === newElectionName);
+  if (selectedElection) {
+    fetchCentres(selectedElection.id);
+  } else {
+    centres.value = [];
+  }
+})
+
+onMounted(() => {
+  fetchElections();
+})
 </script>
 
-<style>
-/* Additional custom styles if needed */
-</style>
