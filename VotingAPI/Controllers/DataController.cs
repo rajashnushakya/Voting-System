@@ -92,6 +92,21 @@ namespace VotingAPI.Controllers
             }
         }
 
+        [HttpGet("Centre/Detail")]
+        public async Task<ActionResult<List<CandidatesPosition>>> GetCentreDetail(int electionId,CancellationToken cancellationToken)
+        {
+            try
+            {
+                var candidatesPositions = await _dataService.GetCentreDetailsAsync(electionId,cancellationToken);
+                return Ok(candidatesPositions);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
 
         [HttpGet("Parties")]
         public async Task<IActionResult> GetParties()
@@ -146,6 +161,25 @@ namespace VotingAPI.Controllers
                 }
 
                 return Ok(ward);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("Election/Centre/Detail")]
+        public async Task<IActionResult> GetElectionCentreDetail(int electionCentreId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var details = await _dataService.GetElectionCentreDetailsAsync(electionCentreId, cancellationToken);
+                if (details == null || details.Count == 0)
+                {
+                    return NotFound(new { message = "No details" });
+                }
+
+                return Ok(details);
             }
             catch (Exception ex)
             {
