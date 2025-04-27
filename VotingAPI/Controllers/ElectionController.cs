@@ -40,6 +40,21 @@ namespace VotingAPI.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetAllElectionAsync(CancellationToken cancellationToken)
+        {
+            ElectionService electionService = new ElectionService(_connectionString);
+            var elections = await electionService.GetAllElectionAsync(cancellationToken);
+
+            if (elections == null || elections.Count == 0)
+            {
+                return NotFound("No elections found.");
+            }
+
+            return Ok(elections);
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> CountAsync(CancellationToken cancellationToken)
         {
             ElectionService electionService = new ElectionService(_connectionString);
