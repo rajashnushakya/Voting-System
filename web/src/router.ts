@@ -78,10 +78,16 @@ const routes = [
     },
 
     {
+      path: '/election/centre/detail/:electionId',
+      name: 'election-centre-detail',
+      component:()=> import('./components/childcomponents/ElectionDetails.vue'),
+    },
+    {
       path: '/election/detail',
       name: 'election-detail',
-      component:()=> import('./components/ElectionDetails.vue'),
+      component:()=> import('./components/childcomponents/ElectionTable.vue'),
     }
+
   
 
 
