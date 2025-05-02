@@ -258,7 +258,7 @@ const createChart = () => {
       labels: ['Votes Cast', 'Total Candidates', 'Total Voters'],
       datasets: [{
         data: [totalVotes, totalCandidates, totalVoters],
-        backgroundColor: ['#4CAF50', '#6A994E','#E0E0E0'],
+        backgroundColor: ['#4CAF50', '#6A994E','#FED18C'],
         hoverBackgroundColor: ['#388E3C', '#FCB07E', '#9E9E9E'],
         borderWidth: 0
       }]
