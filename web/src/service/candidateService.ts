@@ -93,5 +93,16 @@ export default class candidateService {
         }
     }
 
+    async getTopCandidate(){
+        const url = `api/Candidate/top-voted`;
+        try {
+            const response = await this.#api.get(url);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching election type:', error);
+            throw error;
+        }
+    }
+
     
 }
