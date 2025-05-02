@@ -1,11 +1,61 @@
 <script setup lang="ts">
-// Previous script content remains the same
 import { ref, onMounted } from 'vue'
 import MenuComponent from './childcomponents/MenuComponent.vue'
 import { VoteIcon, UsersIcon, CheckSquareIcon, FileTextIcon, UserIcon } from 'lucide-vue-next'
 import ElectionService from '../service/electionService'
 import voterService from '../service/voterService'
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
+import candidateService from '../service/candidateService'
 
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
+const service = new candidateService();
+const electionService = new ElectionService();
+const VoterService = new voterService();
+
+// Define a consistent color palette for all charts
+const chartColors = {
+  backgroundColor: [
+    '#4F46E5', // Indigo
+    '#7C3AED', // Purple
+    '#EC4899', // Pink
+    '#F59E0B', // Amber
+    '#10B981', // Emerald
+    '#3B82F6', // Blue
+    '#F43F5E', // Rose
+    '#8B5CF6'  // Violet
+  ],
+  borderColor: [
+    '#4338CA', // Indigo (darker)
+    '#6D28D9', // Purple (darker)
+    '#DB2777', // Pink (darker)
+    '#D97706', // Amber (darker)
+    '#059669', // Emerald (darker)
+    '#2563EB', // Blue (darker)
+    '#E11D48', // Rose (darker)
+    '#7C3AED'  // Violet (darker)
+  ]
+};
+
+// Function to get colors based on data length
+const getChartColors = (dataLength: number) => {
+  const backgroundColors = [];
+  const borderColors = [];
+  
+  for (let i = 0; i < dataLength; i++) {
+    // Use modulo to cycle through colors if there are more data points than colors
+    const colorIndex = i % chartColors.backgroundColor.length;
+    backgroundColors.push(chartColors.backgroundColor[colorIndex]);
+    borderColors.push(chartColors.borderColor[colorIndex]);
+  }
+  
+  return {
+    backgroundColor: backgroundColors,
+    borderColor: borderColors
+  };
+};
 
 interface QuickStat {
   title: string;
@@ -19,6 +69,7 @@ interface RecentActivity {
   timestamp: string;
   icon: any;
 }
+
 interface Election {
   id: number;
   name: string;
@@ -27,9 +78,11 @@ interface Election {
   totalVotes: number;
 }
 
-interface ElectionResult {
-  id: number;
-  name: string;
+interface CandidateData {
+  candidateId: number;
+  fullName: string;
+  voteCount: number;
+  electionName: string;
 }
 
 const quickStats = ref<QuickStat[]>([
@@ -48,6 +101,116 @@ const recentActivities = ref<RecentActivity[]>([
 const openMenuId = ref<number | null>(null);
 // Store menu position
 const menuPosition = ref({ top: 0, left: 0 });
+
+// Initialize empty chart data
+const chartData = ref({
+  labels: [],
+  datasets: [
+    {
+      label: 'Votes',
+      data: [],
+      backgroundColor: [],
+      borderColor: [],
+      borderWidth: 1
+    }
+  ]
+});
+
+const chartOptions = ref({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false
+    },
+    title: {
+      display: true,
+      text: 'Top Candidates by Votes',
+      font: {
+        size: 16,
+        weight: 'bold'
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: function(context: any) {
+          const label = context.dataset.label || '';
+          const value = context.parsed.y || 0;
+          const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+          const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : '0.00';
+          return `${label}: ${value} (${percentage}%)`;
+        }
+      }
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Number of Votes'
+      }
+    },
+    x: {
+      title: {
+        display: true,
+        text: 'Candidates'
+      }
+    }
+  }
+});
+
+// Store candidate data
+const candidateData = ref<CandidateData[]>([]);
+
+// Fetch candidate data from API
+const fetchCandidateCount = async () => {
+  try {
+    const response = await service.getTopCandidate();
+    console.log('Top candidates:', response);
+    candidateData.value = response;
+    updateChartFromAPI(response);
+  } catch (error) {
+    console.error('Error fetching candidate count:', error);
+  }
+};
+
+// Function to create chart data from API response
+const updateChartFromAPI = (apiData: CandidateData[]) => {
+  if (!apiData || apiData.length === 0) {
+    // Handle empty data
+    chartData.value = {
+      labels: ['No data available'],
+      datasets: [
+        {
+          label: 'Votes',
+          data: [0],
+          backgroundColor: ['#e5e7eb'],
+          borderColor: ['#d1d5db'],
+          borderWidth: 1
+        }
+      ]
+    };
+    return;
+  }
+  
+  const labels = apiData.map((candidate: CandidateData) => candidate.fullName);
+  const data = apiData.map((candidate: CandidateData) => candidate.voteCount);
+  const colors = getChartColors(labels.length);
+  
+  chartData.value = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Votes',
+        data: data,
+        backgroundColor: colors.backgroundColor,
+        borderColor: colors.borderColor,
+        borderWidth: 1
+      }
+    ]
+  };
+};
 
 const toggleMenu = (electionId: number, event: MouseEvent) => {
   // Get the button position
@@ -68,21 +231,18 @@ const toggleMenu = (electionId: number, event: MouseEvent) => {
 };
 
 const startElection = async (electionId: number) => {
-
   try {
     await electionService.startElection(electionId);
-    alert(`Election started successfully for election ID: ${electionId}`);
-    // Add more logic here (e.g., refresh election list, update UI)
+    alert(`Election started successfully !!`);
+    fetchActiveElections();
   } catch (error) {
     console.error("Error starting election:", error);
-    alert(`Failed to start election for ID: ${electionId}`);
+    alert(`Failed to start election `);
   }
 };
 
 const ongoingElections = ref<Election[]>([]);
 
-const electionService = new ElectionService();
-const VoterService = new voterService();
 const fetchActiveElections = async () => {
   try {
     const response = await electionService.getActiveElection();
@@ -111,16 +271,15 @@ const fetchActiveElections = async () => {
   }
 };
 
-
-
 const endElection = async (id: number) => {
   try {
     openMenuId.value = null;
     const response = await electionService.endElection(id);
 
     if (response) {
-
       fetchActiveElections();
+      // Refresh candidate data after ending an election
+      fetchCandidateCount();
     } else {
       console.error('Election ending failed:', response);
     }
@@ -131,7 +290,6 @@ const endElection = async (id: number) => {
     alert('Failed to end the election. Please try again.');
   }
 };
-
 
 const fetchElectionCount = async () => {
   try {
@@ -156,10 +314,16 @@ const closeMenu = () => {
   openMenuId.value = null;
 };
 
+// Refresh data function
+const refreshData = () => {
+  fetchCandidateCount();
+};
+
 onMounted(() => {
   fetchActiveElections();
   fetchElectionCount();
   fetchVoterCount();
+  fetchCandidateCount();
   
   // Add event listener to close menu when clicking outside
   document.addEventListener('click', (event) => {
@@ -169,17 +333,6 @@ onMounted(() => {
     }
   });
 });
-
-const electionResults = ref<ElectionResult[]>([
-  { id: 1, name: 'School Board Election' },
-  { id: 2, name: 'Local Community Council' },
-])
-
-
-const viewDetailedResults = (resultId: number) => {
-  // Implement view detailed results logic
-  console.log('View detailed results clicked for', resultId)
-}
 </script>
 
 <template>
@@ -243,22 +396,34 @@ const viewDetailedResults = (resultId: number) => {
         </div>
       </section>
 
-      <!-- Results Section -->
-      <section v-if="electionResults.length > 0" class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Election Results</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div v-for="result in electionResults" :key="result.id" class="bg-gray-50 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold mb-2">{{ result.name }}</h3>
-            <div class="h-64">
-              <!-- Placeholder for chart -->
-              <div class="bg-gray-200 h-full w-full flex items-center justify-center text-gray-500">
-                Chart Placeholder
-              </div>
-            </div>
-            <button @click="viewDetailedResults(result.id)" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm">
-              View Detailed Results
-            </button>
-          </div>
+      <!-- Results Section with Single Chart -->
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+          <h2 class="text-2xl font-semibold text-gray-800">Top Candidates by Votes</h2>
+          <button 
+            @click="refreshData" 
+            class="mt-2 md:mt-0 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh Data
+          </button>
+        </div>
+        
+        <div v-if="candidateData.length === 0" class="text-center py-10 text-gray-500">
+          No candidate data available. Please check if there are any active elections with votes.
+        </div>
+        
+        <div v-else class="h-80">
+          <Bar 
+            :data="chartData" 
+            :options="chartOptions" 
+          />
+        </div>
+        
+        <div v-if="candidateData.length > 0" class="mt-4 text-sm text-gray-500 text-right">
+          Data from: {{ candidateData[0]?.electionName || 'Unknown Election' }}
         </div>
       </section>
     </div>
@@ -289,4 +454,3 @@ const viewDetailedResults = (resultId: number) => {
     </div>
   </div>
 </template>
-
