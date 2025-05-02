@@ -72,14 +72,70 @@
           </table>
         </div>
       </section>
+
+      <!-- Results Chart Section -->
+      <section class="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Results Visualization</h2>
+        <div class="h-80">
+          <Bar :data="chartData" :options="chartOptions" />
+        </div>
+      </section>
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import MenuComponent from '../components/childcomponents/MenuComponent.vue'
 import ElectionService from '../service/electionService'
 import ElectionCentreService from '../service/electionCentreService'
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
+// Define a consistent color palette for all charts
+const chartColors = {
+  backgroundColor: [
+    '#4F46E5', // Indigo
+    '#7C3AED', // Purple
+    '#EC4899', // Pink
+    '#F59E0B', // Amber
+    '#10B981', // Emerald
+    '#3B82F6', // Blue
+    '#F43F5E', // Rose
+    '#8B5CF6'  // Violet
+  ],
+  borderColor: [
+    '#4338CA', // Indigo (darker)
+    '#6D28D9', // Purple (darker)
+    '#DB2777', // Pink (darker)
+    '#D97706', // Amber (darker)
+    '#059669', // Emerald (darker)
+    '#2563EB', // Blue (darker)
+    '#E11D48', // Rose (darker)
+    '#7C3AED'  // Violet (darker)
+  ]
+};
+
+// Function to get colors based on data length
+const getChartColors = (dataLength: number) => {
+  const backgroundColors = [];
+  const borderColors = [];
+  
+  for (let i = 0; i < dataLength; i++) {
+    // Use modulo to cycle through colors if there are more data points than colors
+    const colorIndex = i % chartColors.backgroundColor.length;
+    backgroundColors.push(chartColors.backgroundColor[colorIndex]);
+    borderColors.push(chartColors.borderColor[colorIndex]);
+  }
+  
+  return {
+    backgroundColor: backgroundColors,
+    borderColor: borderColors
+  };
+};
 
 const Eservice = new ElectionService();
 const ECservice = new ElectionCentreService();
@@ -101,11 +157,78 @@ const overallResultsHeaders = [
   { text: 'Percentage', value: 'percentage' },
 ]
 
-const filteredOverallResults = ref([ 
-  { name: 'John Doe', party: 'Party A', votes: 450, percentage: 50.0, isWinner: true },
-  { name: 'Jane Smith', party: 'Party B', votes: 300, percentage: 33.3, isWinner: false },
-  { name: 'Alex Johnson', party: 'Party C', votes: 150, percentage: 16.7, isWinner: false },
+const filteredOverallResults = ref([
+  // Demo data for when no results are fetched yet
+  { name: 'John Smith', party: 'Democratic Party', votes: 1250, percentage: 42.5, isWinner: false },
+  { name: 'Sarah Johnson', party: 'Republican Party', votes: 1450, percentage: 49.3, isWinner: false },
+  { name: 'Michael Brown', party: 'Independent', votes: 240, percentage: 8.2, isWinner: false }
 ]);
+
+// Chart data computed property that updates when filteredOverallResults changes
+const chartData = computed(() => {
+  const labels = filteredOverallResults.value.map(item => item.name);
+  const data = filteredOverallResults.value.map(item => item.votes);
+  const colors = getChartColors(labels.length);
+  
+  return {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Votes',
+        data: data,
+        backgroundColor: colors.backgroundColor,
+        borderColor: colors.borderColor,
+        borderWidth: 1
+      }
+    ]
+  };
+});
+
+// Chart options
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false
+    },
+    title: {
+      display: true,
+      text: 'Vote Distribution by Candidate',
+      font: {
+        size: 16,
+        weight: 'bold'
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: function(context: any) {
+          const label = context.dataset.label || '';
+          const value = context.parsed.y || 0;
+          const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+          const percentage = ((value / total) * 100).toFixed(2);
+          return `${label}: ${value} (${percentage}%)`;
+        }
+      }
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Number of Votes'
+      }
+    },
+    x: {
+      title: {
+        display: true,
+        text: 'Candidates'
+      }
+    }
+  }
+};
+
 const fetchResults = async () => {
   if (filters.value.election && filters.value.centre) {
     try {
@@ -188,4 +311,3 @@ onMounted(() => {
   fetchElections();
 })
 </script>
-
