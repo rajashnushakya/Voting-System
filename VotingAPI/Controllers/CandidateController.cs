@@ -91,7 +91,26 @@ namespace VotingAPI.Controllers
             }
         }
 
+        [HttpGet("top-voted")]
+        public async Task<ActionResult<List<CandidateVoteResult>>> GetTopVotedCandidates(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var candidateService = new CandidateService(_connectionString);
+                var candidates = await candidateService.GetTopVotedCandidatesAsync(cancellationToken);
 
+                if (candidates == null || candidates.Count == 0)
+                {
+                    return NotFound("No candidates found for this election.");
+                }
+
+                return Ok(candidates);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
     }
 }
