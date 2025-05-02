@@ -182,5 +182,40 @@ namespace VotingAPI.Service
 
             return candidates;
         }
+        public async Task<List<CandidateVoteResult>> GetTopVotedCandidatesAsync(CancellationToken cancellationToken)
+        {
+            var candidates = new List<CandidateVoteResult>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("GetTop5CandidatesByElection", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                await conn.OpenAsync(cancellationToken);
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync(cancellationToken))
+                {
+                    if (!reader.HasRows)
+                    {
+                        Console.WriteLine("No candidate has received votes.");
+                        return candidates;
+                    }
+
+                    while (await reader.ReadAsync(cancellationToken))
+                    {
+                        candidates.Add(new CandidateVoteResult
+                        {
+                            CandidateId = reader.GetInt32(reader.GetOrdinal("CandidateId")),
+                            FullName = reader.GetString(reader.GetOrdinal("FullName")),
+                            VoteCount = reader.GetInt32(reader.GetOrdinal("VoteCount")),
+                            ElectionName = reader.GetString(reader.GetOrdinal("Name"))
+                        });
+                    }
+                }
+            }
+
+            return candidates;
+        }
+
     }
 }
