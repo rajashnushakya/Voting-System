@@ -158,10 +158,7 @@ const overallResultsHeaders = [
 ]
 
 const filteredOverallResults = ref([
-  // Demo data for when no results are fetched yet
-  { name: 'John Smith', party: 'Democratic Party', votes: 1250, percentage: 42.5, isWinner: false },
-  { name: 'Sarah Johnson', party: 'Republican Party', votes: 1450, percentage: 49.3, isWinner: false },
-  { name: 'Michael Brown', party: 'Independent', votes: 240, percentage: 8.2, isWinner: false }
+  { name: '', party: '', votes: 0, percentage: 0 }
 ]);
 
 // Chart data computed property that updates when filteredOverallResults changes
