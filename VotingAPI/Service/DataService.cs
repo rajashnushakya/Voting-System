@@ -264,7 +264,7 @@ namespace VotingAPI.Service
                     using (var cmd = new SqlCommand("GetCandidateVotesByCentre", connection))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@CentreId", CentreId);
+                        cmd.Parameters.AddWithValue("@CenterId", CentreId);
 
                         using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
                         {
