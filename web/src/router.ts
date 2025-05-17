@@ -26,16 +26,7 @@ const routes = [
     name:'Registration',
     component:()=>import ('./components/RegisttrationForm.vue'),
   },
-  {
-    path:'/electionDetails',
-    name:'ElectionDetails',
-    component:()=>import ('./components/ElectionDetail.vue'),
-  },
-  {
-    path:'/Election',
-    name:'Election',
-    component:()=>import ('./components/Election.vue'),
-  },
+
   {
     path:'/log',
     name:'log',
