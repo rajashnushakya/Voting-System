@@ -42,7 +42,19 @@ namespace VotingAPI.Controllers
             return Ok(voterCount);
         }
 
-        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> GetElectionByVoterIdAsync(int voterId, CancellationToken cancellationToken)
+        {
+            VoterService voterService = new VoterService(_connectionString);
+            var result = await voterService.GetElectionByVoterIdAsync(voterId, cancellationToken);
+
+            if (result.Rows.Count == 0)
+            {
+                return NotFound("No election found for the provided voter ID.");
+            }
+
+            return Ok(result);
+        }
 
         [HttpPost]
         public async Task<DbResponse> VoterEnrollmentAsync(int voterId, int electionId, CancellationToken cancellationToken)
