@@ -15,7 +15,7 @@ public class CandidateVoteService
         _connectionString = connectionString;
     }
 
-    public async Task InsertCandidateVoteAsync(int candidateId, int voterId, int electionId, int electionCentreId)
+    public async Task<int> InsertCandidateVoteAsync(int candidateId, int voterId, int electionId, int electionCentreId)
     {
         using (SqlConnection conn = new SqlConnection(_connectionString))
         using (SqlCommand cmd = new SqlCommand("InsertCandidateVote", conn))
@@ -30,7 +30,7 @@ public class CandidateVoteService
 
             // Open connection and execute the command
             await conn.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
+            return await cmd.ExecuteNonQueryAsync();
         }
     }
     public async Task<List<VoteDetails>> GetVotesByVoterIdAsync(int voterId)
