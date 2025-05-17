@@ -92,6 +92,13 @@ import ElectionCentreService from '../service/electionCentreService'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
 
+interface ElectionCentreDetails {
+  candidateName: string;
+  partyName: string;
+  votes: number;
+  votePercentage: number;
+}
+
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
@@ -158,7 +165,7 @@ const overallResultsHeaders = [
 ]
 
 const filteredOverallResults = ref([
-  { name: '', party: '', votes: 0, percentage: 0 }
+  { name: '', party: '', votes: 0, percentage: 0, isWinner: ''}
 ]);
 
 // Chart data computed property that updates when filteredOverallResults changes
@@ -194,7 +201,7 @@ const chartOptions = {
       text: 'Vote Distribution by Candidate',
       font: {
         size: 16,
-        weight: 'bold'
+        weight: 700
       }
     },
     tooltip: {
@@ -225,49 +232,60 @@ const chartOptions = {
     }
   }
 };
-
-const fetchResults = async () => {
+  const fetchResults= async () => {
   if (filters.value.election && filters.value.centre) {
     try {
-      console.log('Selected Centre from filters:', filters.value.centre);  // Debugging: Log selected centre value
-
-      // Find the selected centre object from the centres list based on the name
-      const selectedCentre = centres.value.find(centre => centre.name.trim() === filters.value.centre.trim());
-
-      console.log('Selected Centre:', selectedCentre);  // Debugging: Log selected centre object
+      const selectedCentre = centres.value.find(
+        centre => centre.name.trim() === filters.value.centre.trim()
+      );
 
       if (!selectedCentre) {
-        console.warn('Centre not found');
+        alert('Selected centre not found.');
         return;
       }
 
-      const centreId = selectedCentre.id;  // Use the 'id' of the selected centre
-      const electionId = filters.value.election;
+      const centreId = selectedCentre.id;
 
-      // Debugging: Log the centreId being used
-      console.log('Using Centre ID:', centreId);
+      const results: any = await ECservice.getCandidateVotes(centreId);
 
-      // Fetch the results using the ElectionCentreService
-      const results = await ECservice.getCandidateVotes(centreId);
+      if (!Array.isArray(results) || results.length === 0) {
+        alert('No results found for the selected centre.');
+        return;
+      }
 
-      // Debugging: Log the results returned
-      console.log('Election Results:', results);
+      // Check if all objects have the required properties
+      const isValidFormat = results.every(item =>
+        item &&
+        typeof item.candidateName === 'string' &&
+        typeof item.partyName === 'string' &&
+        typeof item.votes === 'number' &&
+        typeof item.votePercentage === 'number'
+      );
 
-      // Update the filteredOverallResults
-      filteredOverallResults.value = results.map((result: any) => ({
+      if (!isValidFormat) {
+        alert('Unexpected result format received.');
+        return;
+      }
+
+      filteredOverallResults.value = results.map(result => ({
         name: result.candidateName,
         party: result.partyName,
         votes: result.votes,
         percentage: result.votePercentage,
-        isWinner: result.votePercentage > 50 // Example condition for determining the winner
+        isWinner: result.votePercentage > 50 ? 'Yes' : 'No',
       }));
-    } catch (error) {
-      console.error('Error fetching results:', error);
+    } catch (error: any) {
+   if (error.response && error.response.status === 404) {
+        alert('No results found.');
+      } else {
+        alert(error?.message || 'An error occurred while fetching results.');
+      }
     }
   } else {
-    console.warn('Please select both an election and a centre.');
+    alert('Please select both an election and a centre.');
   }
 };
+
 
 const fetchElections = async () => {
   try {
@@ -284,15 +302,35 @@ const fetchCentres = async (electionId: string) => {
     const centers = await ECservice.getCentersByElection(electionId);
     console.log('Fetched centers:', centers);
 
-    // Extracting the id values
-    centres.value = centers.map((center: any) => ({
-      id: center.id,
-      name: center.name,
-    }));
+    centres.value = Array.isArray(centers)
+      ? centers.map((center: any) => ({
+          id: center.id,
+          name: center.name,
+        }))
+      : [];
+
   } catch (error) {
-    console.error('Failed to fetch centers', error);
+    console.error('Failed to fetch centers:', error);
+    centres.value = []; // Clear the list on error
   }
-}
+};
+
+// Watch for changes in selected election and update centres
+watch(
+  () => filters.value.election,
+  (newElectionName) => {
+    const selectedElection = electionsData.value.find(
+      (election: any) => election.name === newElectionName
+    );
+    if (selectedElection) {
+      fetchCentres(selectedElection.id);
+    } else {
+      centres.value = [];
+    }
+    filters.value.centre = ''; // Clear previously selected centre
+  }
+);
+
 
 // When election changes, load centres
 watch(() => filters.value.election, (newElectionName) => {
