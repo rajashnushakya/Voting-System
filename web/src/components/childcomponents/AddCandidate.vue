@@ -240,22 +240,24 @@ watch(() => formData.municipalityId, () => fetchWards());
 };
 
 
-  const closeDialog = () => {
-    emit('update:CdialogActive', false);
-  };
 
-  const isFormValid = computed(() => {
-  return formData.fullName &&  
-         formData.fatherName &&
-         formData.motherName &&
-         formData.dateOfBirth &&
-         formData.gender &&
-         formData.partyId &&
-         formData.electionId &&
-         formData.districtId &&
-         formData.municipalityId &&
-         formData.wardId;
-});
+const closeDialog = () => {
+  emit('update:CdialogActive', false);
+  formData.fullName = '';
+  formData.fatherName = '';
+  formData.motherName = '';
+  formData.grandFatherName = '';
+  formData.grandMotherName = '';
+  formData.dateOfBirth = '';
+  formData.gender = null;
+  formData.partyId = '';
+  formData.electionId = '';
+  formData.districtId = '';
+  formData.municipalityId = '';
+  formData.wardId = '';
+  formData.Position = '';
+};
+
 
 
   </script>
