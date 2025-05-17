@@ -46,7 +46,7 @@
       @click="goToDashboard"
     >
       <ArrowLeftIcon class="mr-1 back-icon" />
-      Back to Dashboard
+      Back to Election list
     </v-btn>
 
     <!-- Details Dialog -->
@@ -302,8 +302,13 @@ const getStatusColor = (status) => {
 
 // Navigate to dashboard
 const goToDashboard = () => {
-  router.push('/dashboard');
+  router.push('/election/detail').then(() => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 100); // Delay gives the router time to navigate
+  });
 };
+
 
 // Fetch election centers from API
 const fetchElectionCenters = async () => {
