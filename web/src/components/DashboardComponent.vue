@@ -346,14 +346,14 @@ onMounted(() => {
   <div class="min-h-screen bg-gray-100">
     <MenuComponent></MenuComponent>
     <div class="p-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
+      <h1 class="text-4xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
 
       <!-- Quick Stats Section -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div v-for="stat in quickStats" :key="stat.title" class="bg-white rounded-lg shadow p-6 flex items-center">
           <component :is="stat.icon" class="w-12 h-12 text-blue-500 mr-4" />
           <div>
-            <h2 class="text-2xl font-semibold text-gray-800">{{ stat.title }}</h2>
+            <h2 class="text-3xl font-semibold text-gray-800">{{ stat.title }}</h2>
             <p class="text-3xl font-bold text-gray-900">{{ stat.value }}</p>
           </div>
         </div>
