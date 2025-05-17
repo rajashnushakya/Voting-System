@@ -24,12 +24,26 @@ public class CandidateVoteController : ControllerBase
         try
         {
             // Call the service method to insert the vote into the database
-            await _candidateVoteService.InsertCandidateVoteAsync(
+            int result = await _candidateVoteService.InsertCandidateVoteAsync(
                 request.CandidateId,
                 request.VoterId,
                 request.ElectionId,
                 request.ElectionCentreId
             );
+
+            // if db insert is successfull create a block
+            if (result > 0)
+            {
+                BlockChainService blockChainService = new BlockChainService();
+                await blockChainService.CastVoteAsync(new VoteDto
+                {
+                    CandidateId = request.CandidateId,
+                    CenterId = request.ElectionCentreId,
+                    ElectionId = request.ElectionId,
+                    VoterId = request.VoterId,
+                    VoteTime = DateTime.Now
+                });
+            }
 
             return Ok("Vote successfully recorded.");
         }
