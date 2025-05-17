@@ -15,7 +15,7 @@ const service = new candidateService();
 const electionService = new ElectionService();
 const VoterService = new voterService();
 
-// Define a consistent color palette for all charts
+// Defining a consistent color palette for all charts
 const chartColors = {
   backgroundColor: [
     '#4F46E5', // Indigo
@@ -85,25 +85,37 @@ interface CandidateData {
   electionName: string;
 }
 
+// Define chart data interface to fix the 'never' type issues
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string[];
+    borderColor: string[];
+    borderWidth: number;
+  }[];
+}
+
 const quickStats = ref<QuickStat[]>([
   { title: 'Number of Elections', value:100 , icon: VoteIcon },
   { title: 'Number of Voters', value: 1250, icon: UsersIcon },
   { title: 'Votes Cast', value: 875, icon: CheckSquareIcon },
 ])
 
-const recentActivities = ref<RecentActivity[]>([
-  { id: 1, description: 'Election XYZ created', timestamp: '2 hours ago', icon: FileTextIcon },
-  { id: 2, description: '50 votes cast in Election ABC', timestamp: '4 hours ago', icon: CheckSquareIcon },
-  { id: 3, description: 'New voter registered', timestamp: '1 day ago', icon: UserIcon },
-])
+// const recentActivities = ref<RecentActivity[]>([
+//   { id: 1, description: 'Election XYZ created', timestamp: '2 hours ago', icon: FileTextIcon },
+//   { id: 2, description: '50 votes cast in Election ABC', timestamp: '4 hours ago', icon: CheckSquareIcon },
+//   { id: 3, description: 'New voter registered', timestamp: '1 day ago', icon: UserIcon },
+// ])
 
 // Track which election's menu is open by ID
 const openMenuId = ref<number | null>(null);
 // Store menu position
 const menuPosition = ref({ top: 0, left: 0 });
 
-// Initialize empty chart data
-const chartData = ref({
+// Initialize empty chart data with proper typing
+const chartData = ref<ChartData>({
   labels: [],
   datasets: [
     {
@@ -128,7 +140,7 @@ const chartOptions = ref({
       text: 'Top Candidates by Votes',
       font: {
         size: 16,
-        weight: 'bold'
+        weight: 'bold' as const 
       }
     },
     tooltip: {
@@ -314,8 +326,6 @@ const closeMenu = () => {
   openMenuId.value = null;
 };
 
-
-
 onMounted(() => {
   fetchActiveElections();
   fetchElectionCount();
@@ -343,13 +353,13 @@ onMounted(() => {
         <div v-for="stat in quickStats" :key="stat.title" class="bg-white rounded-lg shadow p-6 flex items-center">
           <component :is="stat.icon" class="w-12 h-12 text-blue-500 mr-4" />
           <div>
-            <h2 class="text-xl font-semibold text-gray-700">{{ stat.title }}</h2>
+            <h2 class="text-2xl font-semibold text-gray-800">{{ stat.title }}</h2>
             <p class="text-3xl font-bold text-gray-900">{{ stat.value }}</p>
           </div>
         </div>
       </section>
 
-      <!-- Recent Activities Section -->
+      <!-- Recent Activities Section
       <section class="bg-white rounded-lg shadow p-6 mb-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recent Activities</h2>
         <ul class="space-y-4">
@@ -359,11 +369,11 @@ onMounted(() => {
             <span class="ml-auto text-sm text-gray-500">{{ activity.timestamp }}</span>
           </li>
         </ul>
-      </section>
+      </section> -->
 
       <!-- Election Summary Section -->
       <section class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Ongoing Elections</h2>
+        <h2 class="text-3xl font-semibold text-gray-800 mb-4">Ongoing Elections</h2>
         <div class="overflow-x-auto">
           <table class="min-w-full">
             <thead>
@@ -382,7 +392,7 @@ onMounted(() => {
                 <td class="px-6 py-4 whitespace-nowrap space-x-2">
                   <button 
                     @click="toggleMenu(election.id, $event)" 
-                    class="p-2 text-gray-600 hover:text-black menu-button"
+                    class="p-3 text-gray-600 hover:text-black menu-button"
                   >
                     ⋮
                   </button>
@@ -396,8 +406,7 @@ onMounted(() => {
       <!-- Results Section with Single Chart -->
       <section class="bg-white rounded-lg shadow p-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-          <h2 class="text-2xl font-semibold text-gray-800">Top Candidates by Votes</h2>
-
+          <h2 class="text-3xl font-semibold text-gray-800">Top Candidates by Votes</h2>
         </div>
         
         <div v-if="candidateData.length === 0" class="text-center py-10 text-gray-500">
