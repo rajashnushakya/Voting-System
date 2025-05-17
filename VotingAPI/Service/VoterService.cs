@@ -145,6 +145,21 @@ namespace VotingAPI.Service
             return response;
         }
 
+        public async Task<DataTable> GetElectionByVoterIdAsync(int voterId, CancellationToken cancellationToken)
+        {
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            SqlCommand cmd = dataAccess.CreateCommand("GetElectionByVoterId");
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@voterid", voterId);
+
+            return await dataAccess.ExecuteReader(cancellationToken);
+
+        }
+
+
+
+
+
         public async Task<AuthResponse> VoterLogin(  string email, string password, IConfiguration configuration, CancellationToken cancellationToken)
         {
             DataAccess dataAccess = new DataAccess(_connectionString);
