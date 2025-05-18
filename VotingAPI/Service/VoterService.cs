@@ -145,14 +145,25 @@ namespace VotingAPI.Service
             return response;
         }
 
-        public async Task<DataTable> GetElectionByVoterIdAsync(int voterId, CancellationToken cancellationToken)
+        public async Task<List<VoterEnrollElection>> GetElectionByVoterIdAsync(int voterId, CancellationToken cancellationToken)
         {
             DataAccess dataAccess = new DataAccess(_connectionString);
             SqlCommand cmd = dataAccess.CreateCommand("GetElectionByVoterId");
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@voterid", voterId);
 
-            return await dataAccess.ExecuteReader(cancellationToken);
+             DataTable electionInfo = await dataAccess.ExecuteReader(cancellationToken);
+            List<VoterEnrollElection> electionList = new List<VoterEnrollElection>();
+            foreach (DataRow row in electionInfo.Rows)
+            {
+                electionList.Add(new VoterEnrollElection
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    Name = row["Name"].ToString()
+                });
+
+            }
+            return electionList;
 
         }
 
