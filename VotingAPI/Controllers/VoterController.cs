@@ -48,7 +48,7 @@ namespace VotingAPI.Controllers
             VoterService voterService = new VoterService(_connectionString);
             var result = await voterService.GetElectionByVoterIdAsync(voterId, cancellationToken);
 
-            if (result.Rows.Count == 0)
+            if (result.Count == 0)
             {
                 return NotFound("No election found for the provided voter ID.");
             }
