@@ -77,6 +77,11 @@ const routes = [
       path: '/election/detail',
       name: 'election-detail',
       component:()=> import('./components/childcomponents/ElectionTable.vue'),
+    },
+        {
+      path: '/voter/result',
+      name: 'VoterResult',
+      component:()=> import('./components/VoterResult.vue'),
     }
 
   
