@@ -107,7 +107,6 @@
         required
         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
         placeholder="Enter National Id"
-        @input="onlyDigits('NationalId')"
         style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
       />
     </div>
@@ -121,7 +120,6 @@
         required
         class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
         placeholder="Enter Phone Number"
-        @input="onlyDigits('phoneNumber')"
         style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
       />
     </div>
