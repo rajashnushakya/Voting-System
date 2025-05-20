@@ -128,6 +128,18 @@ export default class voterService {
         }
     }
 
+    async getElectionbyVoterId (voterId:string){
+
+        const url = `api/Voter/GetElectionByVoterId?voterId=${voterId}`;
+        try{
+            const response = await this.#api.get(url);
+            return response.data;
+        }catch(error){
+            console.error('Error fetching election:', error);
+            throw error;
+        }
+    }
+
 }
 
 
