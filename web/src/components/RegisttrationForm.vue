@@ -18,6 +18,7 @@
                 id="name"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="John Doe"
+                required
               />
             </div>
             <div>
@@ -28,6 +29,7 @@
                 id="fatherName"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="John Sr."
+                required
               />
             </div>
             <div>
@@ -38,6 +40,7 @@
                 id="motherName"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="Jane Doe"
+                required
               />
             </div>
             <div>
@@ -48,6 +51,7 @@
                 id="grandFatherName"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="James Doe"
+                required
               />
             </div>
             <div>
@@ -58,6 +62,7 @@
                 id="grandMotherName"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="Mary Doe"
+                required
               />
             </div>
             <div>
@@ -68,6 +73,7 @@
                 id="email"
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="email@domain.com"
+                required
               />
             </div>
             <div>
@@ -84,6 +90,7 @@
               <select
                 v-model="formData.gender"
                 id="gender"
+                required
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
               >
                 <option value="Male">Male</option>
@@ -91,35 +98,41 @@
                 <option value="Other">Other</option>
               </select>
             </div>
+  <div>
+      <label for="NationalId" class="block text-gray-700 font-medium mb-2">National Id</label>
+      <input
+        type="tel"
+        v-model="formData.NationalId"
+        id="NationalId"
+        required
+        class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+        placeholder="Enter National Id"
+        @input="onlyDigits('NationalId')"
+        style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
+      />
+    </div>
 
-            <div>
-              <label for="NationalId" class="block text-gray-700 font-medium mb-2">National Id </label>
-              <input
-                type="tel"
-                v-model="formData.NationalId"
-                id="phno"
-                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="Enter Phone Number"
-                style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
-              />
-            </div>
-            <div>
-              <label for="phNo" class="block text-gray-700 font-medium mb-2">Phone Number</label>
-              <input
-                type="tel"
-                v-model="formData.phoneNumber"
-                id="phno"
-                class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
-                placeholder="Enter Phone Number"
-                style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
-              />
-            </div>
+    <div>
+      <label for="phoneNumber" class="block text-gray-700 font-medium mb-2">Phone Number</label>
+      <input
+        type="tel"
+        v-model="formData.phoneNumber"
+        id="phoneNumber"
+        required
+        class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
+        placeholder="Enter Phone Number"
+        @input="onlyDigits('phoneNumber')"
+        style="appearance: textfield; -moz-appearance: textfield; -webkit-appearance: textfield;"
+      />
+    </div>
+
             <div>
               <label for="userName" class="block text-gray-700 font-medium mb-2">Username</label>
               <input
                 type="text"
                 v-model="formData.user.userName"
                 id="userName"
+                required
                 class="h-10 border mt-1 rounded px-4 w-full bg-gray-50 focus:ring focus:ring-blue-300"
                 placeholder="Enter Username"
               />
@@ -288,6 +301,20 @@ const formData = reactive({
   },
 });
 
+function validateForm() {
+  const nationalIdValid = /^\d{10}$/.test(String(formData.NationalId));
+  const phoneNumberValid = /^\d{10}$/.test(String(formData.phoneNumber));
+
+  if (!nationalIdValid) {
+    alert('National Id must be exactly 10 digits and only numbers.');
+    return false;
+  }
+  if (!phoneNumberValid) {
+    alert('Phone Number must be exactly 10 digits and only numbers.');
+    return false;
+  }
+  return true;
+}
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
@@ -365,6 +392,9 @@ const onMunicipalityChange = () => {
 };
 
 const handleSubmit = async () => {
+  if (!validateForm()) {
+    return;
+  }
   try {
     const dateofBirth = formData.dateofBirth ? new Date(formData.dateofBirth) : null;
     formData.address.districtId = selectedDistrict.value ?? '';
@@ -374,14 +404,25 @@ const handleSubmit = async () => {
     const response = await service.addVoter({ ...formData, dateofBirth });
 
     // Check backend status before success message
-    if (response.data.status === 0) {
+    if (response.data.status === 100) {
       alert(response.data.message || "Registration failed.");
       return; // Exit early if registration is not successful
+    }else{
+      alert(response.data.message || "Registration successful.");
+      formData.name = "";
+      formData.fatherName = "";
+      formData.motherName = "";
+      formData.NationalId = 0;
+      formData.phoneNumber = 0;
+      formData.email = "";
+      formData.dateofBirth = "";
+      formData.gender = "";
+      formData.user.userName = "";
+      formData.user.password = "";
+      formData.address.houseNumber = "";
+      formData.address.streetName = "";
+      formData.address.province = "";
     }
-
-    // Show success message
-    successMessage.message = "Registration successful!";
-    successMessage.isVisible = true;
 
     setTimeout(() => {
       successMessage.isVisible = false;
