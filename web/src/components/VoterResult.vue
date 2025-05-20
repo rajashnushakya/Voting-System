@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-100">
-    <MenuComponent></MenuComponent>
     <div class="p-8">
       <h1 class="text-3xl font-bold text-gray-800 mb-8">Election Results and Analysis</h1>
 
@@ -81,13 +80,16 @@
         </div>
       </section>
     </div>
+        <v-btn variant="outlined" @click="navigateToEnrollment">Back to Elections</v-btn>
   </div>
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
-import MenuComponent from '../components/childcomponents/MenuComponent.vue'
-import ElectionService from '../service/electionService'
+
+import { useRouter } from 'vue-router'
+import voterService from '../service/voterService'
 import ElectionCentreService from '../service/electionCentreService'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
@@ -98,6 +100,8 @@ interface ElectionCentreDetails {
   votes: number;
   votePercentage: number;
 }
+
+const router = useRouter()
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -125,6 +129,10 @@ const chartColors = {
     '#7C3AED'  // Violet (darker)
   ]
 };
+const navigateToEnrollment = () => {
+
+router.push({ name: 'voter-dashboard'});
+};
 
 // Function to get colors based on data length
 const getChartColors = (dataLength: number) => {
@@ -144,7 +152,10 @@ const getChartColors = (dataLength: number) => {
   };
 };
 
-const Eservice = new ElectionService();
+
+
+
+const Vservice = new voterService();
 const ECservice = new ElectionCentreService();
 
 const filters = ref({
@@ -286,10 +297,12 @@ const chartOptions = {
   }
 };
 
-
-const fetchElections = async () => {
+const voterId = localStorage.getItem('voterid');
+console.log('Voter ID:', voterId);
+const fetchElections = async (voterId: string) => {
   try {
-    const fetchedElections = await Eservice.getAllElection();
+    
+    const fetchedElections = await Vservice.getElectionbyVoterId(voterId);
     electionsData.value = fetchedElections;
     elections.value = fetchedElections.map((election: any) => election.name);
   } catch (error) {
@@ -343,6 +356,6 @@ watch(() => filters.value.election, (newElectionName) => {
 })
 
 onMounted(() => {
-  fetchElections();
+  fetchElections(voterId || '');
 })
 </script>
