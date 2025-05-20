@@ -3,6 +3,7 @@
     <v-app-bar style="background-color: #003893;">
     <v-btn @click="navigateTo('elections')" style="color: white;">Elections</v-btn>
     <v-btn @click="navigateTo('history')" style="color: white;">History</v-btn>
+    <v-btn @click="navigateTo('Result')" style="color: white;">Result</v-btn>
     <v-menu offset-y>
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props" style="color: white;">Settings </v-btn>
@@ -100,7 +101,10 @@ const navigateTo = (tab: string) => {
       router.push('/dashboard/voter'); break;
     case 'history':
       router.push('/vote/history'); break;
+    case 'Result':
+      router.push('/voter/result'); break;
   }
+
 };
 
 interface Election {
