@@ -9,7 +9,7 @@ namespace VotingAPI.Model
         public DateTime Start_date { get; set; }
         public DateTime End_date { get; set; }
 
-        public int type_id { get; set; }
+        public string Type { get; set; }
     }
 
 }
