@@ -24,9 +24,12 @@
             v-for="center in filteredCenters"
             :key="center.id"
             class="mb-3 transition-colors cursor-pointer"
-            :class="{ 'border-2 border-primary': selectedCenter === center.id }"
+            :class="{
+              'border-2 border-green-600 bg-green-50 dark:bg-green-900': selectedCenter === center.id
+            }"
+            @click="selectedCenter = center.id"
           >
-            <v-card-text class="p-4" @click="selectedCenter = center.id">
+            <v-card-text class="p-4">
               <div class="flex justify-between">
                 <div class="flex items-start">
                   <v-radio :value="center.id" class="mt-0 mr-2"></v-radio>
@@ -67,7 +70,7 @@
       <v-card-actions class="px-4 pb-4">
         <v-btn variant="outlined" @click="navigateToEnrollment">Back to Elections</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" :disabled="!selectedCenter" @click="confirmEnrollment">Enroll at Selected Center</v-btn>
+        <v-btn color="primary" :disabled="!selectedCenter" @click="showConfirmation = true">Enroll at Selected Center</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -81,7 +84,7 @@
           </p>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
             By confirming, you agree to cast your vote at this location for the upcoming election.
-            You can change your enrollment up to 48 hours before the election day.
+            
           </p>
         </v-card-text>
         <v-card-actions>
@@ -120,7 +123,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import ElectionCentreService from '../service/electionCentreService';
-
 import voterService from '../service/voterService';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -152,7 +154,6 @@ const showSuccessDialog = ref(false);
 const electionCenters = ref<any[]>([]);
 const loading = ref(true);
 
-
 // Fetch election centers from API
 onMounted(async () => {
   try {
@@ -181,7 +182,6 @@ const selectedCenterName = computed(() => {
   return center ? center.name : '';
 });
 
-
 const confirmEnrollment = async () => {
   try {
     showConfirmation.value = false;
@@ -194,7 +194,7 @@ const confirmEnrollment = async () => {
     }
 
     const selectedCenterObj = electionCenters.value.find(
-      (center) => center.name === selectedCenterName.value
+      (center) => center.id === selectedCenter.value
     );
     if (!selectedCenterObj) {
       throw new Error("Selected center not found");
@@ -221,7 +221,6 @@ const confirmEnrollment = async () => {
     alert('Enrollment failed. Please try again.');
   }
 };
-
 </script>
 
 <style scoped>
