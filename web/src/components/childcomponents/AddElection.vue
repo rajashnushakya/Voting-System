@@ -106,15 +106,13 @@ const todayDate = computed(() => {
   return now.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
 });
 
-// Computed property for minimum end date (1 hour after start date)
+// Computed property for minimum end date (1 day after start date)
 const minEndDate = computed(() => {
-  if (electionData.value.start_date) {
-    const startDate = new Date(electionData.value.start_date);
-    startDate.setHours(startDate.getHours() + 1); 
-    return startDate.toISOString().slice(0, 16); 
-  }
-  return todayDate.value;
+  const now = new Date();
+  now.setDate(now.getDate() + 1); // Add 1 day to today
+  return now.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
 });
+
 
 // Watcher for start date change, adjusting end date accordingly
 watch(() => electionData.value.start_date, (newStartDate) => {
@@ -147,9 +145,12 @@ const submitForm = async () => {
     console.log("Election added successfully:", electionData.value);
     electionData.value = { id: 0, name: '', start_date: null, end_date: null, type_id: null };
     closeDialog();
+    window.location.reload();
+
   } catch (error) {
     console.error('Error adding election:', error);
   }
+
 };
 
 // Close the dialog
