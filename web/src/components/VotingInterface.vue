@@ -156,7 +156,7 @@ const castVote = async () => {
       });
     } else {
       console.error("Failed to cast vote:", result);
-      alert("Failed to cast vote.");
+      alert("Cannot vote twice." +result);
     }
   } catch (error: any) {
     // Log error if the request fails
