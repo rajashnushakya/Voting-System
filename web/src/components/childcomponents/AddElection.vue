@@ -41,7 +41,7 @@
               <label for="election-type" class="block text-sm font-medium text-gray-700 mb-1">Election Type</label>
               <v-select
                 label="Election Type"
-                v-model="electionData.type_id"  
+                v-model="electionData.Type"  
                 :items="electionTypes"
                 item-title="name"   
                 item-value="id" 
@@ -79,7 +79,7 @@ const electionData = ref({
   name: '',
   start_date: null,
   end_date: null,
-  type_id: null
+  Type: null,
 });
 
 const service = new electionService();
@@ -98,30 +98,42 @@ const getElectionTypes = async () => {
   } catch (error) {
     console.error("Error fetching election types:", error);
   }
-};
-
-// Computed property for today's date
+};// Computed property for today's date (used for min start_date)
 const todayDate = computed(() => {
   const now = new Date();
-  return now.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+  return now.toISOString().slice(0, 16);
 });
 
-// Computed property for minimum end date (1 day after start date)
+// Computed property for minimum valid end_date (1 day after start_date)
 const minEndDate = computed(() => {
-  const now = new Date();
-  now.setDate(now.getDate() + 1); // Add 1 day to today
-  return now.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+  if (!electionData.value.start_date) return todayDate.value;
+
+  const start = new Date(electionData.value.start_date);
+  start.setDate(start.getDate() + 1); // Add 1 day
+
+  return start.toISOString().slice(0, 16);
 });
 
+// Watch start_date: clear end_date if it is less than 1 day after start_date
+watch(
+  () => electionData.value.start_date,
+  (newStart) => {
+    if (electionData.value.end_date && newStart) {
+      const end = new Date(electionData.value.end_date);
+      const minValidEnd = new Date(newStart);
+      minValidEnd.setDate(minValidEnd.getDate() + 1); // Add 1 day
 
-// Watcher for start date change, adjusting end date accordingly
-watch(() => electionData.value.start_date, (newStartDate) => {
-  if (newStartDate && (!electionData.value.end_date || newStartDate >= electionData.value.end_date)) {
-    const endDate = new Date(newStartDate);
-    endDate.setHours(endDate.getHours() + 1); 
-    electionData.value.end_date = endDate.toISOString().slice(0, 16);
+      if (end < minValidEnd) {
+        electionData.value.end_date = null; // Clear invalid end_date
+      }
+    }
   }
-});
+);
+
+
+
+
+
 
 // Watcher for dialog active state, to reload election types when opening the dialog
 watch(() => props.dialogActive, (newValue) => {
@@ -137,13 +149,16 @@ watch(localDialogActive, (newVal) => {
 // Submit the form and save the data
 const submitForm = async () => {
   try {
-    // Ensure only the 'id' is sent in type_id
-    if (electionData.value.type_id && typeof electionData.value.type_id === 'object') {
-      electionData.value.type_id = electionData.value.type_id.id;
+    // // Ensure only the 'id' is sent in Type
+    // if (electionData.value.Type && typeof electionData.value.Type === 'object') {
+    //   electionData.value.Type = electionData.value.Type.id;
+    // }
+    if (typeof electionData.value.Type === 'number') {
+      electionData.value.Type = String(electionData.value.Type);
     }
     await service.addElection(electionData.value);
-    console.log("Election added successfully:", electionData.value);
-    electionData.value = { id: 0, name: '', start_date: null, end_date: null, type_id: null };
+    window.alert("Election added successfully!");
+    electionData.value = { id: 0, name: '', start_date: null, end_date: null, Type: null };
     closeDialog();
     window.location.reload();
 
