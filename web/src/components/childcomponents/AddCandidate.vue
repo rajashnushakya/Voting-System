@@ -51,7 +51,7 @@
 
 
               <v-col cols="12" sm="6" >
-                <v-select v-model="formData.Position" :items="positions" item-title="positionName" item-value="id" label="Position" required></v-select>
+                <v-select v-model="formData.Position" :items="filteredPositions" item-title="positionName" item-value="id" label="Position" required></v-select>
               </v-col>
 
               <!-- District Dropdown -->
@@ -146,7 +146,24 @@
   wardId: '',
 });
 
-  
+const filteredPositions = computed(() => {
+  const selectedElection = elections.value.find(e => e.id === formData.electionId);
+
+  if (!selectedElection) return [];
+
+  const isMetropolitan = selectedElection.type === "3";
+
+  return positions.value.filter(pos => {
+    const name = pos.positionName.toLowerCase();
+    if (isMetropolitan) {
+      return name.includes("mayor");
+    } else {
+      return name.includes("chairman");
+    }
+  });
+});
+
+
   const fetchDistricts = async () => {
     try {
       const data = await centreService.getAllDistricts();
