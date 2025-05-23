@@ -43,9 +43,10 @@ public class CandidateVoteController : ControllerBase
                     VoterId = request.VoterId,
                     VoteTime = DateTime.Now
                 });
+                return Ok("Vote successfully recorded.");
             }
+            return Ok("You have already voted.");
 
-            return Ok("Vote successfully recorded.");
         }
         catch (Exception ex)
         {
