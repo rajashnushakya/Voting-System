@@ -230,33 +230,39 @@ namespace VotingAPI.Service
 
         public async Task<DbResponse> InsertElectionCentreVoterAsync(int centreId, int voterId, CancellationToken cancellationToken)
         {
-            DbResponse response = new DbResponse();
+            //DbResponse response = new DbResponse();
+            DataAccess dataAccess = new DataAccess(_connectionString);
+            var sql=dataAccess.CreateCommand("InsertElectionCentreVoter");
+            sql.Parameters.AddWithValue("@CentreId", centreId);
+            sql.Parameters.AddWithValue("@VoterId", voterId);
 
-            try
-            {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    await connection.OpenAsync(cancellationToken);
+            return await dataAccess.ExecuteNonQueryAsync(cancellationToken);
 
-                    using (var cmd = new SqlCommand("InsertElectionCentreVoter", connection))
-                    {
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            //try
+            //{
+            //    using (var connection = new SqlConnection(_connectionString))
+            //    {
+            //        await connection.OpenAsync(cancellationToken);
 
-                        // Add parameters
-                        cmd.Parameters.AddWithValue("@CentreId", centreId);
-                        cmd.Parameters.AddWithValue("@VoterId", voterId);
+            //        using (var cmd = new SqlCommand("InsertElectionCentreVoter", connection))
+            //        {
+            //            cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                        // Execute the stored procedure
-                        await cmd.ExecuteNonQueryAsync(cancellationToken);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error", ex);
-            }
+            //            // Add parameters
+            //            cmd.Parameters.AddWithValue("@CentreId", centreId);
+            //            cmd.Parameters.AddWithValue("@VoterId", voterId);
 
-            return response;
+            //            // Execute the stored procedure
+            //            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception("Error", ex);
+            //}
+
+            //return response;
         }
 
 
