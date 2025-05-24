@@ -433,7 +433,7 @@ onMounted(() => {
         </div>
         
         <div v-if="candidateData.length > 0" class="mt-4 text-sm text-gray-500 text-right">
-          Data from: {{ candidateData[0]?.electionName || 'Unknown Election' }}
+          Election: {{ candidateData[0]?.electionName || 'Unknown Election' }}
         </div>
       </section>
     </div>
