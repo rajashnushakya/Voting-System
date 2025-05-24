@@ -26,6 +26,15 @@ namespace VotingAPI.Controllers
         }
 
         [HttpGet]
+        public async Task<string> GetBlockCount()
+        {
+            BlockChainService blockChainService = new BlockChainService();
+            BigInteger count = await blockChainService.GetBlockCountAsync();
+            return count.ToString();
+        }
+
+
+        [HttpGet]
         public async Task<int> CountVote(int electionId, int candidateId)
         {
             BlockChainService blockChainService = new BlockChainService();
