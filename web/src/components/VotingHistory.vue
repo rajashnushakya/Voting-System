@@ -1,18 +1,6 @@
 <template>
   <v-card class="mb-6 rounded-lg shadow-md">
-    <v-card-title class="text-h5 font-medium d-flex align-center">
-      Your Voting History
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="searchQuery"
-        append-inner-icon="mdi-magnify"
-        label="Search history"
-        density="compact"
-        hide-details
-        variant="outlined"
-        class="max-w-xs"
-      ></v-text-field>
-    </v-card-title>
+
 
     <v-card-text>
       <div class="mb-4">
@@ -61,11 +49,6 @@
                     <div class="d-flex align-center">
                       <v-icon size="small" class="mr-1">mdi-map-marker</v-icon>
                       <span>Voted at: {{ history.votingLocation }}</span>
-                    </div>
-
-                    <div class="d-flex align-center mt-1">
-                      <v-icon size="small" class="mr-1">mdi-check-circle</v-icon>
-                      <span>Vote verified: {{ history.verificationTime }}</span>
                     </div>
                   </div>
                 </div>
@@ -233,13 +216,10 @@ const enhancedHistory = computed(() =>
   realVotingHistory.value.map(history => ({
     ...history,
     electionType: getElectionType(history.election),
-    votingLocation: 'Central High School, LA',  
-    verificationTime: '2025-04-01 10:30 AM',
+    votingLocation: history.votingLocation,  
     ballotId: `BAL-${Math.random().toString(36).substr(2, 9)}`,
     voterId: `VOT-${Math.random().toString(36).substr(2, 9)}`,
     verificationHash: Math.random().toString(36).substring(2, 15),
-    candidatePlatform: 'Transparency, Education, and Infrastructure.',
-    keyIssues: ['Education', 'Healthcare', 'Job Growth']
   }))
 );
 
@@ -267,7 +247,7 @@ const getElectionType = (name: string) => {
   if (name.toLowerCase().includes('presidential')) return 'Presidential';
   if (name.toLowerCase().includes('local')) return 'Local';
   if (name.toLowerCase().includes('referendum')) return 'Referendum';
-  return 'General';
+  return 'Election';
 };
 
 const getElectionTypeColor = (type: string) => {
@@ -294,10 +274,10 @@ const voteHistory = async () => {
   try {
     const data = await vservice.getVotesByVoter(voterId);
     realVotingHistory.value = data.map((vote: any) => ({
-      date: new Date().toLocaleDateString(), 
       election: vote.electionName,
       candidate: vote.candidateName,
       party: vote.partyName,
+      votingLocation: vote.centreName,
       candidateAvatar: `https://via.placeholder.com/48?text=${vote.candidateName.charAt(0)}`,
       partyColor: 'blue', 
     }));
