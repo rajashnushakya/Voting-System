@@ -95,7 +95,7 @@ const router = createRouter({
   routes,
 });
 
-// 🔐 Global Navigation Guard
+//  Global Navigation Guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token'); // Check token (adjust if needed)
 
