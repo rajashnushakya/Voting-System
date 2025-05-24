@@ -59,8 +59,9 @@ public class CandidateVoteService
                         PartyId = reader.GetInt32(reader.GetOrdinal("PartyId")),
                         PartyName = reader.GetString(reader.GetOrdinal("PartyName")),
                         ElectionId = reader.GetInt32(reader.GetOrdinal("ElectionId")),
-                        ElectionName = reader.GetString(reader.GetOrdinal("Name")),
-                        ElectionCentreId = reader.GetInt32(reader.GetOrdinal("ElectionCentreId"))
+                        ElectionName = reader.GetString(reader.GetOrdinal("ElectionName")),
+                        ElectionCentreId = reader.GetInt32(reader.GetOrdinal("ElectionCentreId")),
+                        CentreName = reader.GetString(reader.GetOrdinal("CentreName"))
                     };
 
                     voteDetailsList.Add(voteDetail);
