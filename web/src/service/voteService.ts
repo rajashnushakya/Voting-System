@@ -35,5 +35,15 @@ export default class voteService {
       throw error;
     }
   }
-  
+ 
+    async getblockcount() {
+    const url = `api/BlockChain/GetBlockCount`;
+    try {
+      const response = await this.#api.get(url);  
+      return response.data;
+    } catch (error) {
+      console.error("Error counting blocks:", error);
+      throw error;
+    }
+  }
 }

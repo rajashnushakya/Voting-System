@@ -92,6 +92,7 @@ export default class candidateService {
             throw error;
         }
     }
+    
 
     async getTopCandidate(){
         const url = `api/Candidate/top-voted`;

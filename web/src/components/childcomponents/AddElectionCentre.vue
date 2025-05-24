@@ -304,6 +304,7 @@ watch(() => formData.electionCentre, () => {
 
 const closeDialog = () => {
   emit('update:EdialogActive', false);
+  
 };
 
 

@@ -7,6 +7,7 @@ import voterService from '../service/voterService'
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
 import candidateService from '../service/candidateService'
+import voteService from '../service/voteService'
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -14,6 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const service = new candidateService();
 const electionService = new ElectionService();
 const VoterService = new voterService();
+const VoteService = new voteService();
 
 // Defining a consistent color palette for all charts
 const chartColors = {
@@ -312,6 +314,15 @@ const fetchElectionCount = async () => {
   }
 }
 
+const fetchBlockCount = async () => {
+  try {
+    const response = await VoteService.getblockcount();
+    quickStats.value[2].value = response;
+  } catch (error) {
+    console.error('Error fetching block count:', error);
+  }
+}
+
 const fetchVoterCount = async () => {
   try {
     const response = await VoterService.getVoterCount();
@@ -331,6 +342,7 @@ onMounted(() => {
   fetchElectionCount();
   fetchVoterCount();
   fetchCandidateCount();
+  fetchBlockCount();
   
   // Add event listener to close menu when clicking outside
   document.addEventListener('click', (event) => {
