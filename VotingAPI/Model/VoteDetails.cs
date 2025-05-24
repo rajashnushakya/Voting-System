@@ -10,6 +10,6 @@
         public int ElectionId { get; set; }
         public string ElectionName { get; set; }
         public int ElectionCentreId { get; set; }
-        public string ElectionCentreName { get; set; }
+        public string CentreName { get; set; }
     }
 }
