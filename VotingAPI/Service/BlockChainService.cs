@@ -116,8 +116,29 @@ namespace VotingAPI.Service
                 VoteTime = ToDateTime((long)result.VoteTime),
             };
         }
-        
+
+        /// <summary>
+        /// Gets the current total number of blocks on the blockchain.
+        /// </summary>
+        /// <returns>The latest block number (total blocks).</returns>
+        public async Task<BigInteger> GetBlockCountAsync()
+        {
+            try
+            {
+                var latestBlockNumber = await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
+                return latestBlockNumber.Value;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching block count: {ex.Message}");
+                return -1;
+            }
+        }
+
     }
+
+
+
 
 
     [Function("castVote")]
