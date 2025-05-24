@@ -36,7 +36,6 @@
                   <div>
                     <div class="text-h6">{{ center.name }}</div>
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <v-icon size="small" class="mr-1">mdi-map-marker</v-icon>
                       {{ center.address }}, {{ center.city }}
                     </div>
                   </div>
@@ -84,7 +83,6 @@
           </p>
           <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
             By confirming, you agree to cast your vote at this location for the upcoming election.
-            
           </p>
         </v-card-text>
         <v-card-actions>
@@ -137,15 +135,13 @@ const navigateToEnrollment = () => {
     return;
   }
 
-  router.push({ name: 'vote', params: { electionId } });
+  router.push({ name: 'voter-dashboard'});
 };
 
-// Props & Emits
 const props = defineProps<{ electionId: string }>();
 const emit = defineEmits(['update:activeTab', 'enrollment-complete']);
 const voterEnrollment = new voterService();
 
-// State
 const electionCentreService = new ElectionCentreService();
 const searchQuery = ref('');
 const selectedCenter = ref<string | null>(null);
@@ -154,7 +150,6 @@ const showSuccessDialog = ref(false);
 const electionCenters = ref<any[]>([]);
 const loading = ref(true);
 
-// Fetch election centers from API
 onMounted(async () => {
   try {
     loading.value = true;
@@ -166,7 +161,6 @@ onMounted(async () => {
   }
 });
 
-// Computed Properties
 const filteredCenters = computed(() => {
   if (!searchQuery.value) return electionCenters.value;
   const query = searchQuery.value.toLowerCase();
@@ -186,29 +180,31 @@ const confirmEnrollment = async () => {
   try {
     showConfirmation.value = false;
 
-    // Get the voterId from localStorage
     const voterIdFromLocalStorage = localStorage.getItem("voterid");
+    if (!voterIdFromLocalStorage) throw new Error("Voter ID not found");
 
-    if (!voterIdFromLocalStorage) {
-      throw new Error("Voter ID not found in localStorage");
-    }
+    const selectedCenterObj = electionCenters.value.find(center => center.id === selectedCenter.value);
+    if (!selectedCenterObj) throw new Error("Selected center not found");
 
-    const selectedCenterObj = electionCenters.value.find(
-      (center) => center.id === selectedCenter.value
-    );
-    if (!selectedCenterObj) {
-      throw new Error("Selected center not found");
-    }
-
-    // Save the selected center ID to localStorage
     localStorage.setItem("electionCenterId", selectedCenterObj.electionCentreId.toString());
-    console.log("Selected center electionCentreId saved to localStorage:", selectedCenterObj.electionCentreId);
 
-    // Perform the enrollment API call here
-    await voterEnrollment.enrollVoterToElectionCenter(
-      voterIdFromLocalStorage, 
-      selectedCenterObj.id 
+    // Call the API and store the response
+    const response = await voterEnrollment.enrollVoterToElectionCenter(
+      voterIdFromLocalStorage,
+      selectedCenterObj.id
     );
+
+    // Check API response status and message
+    if (response.status === 1 && response.message === "Voter location does not match Election Centre location") {
+      alert("Enrollment failed: Voter location does not match the selected election center.");
+      return; // Do not proceed
+    }
+
+    // Proceed only if enrollment was successful
+    if (response.status !== 0) {
+      alert(`Enrollment failed: ${response.message || "Unknown error occurred."}`);
+      return;
+    }
 
     showSuccessDialog.value = true;
 
@@ -221,6 +217,7 @@ const confirmEnrollment = async () => {
     alert('Enrollment failed. Please try again.');
   }
 };
+
 </script>
 
 <style scoped>
@@ -230,4 +227,5 @@ const confirmEnrollment = async () => {
 .v-card:hover {
   transform: translateY(-2px);
 }
+/* Highlight styles are controlled dynamically via :class in the template */
 </style>
